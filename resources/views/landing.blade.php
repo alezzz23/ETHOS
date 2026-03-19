@@ -3,8 +3,54 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ETHOS | Consultoría Empresarial Estratégica</title>
-    <meta name="description" content="Diseñamos procesos inteligentes, auditoría estratégica y sistemas empresariales sólidos.">
+    <!-- Primary Meta Tags -->
+    <title>ETHOS | Consultoría Estratégica Empresarial, Auditoría y Procesos en Caracas</title>
+    <meta name="title" content="ETHOS | Consultoría Estratégica Empresarial y Auditoría">
+    <meta name="description" content="Diseñamos procesos corporativos inteligentes, auditoría estratégica interna y sistemas empresariales sólidos para el crecimiento. Basados en Caracas, Venezuela.">
+    <meta name="keywords" content="consultoría estratégica, auditoría estratégica, auditoría interna, procesos corporativos, estructuración organizacional, sistemas empresariales, Caracas, Venezuela, ETHOS">
+    <meta name="author" content="ETHOS Summit Group">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="ETHOS | Consultoría Estratégica Empresarial">
+    <meta property="og:description" content="Diseñamos procesos inteligentes y auditoría estratégica para escalar y proteger tu empresa. Convertimos retos en resultados.">
+    <meta property="og:image" content="{{ asset('images/ethos-og.jpg') }}">
+    <meta property="og:site_name" content="ETHOS Consultoría">
+    <meta property="og:locale" content="es_VE">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="ETHOS | Consultoría Estratégica Empresarial">
+    <meta property="twitter:description" content="Diseñamos procesos inteligentes y auditoría estratégica para escalar y proteger tu empresa.">
+    
+    <!-- Geo / Local SEO -->
+    <meta name="geo.region" content="VE-A">
+    <meta name="geo.placename" content="Caracas">
+    
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ConsultingBusiness",
+      "name": "ETHOS Summit Group",
+      "description": "Firma de consultoría estratégica y auditoría empresarial especializada en diseño de procesos inteligentes y estructuración organizacional.",
+      "url": "{{ url('/') }}",
+      "email": "ethossummitgroup@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Caracas",
+        "addressCountry": "VE"
+      },
+      "sameAs": [
+        "https://www.instagram.com/ethosconsultoria_"
+      ]
+    }
+    </script>
  
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -706,13 +752,8 @@
             <div class="flex items-center justify-between h-24">
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-4 group">
-                    <div class="relative w-14 h-14">
-                        <div class="absolute inset-0 bg-white rounded-xl shadow-xl group-hover:shadow-2xl transition-all duration-500"></div>
-                        <div class="absolute inset-0 bg-gradient-to-br from-ethos-100 to-white opacity-0 group-hover:opacity-100 rounded-xl transition-opacity duration-500"></div>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="font-display text-3xl font-bold text-ethos-700 group-hover:scale-110 transition-transform duration-500">Ε</span>
-                        </div>
-                        <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-gradient-to-r from-ethos-600 via-ethos-400 to-ethos-600 rounded-full opacity-80 group-hover:w-14 transition-all duration-500"></div>
+                    <div class="relative w-14 h-14 flex items-center justify-center overflow-hidden rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 group-hover:border-white/30 transition-colors duration-500">
+                        <img src="{{ asset('assets/image/logo.png') }}" alt="ETHOS Logo" class="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="flex flex-col">
                         <span class="font-display text-2xl font-semibold text-white tracking-[0.15em] group-hover:tracking-[0.2em] transition-all duration-500">ETHOS</span>
@@ -737,6 +778,15 @@
                     <a href="#contacto" class="btn-outline-premium text-white px-8 py-3 rounded-lg text-sm font-semibold tracking-widest uppercase">
                         Contactar
                     </a>
+                    <a href="/login" class="group inline-flex items-center gap-2 text-white/60 hover:text-white text-xs tracking-[0.25em] uppercase transition-colors duration-300" aria-label="Login">
+                        <svg class="w-4 h-4 opacity-80 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm2-10V7a4 4 0 118 0v4"/>
+                        </svg>
+                        <span class="relative">
+                            Login
+                            <span class="absolute -bottom-2 left-0 w-0 h-px bg-gradient-to-r from-ethos-400 to-ethos-600 group-hover:w-full transition-all duration-500"></span>
+                        </span>
+                    </a>
                 </div>
  
                 <!-- Mobile Menu Button -->
@@ -755,6 +805,12 @@
                 <a href="#metodologia" class="block text-white/80 hover:text-white py-3 text-lg tracking-wide transition-colors">Metodología</a>
                 <a href="#servicios" class="block text-white/80 hover:text-white py-3 text-lg tracking-wide transition-colors">Servicios</a>
                 <a href="#contacto" class="block text-white font-semibold py-3 text-lg tracking-wide">Contactar</a>
+                <a href="/login" class="inline-flex items-center gap-3 text-white/70 hover:text-white py-3 text-sm tracking-[0.25em] uppercase transition-colors" aria-label="Login">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm2-10V7a4 4 0 118 0v4"/>
+                    </svg>
+                    Login
+                </a>
             </div>
         </div>
     </nav>
@@ -853,7 +909,9 @@
                         <!-- Main Image Container -->
                         <div class="relative rounded-2xl overflow-hidden shadow-2xl animate-pulse-glow">
                             <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80" 
-                                 alt="Arquitectura empresarial moderna" 
+                                 alt="Edificio corporativo moderno representando la consultoría empresarial de ETHOS" 
+                                 title="Diseño de estructuras organizacionales"
+                                 loading="lazy"
                                  class="w-full h-[550px] object-cover">
  
                             <!-- Overlay -->

@@ -1,2 +1,8 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /*?*
+Disallow: /login
+Disallow: /register
+Disallow: /admin
+
+Sitemap: https://ethos-consultoria.com/sitemap.xml
