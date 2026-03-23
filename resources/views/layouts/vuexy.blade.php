@@ -27,7 +27,7 @@
             </div>
             <div class="search-modal-body" id="searchResults">
                 <div class="search-section-title">Popular Searches</div>
-                <a href="/admin/dashboard" class="search-result-item"><i class="ti ti-smart-home"></i><span>Analytics Dashboard</span></a>
+                <a href="/admin/dashboard" class="search-result-item"><i class="ti ti-smart-home"></i><span>inicio</span></a>
                 <a href="#" class="search-result-item"><i class="ti ti-file-invoice"></i><span>Invoice List</span></a>
                 <a href="#" class="search-result-item"><i class="ti ti-users"></i><span>User List</span></a>
                 <a href="#" class="search-result-item"><i class="ti ti-settings"></i><span>Account Settings</span></a>
@@ -102,7 +102,6 @@
     <aside class="layout-menu" id="layoutMenu">
         <div class="app-brand">
             <a href="/admin/dashboard" class="app-brand-link">
-                <img src="{{ asset('assets/image/logo.png') }}" alt="ETHOS">
                 <span class="brand-text">ETHOS</span>
             </a>
             <button class="sidebar-toggler d-none d-xl-block" id="sidebarCollapse" title="Toggle sidebar">
@@ -112,10 +111,14 @@
         </div>
         <ul class="menu-inner" style="list-style:none;padding:0;">
             <li class="menu-header">Dashboards <span class="menu-badge badge-label bg-label-danger">5</span></li>
-            <li class="menu-item"><a href="/admin/dashboard" class="menu-link {{ request()->is('admin/dashboard') ? 'active' : '' }}"><i class="ti ti-smart-home"></i><span>Analytics</span></a></li>
-            <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-shopping-cart"></i><span>eCommerce</span></a></li>
-            <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-chart-pie-2"></i><span>CRM</span></a></li>
-            <li class="menu-header">Apps & Pages</li>
+            <li class="menu-item"><a href="/admin/dashboard" class="menu-link {{ request()->is('admin/dashboard') ? 'active' : '' }}"><i class="ti ti-smart-home"></i><span>Inicio</span></a></li>
+            @can('clients.view')
+            <li class="menu-item"><a href="/admin/clients" class="menu-link {{ request()->is('admin/clients*') ? 'active' : '' }}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
+            @endcan
+            @can('projects.view')
+            <li class="menu-item"><a href="/admin/projects" class="menu-link {{ request()->is('admin/projects*') ? 'active' : '' }}"><i class="ti ti-briefcase"></i><span>Proyectos</span></a></li>
+            @endcan
+         <!--    <li class="menu-header">Apps & Pages</li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-mail"></i><span>Email</span><span class="menu-badge badge-label bg-label-primary ms-auto">12</span></a></li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-messages"></i><span>Chat</span></a></li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-calendar"></i><span>Calendar</span></a></li>
@@ -139,7 +142,7 @@
             <li class="menu-header">Charts & Misc</li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-chart-bar"></i><span>Charts</span></a></li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-box-multiple"></i><span>Misc</span></a></li>
-        </ul>
+        </ul> -->
     </aside>
 
     <!-- Navbar -->
@@ -172,9 +175,14 @@
                     <li><a class="dropdown-item" href="#"><i class="ti ti-currency-dollar me-2"></i>Facturación</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#"><i class="ti ti-lifebuoy me-2"></i>Ayuda</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="ti ti-help me-2"></i>FAQ</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="/login"><i class="ti ti-power me-2"></i>Cerrar Sesión</a></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <a class="dropdown-item text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();">
+                                <i class="ti ti-power me-2"></i>Cerrar Sesión
+                            </a>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>

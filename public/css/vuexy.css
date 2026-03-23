@@ -1247,3 +1247,390 @@ a {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(115, 103, 240, 0.4);
 }
+
+.ethos-crm-card {
+    border: 1px solid rgba(var(--vz-primary-rgb), 0.14);
+    box-shadow: 0 18px 40px -28px rgba(var(--vz-primary-rgb), 0.45);
+}
+
+.ethos-crm-card .card-header {
+    background: linear-gradient(180deg, rgba(var(--vz-primary-rgb), 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+    border-bottom: 1px solid rgba(var(--vz-primary-rgb), 0.12);
+}
+
+.ethos-create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 0.7rem;
+    box-shadow: 0 12px 20px -14px rgba(var(--vz-primary-rgb), 0.8);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ethos-create-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 26px -16px rgba(var(--vz-primary-rgb), 0.8);
+}
+
+.ethos-table-shell {
+    border: 1px solid var(--vz-border-color);
+    border-radius: 0.9rem;
+    overflow: hidden;
+}
+
+.ethos-data-table {
+    margin-bottom: 0;
+    background: var(--vz-card-bg);
+}
+
+.ethos-data-table thead th {
+    border-bottom: 1px solid var(--vz-border-color);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--vz-heading-color);
+    background: rgba(var(--vz-primary-rgb), 0.04);
+    padding: 0.9rem 0.95rem;
+}
+
+.ethos-data-table tbody td {
+    border-color: rgba(115, 103, 240, 0.08);
+    padding: 0.95rem;
+    vertical-align: middle;
+}
+
+.ethos-data-table tbody tr {
+    transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.ethos-data-table tbody tr:hover {
+    background: rgba(var(--vz-primary-rgb), 0.04);
+    transform: translateY(-1px);
+    box-shadow: inset 3px 0 0 rgba(var(--vz-primary-rgb), 0.45);
+}
+
+.ethos-primary-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.ethos-cell-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+    background: rgba(var(--vz-primary-rgb), 0.12);
+    color: var(--vz-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.ethos-cell-text {
+    font-weight: 600;
+    color: var(--vz-heading-color);
+}
+
+.ethos-muted-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--vz-body-color);
+}
+
+.ethos-muted-cell i {
+    font-size: 0.95rem;
+    color: var(--vz-primary);
+}
+
+.ethos-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.28rem 0.68rem;
+    background: rgba(var(--vz-info-rgb), 0.14);
+    color: #098ca0;
+    font-size: 0.77rem;
+    font-weight: 600;
+}
+
+.ethos-action-btn {
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.ethos-action-btn:hover {
+    background: rgba(var(--vz-primary-rgb), 0.1);
+    color: var(--vz-primary) !important;
+    border-color: rgba(var(--vz-primary-rgb), 0.25);
+}
+
+.ethos-empty-state {
+    color: var(--vz-body-color);
+    padding: 1.5rem 0.5rem !important;
+}
+
+.ethos-empty-state i {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 0.4rem;
+    color: rgba(var(--vz-primary-rgb), 0.75);
+}
+
+.ethos-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    padding: 0.32rem 0.62rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ethos-status-capturado { background: rgba(var(--vz-info-rgb), 0.14); color: #0b8da3; }
+.ethos-status-clasificacion-pendiente { background: rgba(var(--vz-warning-rgb), 0.18); color: #a56418; }
+.ethos-status-priorizado { background: rgba(var(--vz-primary-rgb), 0.14); color: var(--vz-primary); }
+.ethos-status-asignacion-lider-pendiente { background: rgba(123, 128, 154, 0.2); color: #505970; }
+.ethos-status-en-diagnostico { background: rgba(var(--vz-danger-rgb), 0.15); color: #ba4143; }
+.ethos-status-en-diseno { background: rgba(94, 96, 206, 0.16); color: #4f50aa; }
+.ethos-status-en-implementacion { background: rgba(57, 173, 123, 0.16); color: #20895e; }
+.ethos-status-en-seguimiento { background: rgba(18, 132, 170, 0.17); color: #0b7092; }
+.ethos-status-cerrado { background: rgba(var(--vz-success-rgb), 0.18); color: #17784a; }
+.ethos-status-default { background: rgba(var(--vz-primary-rgb), 0.12); color: var(--vz-primary); }
+
+.ethos-create-modal .modal-content {
+    border: 1px solid rgba(var(--vz-primary-rgb), 0.18);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 25px 45px -30px rgba(var(--vz-primary-rgb), 0.75);
+}
+
+.ethos-create-modal .modal-header {
+    background: linear-gradient(135deg, rgba(var(--vz-primary-rgb), 0.14) 0%, rgba(var(--vz-info-rgb), 0.1) 100%);
+    border-bottom: 1px solid rgba(var(--vz-primary-rgb), 0.18);
+}
+
+.ethos-modal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ethos-modal-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.72rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vz-primary);
+    background: rgba(var(--vz-primary-rgb), 0.14);
+    font-size: 1.2rem;
+}
+
+.ethos-modal-subtitle {
+    font-size: 0.78rem;
+    color: var(--vz-body-color);
+}
+
+.ethos-create-modal .form-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--vz-heading-color);
+}
+
+.ethos-create-modal .form-label i {
+    color: var(--vz-primary);
+}
+
+.ethos-create-modal .form-control,
+.ethos-create-modal .form-select {
+    border-radius: 0.7rem;
+    border-color: rgba(123, 117, 142, 0.22);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.ethos-create-modal .form-control:focus,
+.ethos-create-modal .form-select:focus {
+    border-color: rgba(var(--vz-primary-rgb), 0.45);
+    box-shadow: 0 0 0 0.22rem rgba(var(--vz-primary-rgb), 0.14);
+    transform: translateY(-1px);
+}
+
+.ethos-create-modal .modal-footer {
+    border-top: 1px solid rgba(var(--vz-primary-rgb), 0.12);
+}
+
+.ethos-create-modal .modal-footer .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ethos-ajax-alert {
+    border-radius: 0.7rem;
+    border: 1px solid transparent;
+}
+
+.ethos-submit-btn .spinner-border {
+    width: 0.95rem;
+    height: 0.95rem;
+}
+
+.ethos-row-highlight {
+    animation: ethosRowPulse 1.35s ease;
+}
+
+@keyframes ethosRowPulse {
+    0% {
+        background: rgba(var(--vz-success-rgb), 0.18);
+    }
+    100% {
+        background: transparent;
+    }
+}
+
+.ethos-crm-card .card-header h5,
+.ethos-crm-card .card-header h5 i {
+    color: var(--vz-heading-color);
+}
+
+.ethos-create-modal .modal-title {
+    color: var(--vz-heading-color);
+}
+
+.dark-style .ethos-crm-card {
+    border-color: rgba(var(--vz-primary-rgb), 0.32);
+    background: var(--vz-card-bg);
+}
+
+.dark-style .ethos-crm-card .card-header {
+    background: linear-gradient(180deg, rgba(var(--vz-primary-rgb), 0.2) 0%, rgba(31, 36, 54, 0.55) 100%);
+    border-bottom-color: rgba(var(--vz-primary-rgb), 0.34);
+}
+
+.dark-style .ethos-create-modal .modal-content {
+    background: linear-gradient(180deg, rgba(54, 60, 88, 0.95) 0%, rgba(47, 51, 73, 1) 100%);
+    border-color: rgba(var(--vz-primary-rgb), 0.4);
+}
+
+.dark-style .ethos-create-modal .modal-header {
+    background: linear-gradient(135deg, rgba(var(--vz-primary-rgb), 0.3) 0%, rgba(26, 31, 48, 0.95) 100%);
+    border-bottom-color: rgba(var(--vz-primary-rgb), 0.38);
+}
+
+.dark-style .ethos-create-modal .modal-body,
+.dark-style .ethos-create-modal .modal-footer {
+    background: transparent;
+}
+
+.dark-style .ethos-create-modal .modal-title {
+    color: var(--vz-heading-color);
+}
+
+.dark-style .ethos-modal-subtitle {
+    color: rgba(207, 211, 236, 0.8);
+}
+
+.dark-style .ethos-modal-icon {
+    background: rgba(var(--vz-primary-rgb), 0.28);
+    color: #d7d3ff;
+}
+
+.dark-style .ethos-create-modal .form-label {
+    color: #d7dbf6;
+}
+
+.dark-style .ethos-create-modal .form-control,
+.dark-style .ethos-create-modal .form-select {
+    background-color: rgba(27, 31, 47, 0.88);
+    color: #e5e8ff;
+    border-color: rgba(179, 189, 236, 0.22);
+}
+
+.dark-style .ethos-create-modal .form-control::placeholder {
+    color: rgba(213, 218, 245, 0.48);
+}
+
+.dark-style .ethos-create-modal .form-control:focus,
+.dark-style .ethos-create-modal .form-select:focus {
+    border-color: rgba(var(--vz-primary-rgb), 0.75);
+    box-shadow: 0 0 0 0.22rem rgba(var(--vz-primary-rgb), 0.24);
+}
+
+.dark-style .ethos-create-modal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(185%);
+}
+
+.dark-style .ethos-ajax-alert.alert-success {
+    color: #d8f7e6;
+    background: rgba(var(--vz-success-rgb), 0.2);
+    border-color: rgba(var(--vz-success-rgb), 0.35);
+}
+
+.dark-style .ethos-ajax-alert.alert-danger {
+    color: #ffd8d8;
+    background: rgba(var(--vz-danger-rgb), 0.2);
+    border-color: rgba(var(--vz-danger-rgb), 0.35);
+}
+
+@media (max-width: 991.98px) {
+    .ethos-create-modal .modal-dialog {
+        margin: 0.75rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ethos-data-table thead {
+        display: none;
+    }
+
+    .ethos-data-table tbody tr {
+        display: block;
+        margin: 0.7rem;
+        border: 1px solid var(--vz-border-color);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 12px 30px -26px rgba(var(--vz-primary-rgb), 0.8);
+    }
+
+    .ethos-data-table tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        border: 0;
+        border-bottom: 1px dashed rgba(var(--vz-primary-rgb), 0.16);
+        padding: 0.8rem 0.9rem;
+    }
+
+    .ethos-data-table tbody td:last-child {
+        border-bottom: 0;
+    }
+
+    .ethos-data-table tbody td::before {
+        content: attr(data-label);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        font-weight: 700;
+        color: var(--vz-body-color);
+    }
+
+    .ethos-primary-cell {
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .ethos-muted-cell,
+    .ethos-status-badge,
+    .ethos-pill {
+        margin-left: auto;
+    }
+}
