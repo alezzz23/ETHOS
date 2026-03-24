@@ -74,6 +74,9 @@
                                     </span>
                                 </td>
                                 <td data-label="Acciones">
+                                    <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-view-client" title="Ver detalles" data-client-id="{{ $client->id }}" aria-label="Ver detalles del cliente {{ $client->name }}">
+                                        <i class="ti ti-eye"></i>
+                                    </button>
                                     @can('clients.update')
                                     <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-client" title="Editar cliente" data-client='@json($clientPayload)'>
                                         <i class="ti ti-edit"></i>
@@ -93,7 +96,7 @@
                     </table>
                 </div>
                 <div class="mt-3">
-                    {{ $clients->links() }}
+                    {{ $clients->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>
@@ -101,7 +104,7 @@
 </div>
 
 <div class="modal fade ethos-create-modal" id="createClientModal" tabindex="-1" aria-labelledby="createClientModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <div class="ethos-modal-title-wrap">
@@ -117,12 +120,13 @@
           @csrf
           <input type="hidden" name="_method" id="clientFormMethod" value="POST">
           <input type="hidden" id="clientEditId" value="">
-          <div class="modal-body">
+          <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
               <div id="clientFormFeedback" class="alert d-none ethos-ajax-alert" role="alert" aria-live="assertive"></div>
               <div class="row g-3">
               <div class="col-md-6">
-                  <label class="form-label"><i class="ti ti-building"></i> Nombre *</label>
+                  <label class="form-label"><i class="ti ti-building"></i> Nombre <span class="text-danger">*</span></label>
                   <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+                  <div class="invalid-feedback">El nombre del cliente es obligatorio.</div>
               </div>
               <div class="col-md-6">
                   <label class="form-label"><i class="ti ti-briefcase"></i> Industria</label>
@@ -135,11 +139,71 @@
               <div class="col-md-6">
                   <label class="form-label"><i class="ti ti-at"></i> Email Contacto Principal</label>
                   <input type="email" name="primary_contact_email" class="form-control" value="{{ old('primary_contact_email') }}">
+                  <div class="invalid-feedback">Por favor ingresa un email válido.</div>
+              </div>
+              <div class="col-md-6">
+                  <label class="form-label"><i class="ti ti-phone"></i> Teléfono</label>
+                  <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="+58 412-1234567">
               </div>
               <div class="col-12">
                   <label class="form-label"><i class="ti ti-notes"></i> Notas</label>
-                  <textarea name="notes" class="form-control" rows="3">{{ old('notes') }}</textarea>
+                  <textarea name="notes" class="form-control" rows="2">{{ old('notes') }}</textarea>
               </div>
+              </div>
+
+              {{-- Sección: Ubicación --}}
+              <div class="row g-3 mt-0">
+                  <div class="col-12">
+                      <h6 class="ethos-form-section-title"><i class="ti ti-map-pin"></i> Ubicación</h6>
+                  </div>
+                  <div class="col-md-6">
+                      <label class="form-label"><i class="ti ti-map"></i> Dirección</label>
+                      <input type="text" name="address" class="form-control" value="{{ old('address') }}" placeholder="Calle, número, zona">
+                  </div>
+                  <div class="col-md-3">
+                      <label class="form-label"><i class="ti ti-building-community"></i> Ciudad</label>
+                      <input type="text" name="city" class="form-control" value="{{ old('city') }}">
+                  </div>
+                  <div class="col-md-3">
+                      <label class="form-label"><i class="ti ti-building"></i> Estado/Provincia</label>
+                      <input type="text" name="state" class="form-control" value="{{ old('state') }}">
+                  </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-globe"></i> País</label>
+                      <input type="text" name="country" class="form-control" value="{{ old('country') }}">
+                  </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-map-2"></i> Municipio</label>
+                      <input type="text" name="municipality" class="form-control" value="{{ old('municipality') }}">
+                  </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-location"></i> Parroquia</label>
+                      <input type="text" name="parish" class="form-control" value="{{ old('parish') }}">
+                  </div>
+              </div>
+
+              {{-- Sección: Ubicación en Mapa --}}
+              <div class="row g-3 mt-0">
+                  <div class="col-12">
+                      <h6 class="ethos-form-section-title"><i class="ti ti-map-2"></i> Ubicación en Mapa</h6>
+                      <p class="text-muted small mb-2">Haz clic en el mapa para seleccionar la ubicación del cliente</p>
+                  </div>
+                  <div class="col-12">
+                      <div id="clientMapPicker" style="height: 300px; width: 100%; border-radius: 8px; border: 1px solid #e7e5eb;"></div>
+                  </div>
+                  <div class="col-md-6">
+                      <label class="form-label"><i class="ti ti-compass"></i> Latitud</label>
+                      <input type="text" name="latitude" id="latitudeDisplay" class="form-control" value="{{ old('latitude') }}" readonly placeholder="Haz clic en el mapa">
+                  </div>
+                  <div class="col-md-6">
+                      <label class="form-label"><i class="ti ti-compass"></i> Longitud</label>
+                      <input type="text" name="longitude" id="longitudeDisplay" class="form-control" value="{{ old('longitude') }}" readonly placeholder="Haz clic en el mapa">
+                  </div>
+                  <div class="col-12">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" id="clearLocationBtn">
+                          <i class="ti ti-trash"></i> Limpiar ubicación
+                      </button>
+                  </div>
               </div>
           </div>
           <div class="modal-footer">
@@ -154,6 +218,40 @@
               </button>
           </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalles de Cliente -->
+<div class="modal fade ethos-detail-modal" id="clientDetailModal" tabindex="-1" aria-labelledby="clientDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="ethos-modal-title-wrap">
+            <span class="ethos-modal-icon"><i class="ti ti-building-skyscraper"></i></span>
+            <div>
+                <h5 class="modal-title" id="clientDetailModalLabel">Detalles del Cliente</h5>
+                <p class="mb-0 ethos-modal-subtitle" id="clientDetailSubtitle">Información completa del cliente</p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+          <div id="clientDetailContent">
+              <div class="ethos-detail-loading">
+                  <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Cargando...</span>
+                  </div>
+                  <p>Cargando detalles del cliente...</p>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">
+            <i class="ti ti-x"></i>
+            <span>Cerrar</span>
+          </button>
+      </div>
     </div>
   </div>
 </div>
@@ -200,17 +298,59 @@
         methodInput.value = 'PUT';
         editIdInput.value = String(client.id);
         form.action = updateUrlTemplate.replace('__id__', String(client.id));
+        // Básicos
         form.elements.name.value = client.name || '';
         form.elements.industry.value = client.industry || '';
         form.elements.primary_contact_name.value = client.primary_contact_name || '';
         form.elements.primary_contact_email.value = client.primary_contact_email || '';
+        form.elements.phone.value = client.phone || '';
         form.elements.notes.value = client.notes || '';
+        // Ubicación
+        form.elements.address.value = client.address || '';
+        form.elements.city.value = client.city || '';
+        form.elements.state.value = client.state || '';
+        form.elements.country.value = client.country || '';
+        form.elements.municipality.value = client.municipality || '';
+        form.elements.parish.value = client.parish || '';
+        // Coordenadas
+        form.elements.latitude.value = client.latitude || '';
+        form.elements.longitude.value = client.longitude || '';
+        document.getElementById('latitudeDisplay').value = client.latitude || '';
+        document.getElementById('longitudeDisplay').value = client.longitude || '';
         modalTitle.textContent = 'Editar Cliente';
         modalSubtitle.textContent = 'Actualiza la información del cliente seleccionado.';
         modalIcon.className = 'ti ti-edit';
         submitText.textContent = 'Actualizar Cliente';
         clearFeedback(feedback);
         modal.show();
+
+        // Set map marker if coordinates exist
+        setTimeout(() => {
+            if (client.latitude && client.longitude && mapPicker) {
+                const position = { lat: parseFloat(client.latitude), lng: parseFloat(client.longitude) };
+                mapPicker.setCenter(position);
+                if (mapMarker) {
+                    mapMarker.setPosition(position);
+                } else {
+                    mapMarker = new google.maps.Marker({
+                        position: position,
+                        map: mapPicker,
+                        draggable: true,
+                        title: 'Ubicación del cliente',
+                    });
+                    mapMarker.addListener('dragend', () => {
+                        const pos = mapMarker.getPosition();
+                        document.getElementById('latitudeDisplay').value = pos.lat().toFixed(6);
+                        document.getElementById('longitudeDisplay').value = pos.lng().toFixed(6);
+                        form.elements.latitude.value = pos.lat().toFixed(6);
+                        form.elements.longitude.value = pos.lng().toFixed(6);
+                    });
+                }
+            } else if (mapMarker) {
+                mapMarker.setMap(null);
+                mapMarker = null;
+            }
+        }, 300);
     };
 
     const escapeHtml = (value) => {
@@ -231,21 +371,27 @@
         primary_contact_name_label: client.primary_contact_name_label || 'Sin contacto',
         primary_contact_email: client.primary_contact_email || '',
         primary_contact_email_label: client.primary_contact_email_label || 'Sin email',
-        notes: client.notes || ''
+        phone: client.phone || '',
+        notes: client.notes || '',
+        // Ubicación
+        address: client.address || '',
+        city: client.city || '',
+        state: client.state || '',
+        country: client.country || '',
+        municipality: client.municipality || '',
+        parish: client.parish || '',
+        // Coordenadas
+        latitude: client.latitude || '',
+        longitude: client.longitude || ''
     });
 
     const clientRowHtml = (client) => {
-        const payload = escapeHtml(JSON.stringify({
-            id: client.id,
-            name: client.name,
-            industry: client.industry,
-            primary_contact_name: client.primary_contact_name,
-            primary_contact_email: client.primary_contact_email,
-            notes: client.notes
-        }));
-        const actionCell = canUpdate
+        const payload = escapeHtml(JSON.stringify(client));
+        const viewBtn = `<button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-view-client" title="Ver detalles" data-client-id="${client.id}"><i class="ti ti-eye"></i></button>`;
+        const editBtn = canUpdate
             ? `<button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-client" title="Editar cliente" data-client="${payload}"><i class="ti ti-edit"></i></button>`
             : '';
+        const actionCell = viewBtn + editBtn;
 
         return `<tr data-client-id="${client.id}">
             <td data-label="Nombre">
@@ -326,6 +472,217 @@
         });
     };
 
+    // Modal de detalles
+    const detailModalElement = document.getElementById('clientDetailModal');
+    const detailModal = new bootstrap.Modal(detailModalElement);
+    const detailContent = document.getElementById('clientDetailContent');
+    const detailSubtitle = document.getElementById('clientDetailSubtitle');
+
+    const renderClientDetails = (client) => {
+        const projectsHtml = client.projects && client.projects.length > 0
+            ? client.projects.map(p => `
+                <div class="ethos-detail-item">
+                    <div class="ethos-detail-item-main">
+                        <i class="ti ti-briefcase-2"></i>
+                        <span>${escapeHtml(p.title)}</span>
+                    </div>
+                    <span class="ethos-status-badge ethos-status-${p.status}">${escapeHtml(p.status_label)}</span>
+                </div>
+            `).join('')
+            : '<p class="text-muted mb-0">Este cliente no tiene proyectos registrados.</p>';
+
+        return `
+            <div class="ethos-detail-sections">
+                <div class="ethos-detail-section">
+                    <h6 class="ethos-detail-section-title">
+                        <i class="ti ti-building"></i>
+                        <span>Información General</span>
+                    </h6>
+                    <div class="ethos-detail-grid">
+                        <div class="ethos-detail-field">
+                            <label>Nombre</label>
+                            <span>${escapeHtml(client.name)}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Industria</label>
+                            <span>${escapeHtml(client.industry_label)}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Tipo de Negocio</label>
+                            <span>${escapeHtml(client.business_type_label)}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Sitio Web</label>
+                            <span>${client.website ? `<a href="${escapeHtml(client.website)}" target="_blank" rel="noopener">${escapeHtml(client.website)}</a>` : 'No especificado'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ethos-detail-section">
+                    <h6 class="ethos-detail-section-title">
+                        <i class="ti ti-user"></i>
+                        <span>Contacto Principal</span>
+                    </h6>
+                    <div class="ethos-detail-grid">
+                        <div class="ethos-detail-field">
+                            <label>Nombre</label>
+                            <span>${escapeHtml(client.primary_contact_name_label)}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Email</label>
+                            <span>${client.primary_contact_email ? `<a href="mailto:${escapeHtml(client.primary_contact_email)}">${escapeHtml(client.primary_contact_email)}</a>` : escapeHtml(client.primary_contact_email_label)}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Teléfono</label>
+                            <span>${client.primary_contact_phone ? `<a href="tel:${escapeHtml(client.primary_contact_phone)}">${escapeHtml(client.primary_contact_phone)}</a>` : escapeHtml(client.primary_contact_phone_label)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                ${client.secondary_contact_name ? `
+                <div class="ethos-detail-section">
+                    <h6 class="ethos-detail-section-title">
+                        <i class="ti ti-users"></i>
+                        <span>Contacto Secundario</span>
+                    </h6>
+                    <div class="ethos-detail-grid">
+                        <div class="ethos-detail-field">
+                            <label>Nombre</label>
+                            <span>${escapeHtml(client.secondary_contact_name)}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Email</label>
+                            <span>${client.secondary_contact_email ? `<a href="mailto:${escapeHtml(client.secondary_contact_email)}">${escapeHtml(client.secondary_contact_email)}</a>` : 'No especificado'}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Teléfono</label>
+                            <span>${client.secondary_contact_phone ? `<a href="tel:${escapeHtml(client.secondary_contact_phone)}">${escapeHtml(client.secondary_contact_phone)}</a>` : 'No especificado'}</span>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="ethos-detail-section">
+                    <h6 class="ethos-detail-section-title">
+                        <i class="ti ti-map-pin"></i>
+                        <span>Ubicación</span>
+                    </h6>
+                    <div class="ethos-detail-grid">
+                        <div class="ethos-detail-field">
+                            <label>Dirección</label>
+                            <span>${client.address ? escapeHtml(client.address) : 'No especificada'}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Ciudad</label>
+                            <span>${client.city ? escapeHtml(client.city) : 'No especificada'}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Estado/Provincia</label>
+                            <span>${client.state ? escapeHtml(client.state) : 'No especificado'}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>País</label>
+                            <span>${client.country ? escapeHtml(client.country) : 'No especificado'}</span>
+                        </div>
+                        <div class="ethos-detail-field">
+                            <label>Código Postal</label>
+                            <span>${client.postal_code ? escapeHtml(client.postal_code) : 'No especificado'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                ${client.notes ? `
+                <div class="ethos-detail-section">
+                    <h6 class="ethos-detail-section-title">
+                        <i class="ti ti-notes"></i>
+                        <span>Notas</span>
+                    </h6>
+                    <div class="ethos-detail-notes">
+                        <p class="mb-0">${escapeHtml(client.notes)}</p>
+                    </div>
+                </div>
+                ` : ''}
+
+                <div class="ethos-detail-section">
+                    <h6 class="ethos-detail-section-title">
+                        <i class="ti ti-briefcase"></i>
+                        <span>Proyectos (${client.projects_count || 0})</span>
+                    </h6>
+                    <div class="ethos-detail-projects">
+                        ${projectsHtml}
+                    </div>
+                </div>
+
+                <div class="ethos-detail-section ethos-detail-timestamps">
+                    <div class="ethos-detail-timestamp">
+                        <i class="ti ti-calendar-plus"></i>
+                        <span>Creado: ${escapeHtml(client.created_at || 'N/A')}</span>
+                    </div>
+                    <div class="ethos-detail-timestamp">
+                        <i class="ti ti-calendar-check"></i>
+                        <span>Actualizado: ${escapeHtml(client.updated_at || 'N/A')}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    const loadClientDetails = async (clientId) => {
+        detailContent.innerHTML = `
+            <div class="ethos-detail-loading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p>Cargando detalles del cliente...</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch(`/admin/clients/${clientId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudieron cargar los detalles');
+            }
+
+            const data = await response.json();
+            detailSubtitle.textContent = data.client.name;
+            detailContent.innerHTML = renderClientDetails(data.client);
+        } catch (error) {
+            detailContent.innerHTML = `
+                <div class="ethos-detail-error">
+                    <i class="ti ti-alert-triangle"></i>
+                    <p>No se pudieron cargar los detalles del cliente.</p>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="this.closest('.modal').querySelector('.btn-close').click()">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+        }
+    };
+
+    const bindViewButtons = () => {
+        tableBody.querySelectorAll('.js-view-client').forEach((button) => {
+            if (button.dataset.bound === '1') {
+                return;
+            }
+            button.dataset.bound = '1';
+            button.addEventListener('click', () => {
+                const clientId = button.dataset.clientId;
+                if (!clientId) {
+                    return;
+                }
+                loadClientDetails(clientId);
+                detailModal.show();
+            });
+        });
+    };
+
     createBtn?.addEventListener('click', openCreateMode);
     modalElement.addEventListener('hidden.bs.modal', () => {
         setLoading(false);
@@ -383,7 +740,155 @@
     });
 
     bindEditButtons();
+    bindViewButtons();
     openCreateMode();
+
+    // Google Maps Picker
+    let mapPicker = null;
+    let mapMarker = null;
+    const googleMapsApiKey = @json($googleMapsApiKey ?? '');
+
+    const initMapPicker = () => {
+        const mapDiv = document.getElementById('clientMapPicker');
+        if (!mapDiv || !googleMapsApiKey) return;
+
+        // Default center (Caracas, Venezuela)
+        const defaultCenter = { lat: 10.4806, lng: -66.9036 };
+
+        mapPicker = new google.maps.Map(mapDiv, {
+            center: defaultCenter,
+            zoom: 12,
+            mapTypeId: 'roadmap',
+            streetViewControl: false,
+            mapTypeControl: false,
+            fullscreenControl: false,
+        });
+
+        // Click event to place marker
+        mapPicker.addListener('click', (e) => {
+            const lat = e.latLng.lat();
+            const lng = e.latLng.lng();
+
+            // Update displays
+            document.getElementById('latitudeDisplay').value = lat.toFixed(6);
+            document.getElementById('longitudeDisplay').value = lng.toFixed(6);
+            // Update hidden form inputs
+            form.elements.latitude.value = lat.toFixed(6);
+            form.elements.longitude.value = lng.toFixed(6);
+
+            // Place or move marker
+            if (mapMarker) {
+                mapMarker.setPosition(e.latLng);
+            } else {
+                mapMarker = new google.maps.Marker({
+                    position: e.latLng,
+                    map: mapPicker,
+                    draggable: true,
+                    title: 'Ubicación del cliente',
+                });
+
+                // Update on drag
+                mapMarker.addListener('dragend', () => {
+                    const pos = mapMarker.getPosition();
+                    document.getElementById('latitudeDisplay').value = pos.lat().toFixed(6);
+                    document.getElementById('longitudeDisplay').value = pos.lng().toFixed(6);
+                    form.elements.latitude.value = pos.lat().toFixed(6);
+                    form.elements.longitude.value = pos.lng().toFixed(6);
+                });
+            }
+        });
+    };
+
+    // Clear location button
+    document.getElementById('clearLocationBtn')?.addEventListener('click', () => {
+        document.getElementById('latitudeDisplay').value = '';
+        document.getElementById('longitudeDisplay').value = '';
+        form.elements.latitude.value = '';
+        form.elements.longitude.value = '';
+        if (mapMarker) {
+            mapMarker.setMap(null);
+            mapMarker = null;
+        }
+    });
+
+    // Initialize map when modal opens
+    modalElement.addEventListener('shown.bs.modal', () => {
+        if (typeof google !== 'undefined' && google.maps) {
+            if (!mapPicker) {
+                initMapPicker();
+            }
+        } else if (googleMapsApiKey) {
+            // Load Google Maps API dynamically
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&callback=initMapPickerCallback`;
+            script.async = true;
+            script.defer = true;
+            window.initMapPickerCallback = () => {
+                initMapPicker();
+                // Restore original if exists
+                if (typeof window.originalInitMap === 'function') {
+                    window.initMap = window.originalInitMap;
+                }
+            };
+            document.head.appendChild(script);
+        }
+    });
+
+    // Set marker position when editing client with existing coordinates
+    const setMarkerFromCoordinates = (lat, lng) => {
+        if (!mapPicker || !lat || !lng) return;
+
+        const position = { lat: parseFloat(lat), lng: parseFloat(lng) };
+        mapPicker.setCenter(position);
+
+        if (mapMarker) {
+            mapMarker.setPosition(position);
+        } else {
+            mapMarker = new google.maps.Marker({
+                position: position,
+                map: mapPicker,
+                draggable: true,
+                title: 'Ubicación del cliente',
+            });
+            mapMarker.addListener('dragend', () => {
+                const pos = mapMarker.getPosition();
+                document.getElementById('latitudeDisplay').value = pos.lat().toFixed(6);
+                document.getElementById('longitudeDisplay').value = pos.lng().toFixed(6);
+            });
+        }
+    };
+
+    // Override openEditMode to set marker
+    const originalOpenEditMode = openEditMode;
+    window.openEditModeWithMap = (client) => {
+        originalOpenEditMode(client);
+        // Wait for modal to open and map to init
+        setTimeout(() => {
+            if (client.latitude && client.longitude) {
+                setMarkerFromCoordinates(client.latitude, client.longitude);
+            }
+        }, 500);
+    };
 })();
 </script>
+@endpush
+
+@push('styles')
+<style>
+.ethos-form-section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #5d596c;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e7e5eb;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.ethos-form-section-title i {
+    font-size: 1rem;
+    color: #7c7a8d;
+}
+</style>
 @endpush

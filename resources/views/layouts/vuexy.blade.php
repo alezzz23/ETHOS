@@ -24,79 +24,30 @@
         <div class="search-modal-content">
             <div class="search-modal-header">
                 <i class="ti ti-search"></i>
-                <input type="text" id="searchModalInput" placeholder="Buscar navegación, páginas...">
+                <input type="text" id="searchModalInput" placeholder="Buscar clientes, proyectos, navegación..." autocomplete="off" aria-label="Buscar" aria-controls="searchResults" aria-expanded="false">
                 <kbd>ESC</kbd>
             </div>
             <div class="search-modal-body" id="searchResults">
-                <div class="search-section-title">Popular Searches</div>
-                <a href="/admin/dashboard" class="search-result-item"><i class="ti ti-smart-home"></i><span>inicio</span></a>
-                <a href="#" class="search-result-item"><i class="ti ti-file-invoice"></i><span>Invoice List</span></a>
-                <a href="#" class="search-result-item"><i class="ti ti-users"></i><span>User List</span></a>
-                <a href="#" class="search-result-item"><i class="ti ti-settings"></i><span>Account Settings</span></a>
-            </div>
-        </div>
-    </div>
+                <div class="d-flex align-items-center justify-content-between gap-2" style="padding:0.25rem 0.25rem 0.75rem; border-bottom: 1px solid var(--vz-border-color);">
+                    <div class="btn-group" role="group" aria-label="Filtros de búsqueda">
+                        <button type="button" class="btn btn-sm btn-outline-primary search-filter-btn active" data-category="all">Todo</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary search-filter-btn" data-category="clients">Clientes</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary search-filter-btn" data-category="projects">Proyectos</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary search-filter-btn" data-category="navigation">Navegación</button>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-label-secondary" id="searchClearHistoryBtn" aria-label="Borrar historial">Borrar</button>
+                </div>
 
-    <!-- Notifications Panel -->
-    <div class="notifications-panel" id="notificationsPanel">
-        <div class="notif-header">
-            <h6>Notificaciones</h6>
-            <span class="badge-label bg-label-primary">8 nuevas</span>
-        </div>
-        <div class="notif-tabs">
-            <button class="notif-tab active" data-tab="all">Todo</button>
-            <button class="notif-tab" data-tab="unread">Sin leer</button>
-            <button class="notif-tab" data-tab="archived">Archivadas</button>
-        </div>
-        <div class="notif-list">
-            <div class="notif-item unread">
-                <div class="notif-avatar bg-label-primary"><i class="ti ti-award"></i></div>
-                <div class="notif-info">
-                    <div class="notif-title">¡Felicidades! 🎉</div>
-                    <div class="notif-desc">Has ganado la medalla de oro por rendimiento excepcional.</div>
-                    <div class="notif-time">Hoy</div>
+                <div id="searchStatus" class="text-muted" style="font-size:0.85rem; padding:0.75rem 0.25rem;"></div>
+                <div id="searchRecentSection" style="display:none;">
+                    <div class="search-section-title">Búsquedas recientes</div>
+                    <div id="searchRecentList"></div>
+                </div>
+                <div id="searchSuggestionsSection" style="display:none;">
+                    <div class="search-section-title">Sugerencias</div>
+                    <div id="searchSuggestionsList" role="listbox" aria-label="Sugerencias"></div>
                 </div>
             </div>
-            <div class="notif-item unread">
-                <div class="notif-avatar bg-label-danger"><i class="ti ti-message-dots"></i></div>
-                <div class="notif-info">
-                    <div class="notif-title">Nuevo mensaje recibido</div>
-                    <div class="notif-desc">Tienes 10 mensajes sin leer de María R.</div>
-                    <div class="notif-time">Hace 1 hora</div>
-                </div>
-            </div>
-            <div class="notif-item">
-                <div class="notif-avatar bg-label-success"><i class="ti ti-shopping-cart"></i></div>
-                <div class="notif-info">
-                    <div class="notif-title">Nuevo pedido generado</div>
-                    <div class="notif-desc">Consultoría #5090 por valor de $3,200.</div>
-                    <div class="notif-time">Hace 2 horas</div>
-                </div>
-            </div>
-            <div class="notif-item">
-                <div class="notif-avatar bg-label-warning"><i class="ti ti-alert-triangle"></i></div>
-                <div class="notif-info">
-                    <div class="notif-title">Factura vencida</div>
-                    <div class="notif-desc">La factura #5086 ha excedido el plazo de pago.</div>
-                    <div class="notif-time">Ayer</div>
-                </div>
-            </div>
-        </div>
-        <div class="notif-footer">
-            <button class="btn-read-all">Marcar todas como leídas</button>
-        </div>
-    </div>
-
-    <!-- Shortcuts Panel -->
-    <div class="shortcuts-panel" id="shortcutsPanel">
-        <div class="notif-header"><h6>Accesos Rápidos</h6></div>
-        <div class="shortcuts-grid">
-            <a href="#" class="shortcut-item"><div class="shortcut-icon bg-label-primary"><i class="ti ti-calendar-event"></i></div><span>Calendario</span></a>
-            <a href="#" class="shortcut-item"><div class="shortcut-icon bg-label-success"><i class="ti ti-file-invoice"></i></div><span>Facturación</span></a>
-            <a href="#" class="shortcut-item"><div class="shortcut-icon bg-label-danger"><i class="ti ti-users"></i></div><span>Usuarios</span></a>
-            <a href="#" class="shortcut-item"><div class="shortcut-icon bg-label-warning"><i class="ti ti-lock"></i></div><span>Roles</span></a>
-            <a href="/admin/dashboard" class="shortcut-item"><div class="shortcut-icon bg-label-info"><i class="ti ti-chart-bar"></i></div><span>Dashboard</span></a>
-            <a href="#" class="shortcut-item"><div class="shortcut-icon bg-label-primary"><i class="ti ti-settings"></i></div><span>Ajustes</span></a>
         </div>
     </div>
 
@@ -155,10 +106,7 @@
             <input type="text" placeholder="Search (Ctrl+/)" readonly>
         </div>
         <div class="navbar-end">
-            <button class="navbar-icon-btn" id="langSwitcher" title="Language" aria-label="Cambiar idioma"><i class="ti ti-language"></i></button>
             <button class="navbar-icon-btn" id="themeSwitcher" title="Dark/Light Mode" aria-label="Alternar modo oscuro"><i class="ti ti-moon" id="themeIcon"></i></button>
-            <button class="navbar-icon-btn" id="shortcutsBtn" title="Shortcuts" aria-label="Abrir accesos rápidos"><i class="ti ti-layout-grid-add"></i></button>
-            <button class="navbar-icon-btn" id="notifBtn" title="Notifications" aria-label="Abrir notificaciones"><i class="ti ti-bell"></i><span class="badge-dot"></span></button>
             <div class="navbar-user dropdown">
                 <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="navbar-user-avatar">AD</div>
@@ -173,10 +121,7 @@
                         <div><div class="fw-semibold" style="color:var(--vz-heading-color)">Admin</div><small class="text-muted">admin@ethos.com</small></div>
                     </li>
                     <li><a class="dropdown-item" href="#"><i class="ti ti-user me-2"></i>Mi Perfil<span class="badge-label bg-label-danger ms-auto">4</span></a></li>
-                    <li><a class="dropdown-item" href="#"><i class="ti ti-settings me-2"></i>Configuración</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="ti ti-currency-dollar me-2"></i>Facturación</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#"><i class="ti ti-lifebuoy me-2"></i>Ayuda</a></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -210,6 +155,7 @@
     (function(){
         const $ = s => document.querySelector(s);
         const $$ = s => document.querySelectorAll(s);
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
         // Sidebar toggle (mobile)
         $('#menuToggle')?.addEventListener('click', () => { $('#layoutMenu').classList.toggle('show'); $('#sidebarOverlay').classList.toggle('show'); });
@@ -244,27 +190,243 @@
 
         // Search modal
         function openSearch(){ $('#searchModal').classList.add('show'); setTimeout(()=>$('#searchModalInput')?.focus(),100); }
-        function closeSearch(){ $('#searchModal').classList.remove('show'); $('#searchModalInput').value=''; }
+        function closeSearch(){ $('#searchModal').classList.remove('show'); if($('#searchModalInput')){ $('#searchModalInput').value=''; $('#searchModalInput').setAttribute('aria-expanded','false'); } clearSearchUI(); }
         $('#navbarSearchTrigger')?.addEventListener('click', openSearch);
         $('#searchModal')?.addEventListener('click', e=>{ if(e.target===$('#searchModal')) closeSearch(); });
         document.addEventListener('keydown', e=>{
             if((e.ctrlKey||e.metaKey)&&e.key==='/'){ e.preventDefault(); openSearch(); }
             if(e.key==='Escape') closeSearch();
         });
-        $('#searchModalInput')?.addEventListener('input', function(){
-            const q = this.value.toLowerCase();
-            $$('.search-result-item').forEach(item=>{ item.style.display = item.textContent.toLowerCase().includes(q)||!q ? '' : 'none'; });
+
+        const HISTORY_KEY = 'ethos.search.history.v1';
+        let activeCategory = 'all';
+        let activeIndex = -1;
+        let lastSearchAbort = null;
+        let debounceTimer = null;
+
+        function readHistory(){
+            try {
+                const raw = localStorage.getItem(HISTORY_KEY);
+                const list = raw ? JSON.parse(raw) : [];
+                return Array.isArray(list) ? list.filter(x => typeof x === 'string') : [];
+            } catch(e){
+                return [];
+            }
+        }
+
+        function writeHistory(list){
+            try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list.slice(0, 8))); } catch(e) {}
+        }
+
+        function pushHistory(query){
+            const q = String(query || '').trim();
+            if(!q) return;
+            const prev = readHistory();
+            const next = [q, ...prev.filter(x => x.toLowerCase() !== q.toLowerCase())];
+            writeHistory(next);
+        }
+
+        function clearSearchUI(){
+            activeIndex = -1;
+            $('#searchStatus') && ($('#searchStatus').textContent='');
+            $('#searchSuggestionsSection') && ($('#searchSuggestionsSection').style.display='none');
+            $('#searchSuggestionsList') && ($('#searchSuggestionsList').innerHTML='');
+            renderRecent();
+        }
+
+        function renderRecent(){
+            const list = readHistory();
+            const section = $('#searchRecentSection');
+            const wrap = $('#searchRecentList');
+            if(!section || !wrap) return;
+            if(list.length === 0){
+                section.style.display = 'none';
+                wrap.innerHTML = '';
+                return;
+            }
+            section.style.display = '';
+            wrap.innerHTML = list.map(q => `
+                <button type="button" class="search-result-item" data-recent="1" data-q="${encodeURIComponent(q)}" style="width:100%; text-align:left;">
+                    <i class="ti ti-history"></i><span>${escapeHtml(q)}</span>
+                </button>
+            `).join('');
+        }
+
+        function escapeHtml(value){
+            return String(value ?? '')
+                .replaceAll('&','&amp;')
+                .replaceAll('<','&lt;')
+                .replaceAll('>','&gt;')
+                .replaceAll('"','&quot;')
+                .replaceAll("'",'&#039;');
+        }
+
+        function fmtTime(iso){
+            if(!iso) return '';
+            try {
+                const d = new Date(iso);
+                const now = new Date();
+                const sameDay = d.toDateString() === now.toDateString();
+                const time = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                return sameDay ? `Hoy ${time}` : `${d.toLocaleDateString()} ${time}`;
+            } catch(e){
+                return '';
+            }
+        }
+
+        async function apiFetch(url, options={}){
+            const res = await fetch(url, {
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(csrf ? {'X-CSRF-TOKEN': csrf} : {}),
+                    ...(options.headers || {})
+                },
+                ...options,
+            });
+            return res;
+        }
+
+        function setSearchStatus(text){
+            const el = $('#searchStatus');
+            if(!el) return;
+            el.textContent = text || '';
+        }
+
+        function setSearchResults(items){
+            const section = $('#searchSuggestionsSection');
+            const list = $('#searchSuggestionsList');
+            if(!section || !list) return;
+            if(!items || items.length === 0){
+                section.style.display = 'none';
+                list.innerHTML = '';
+                return;
+            }
+            section.style.display = '';
+            list.innerHTML = items.map((it, idx) => {
+                const icon = it.icon || 'ti ti-search';
+                const subtitle = it.subtitle ? `<div class="search-result-meta">${escapeHtml(it.subtitle)}</div>` : '';
+                return `
+                    <a href="${escapeHtml(it.url || '#')}" class="search-result-item" role="option" aria-selected="false" data-idx="${idx}">
+                        <i class="${escapeHtml(icon)}"></i>
+                        <span>${escapeHtml(it.title || '')}</span>
+                        ${subtitle}
+                    </a>
+                `;
+            }).join('');
+            $('#searchModalInput')?.setAttribute('aria-expanded','true');
+        }
+
+        async function runSearch(query){
+            const q = String(query || '').trim();
+            if(q.length === 0){
+                clearSearchUI();
+                return;
+            }
+            if(q.length < 2){
+                setSearchStatus('Escribe al menos 2 caracteres.');
+                setSearchResults([]);
+                $('#searchSuggestionsSection') && ($('#searchSuggestionsSection').style.display='none');
+                return;
+            }
+
+            setSearchStatus('Buscando...');
+
+            if(lastSearchAbort){
+                lastSearchAbort.abort();
+            }
+            lastSearchAbort = new AbortController();
+
+            const params = new URLSearchParams({q: q, category: activeCategory});
+            try {
+                const res = await apiFetch(`/admin/search?${params.toString()}`, { signal: lastSearchAbort.signal });
+                if(!res.ok){
+                    setSearchStatus('No se pudo buscar.');
+                    setSearchResults([]);
+                    return;
+                }
+                const data = await res.json();
+                setSearchStatus(data.items && data.items.length ? '' : 'Sin resultados.');
+                setSearchResults(data.items || []);
+            } catch(e){
+                if(e && e.name === 'AbortError') return;
+                setSearchStatus('Error de red al buscar.');
+                setSearchResults([]);
+            }
+        }
+
+        $$('.search-filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                $$('.search-filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCategory = btn.dataset.category || 'all';
+                runSearch($('#searchModalInput')?.value || '');
+            });
         });
 
-        // Panels (notifications, shortcuts)
-        function togglePanel(panel){ const p=$(panel); const isOpen=p.classList.contains('show'); $$('.notifications-panel,.shortcuts-panel').forEach(x=>x.classList.remove('show')); if(!isOpen) p.classList.add('show'); }
-        $('#notifBtn')?.addEventListener('click', e=>{ e.stopPropagation(); togglePanel('#notificationsPanel'); });
-        $('#shortcutsBtn')?.addEventListener('click', e=>{ e.stopPropagation(); togglePanel('#shortcutsPanel'); });
-        document.addEventListener('click', e=>{ if(!e.target.closest('.notifications-panel,.shortcuts-panel,.navbar-icon-btn')) $$('.notifications-panel,.shortcuts-panel').forEach(x=>x.classList.remove('show')); });
+        $('#searchClearHistoryBtn')?.addEventListener('click', () => {
+            writeHistory([]);
+            renderRecent();
+        });
 
-        // Notification tabs
-        $$('.notif-tab').forEach(tab=>{ tab.addEventListener('click', ()=>{ $$('.notif-tab').forEach(t=>t.classList.remove('active')); tab.classList.add('active'); }); });
-        $('.btn-read-all')?.addEventListener('click', ()=>{ $$('.notif-item.unread').forEach(n=>n.classList.remove('unread')); });
+        $('#searchResults')?.addEventListener('click', (e) => {
+            const target = e.target.closest('[data-recent="1"]');
+            if(!target) return;
+            const q = decodeURIComponent(target.getAttribute('data-q') || '');
+            if($('#searchModalInput')){
+                $('#searchModalInput').value = q;
+                $('#searchModalInput').focus();
+            }
+            runSearch(q);
+        });
+
+        $('#searchSuggestionsList')?.addEventListener('click', (e) => {
+            const a = e.target.closest('a.search-result-item');
+            if(!a) return;
+            const text = $('#searchModalInput')?.value || '';
+            pushHistory(text);
+        });
+
+        $('#searchModalInput')?.addEventListener('input', function(){
+            const q = this.value;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => runSearch(q), 160);
+        });
+
+        $('#searchModalInput')?.addEventListener('keydown', function(e){
+            const list = $('#searchSuggestionsList');
+            if(!list) return;
+            const items = Array.from(list.querySelectorAll('a.search-result-item'));
+            if(items.length === 0) return;
+            if(e.key === 'ArrowDown'){
+                e.preventDefault();
+                activeIndex = Math.min(items.length - 1, activeIndex + 1);
+            } else if(e.key === 'ArrowUp'){
+                e.preventDefault();
+                activeIndex = Math.max(0, activeIndex - 1);
+            } else if(e.key === 'Enter'){
+                if(activeIndex >= 0 && items[activeIndex]){
+                    e.preventDefault();
+                    const text = $('#searchModalInput')?.value || '';
+                    pushHistory(text);
+                    window.location.href = items[activeIndex].getAttribute('href');
+                }
+                return;
+            } else {
+                return;
+            }
+
+            items.forEach((el, idx) => {
+                el.setAttribute('aria-selected', idx === activeIndex ? 'true' : 'false');
+                el.classList.toggle('active', idx === activeIndex);
+            });
+            items[activeIndex]?.scrollIntoView({block:'nearest'});
+        });
+
+        $('#navbarSearchTrigger')?.addEventListener('click', () => {
+            renderRecent();
+            setSearchStatus('');
+        });
 
         // Active menu highlighting
         $$('.menu-link:not(.submenu-toggle)').forEach(link=>{
