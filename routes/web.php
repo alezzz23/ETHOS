@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,9 +15,9 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard')->middleware('permission:admin.access');
+    Route::get('/admin/dashboard', DashboardController::class)
+        ->name('admin.dashboard')
+        ->middleware('permission:admin.access');
     
     // Rutas para clientes y proyectos
     Route::resource('admin/clients', App\Http\Controllers\Admin\ClientController::class);

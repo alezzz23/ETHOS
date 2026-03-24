@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Project;
 
 class MVPTest extends TestCase
 {
@@ -60,5 +61,38 @@ class MVPTest extends TestCase
             'status' => 'capturado',
             'client_id' => $client->id,
         ]);
+    }
+
+    public function test_dashboard_uses_real_project_data()
+    {
+        $user = User::where('email', 'miguel@ethos.com')->first();
+
+        $client = Client::create([
+            'name' => 'Cliente Dashboard',
+        ]);
+
+        Project::create([
+            'client_id' => $client->id,
+            'title' => 'Proyecto Activo',
+            'status' => 'en_diseno',
+            'ends_at' => now()->addDays(10)->toDateString(),
+        ]);
+
+        Project::create([
+            'client_id' => $client->id,
+            'title' => 'Proyecto Cerrado',
+            'status' => 'cerrado',
+            'ends_at' => now()->addDays(45)->toDateString(),
+        ]);
+
+        $response = $this->actingAs($user)->get('/admin/dashboard');
+
+        $response->assertOk();
+        $response->assertViewIs('admin.dashboard');
+        $response->assertSeeText('Clientes');
+        $response->assertSeeText('Proyectos totales');
+        $response->assertSeeText('2');
+        $response->assertSeeText('1');
+        $response->assertSeeText('Proyectos recientes');
     }
 }
