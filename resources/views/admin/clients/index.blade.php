@@ -156,29 +156,61 @@
                   <div class="col-12">
                       <h6 class="ethos-form-section-title"><i class="ti ti-map-pin"></i> Ubicación</h6>
                   </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-building"></i> Estado/Provincia *</label>
+                      <select name="state" id="stateSelect" class="form-select" required>
+                          <option value="">Selecciona un estado</option>
+                          <option value="Distrito Capital">Distrito Capital</option>
+                          <option value="Amazonas">Amazonas</option>
+                          <option value="Anzoátegui">Anzoátegui</option>
+                          <option value="Apure">Apure</option>
+                          <option value="Aragua">Aragua</option>
+                          <option value="Barinas">Barinas</option>
+                          <option value="Bolívar">Bolívar</option>
+                          <option value="Carabobo">Carabobo</option>
+                          <option value="Cojedes">Cojedes</option>
+                          <option value="Delta Amacuro">Delta Amacuro</option>
+                          <option value="Falcón">Falcón</option>
+                          <option value="Guárico">Guárico</option>
+                          <option value="Lara">Lara</option>
+                          <option value="Mérida">Mérida</option>
+                          <option value="Miranda">Miranda</option>
+                          <option value="Monagas">Monagas</option>
+                          <option value="Nueva Esparta">Nueva Esparta</option>
+                          <option value="Portuguesa">Portuguesa</option>
+                          <option value="Sucre">Sucre</option>
+                          <option value="Táchira">Táchira</option>
+                          <option value="Trujillo">Trujillo</option>
+                          <option value="Vargas">Vargas</option>
+                          <option value="Yaracuy">Yaracuy</option>
+                          <option value="Zulia">Zulia</option>
+                      </select>
+                  </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-building-community"></i> Ciudad</label>
+                      <select name="city" id="citySelect" class="form-select">
+                          <option value="">Primero selecciona un estado</option>
+                      </select>
+                  </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-map-2"></i> Municipio</label>
+                      <select name="municipality" id="municipalitySelect" class="form-select">
+                          <option value="">Primero selecciona un estado</option>
+                      </select>
+                  </div>
+                  <div class="col-md-4">
+                      <label class="form-label"><i class="ti ti-location"></i> Parroquia</label>
+                      <select name="parish" id="parishSelect" class="form-select">
+                          <option value="">Primero selecciona un municipio</option>
+                      </select>
+                  </div>
                   <div class="col-md-6">
                       <label class="form-label"><i class="ti ti-map"></i> Dirección</label>
                       <input type="text" name="address" class="form-control" value="{{ old('address') }}" placeholder="Calle, número, zona">
                   </div>
-                  <div class="col-md-3">
-                      <label class="form-label"><i class="ti ti-building-community"></i> Ciudad</label>
-                      <input type="text" name="city" class="form-control" value="{{ old('city') }}">
-                  </div>
-                  <div class="col-md-3">
-                      <label class="form-label"><i class="ti ti-building"></i> Estado/Provincia</label>
-                      <input type="text" name="state" class="form-control" value="{{ old('state') }}">
-                  </div>
-                  <div class="col-md-4">
+                  <div class="col-md-2">
                       <label class="form-label"><i class="ti ti-globe"></i> País</label>
-                      <input type="text" name="country" class="form-control" value="{{ old('country') }}">
-                  </div>
-                  <div class="col-md-4">
-                      <label class="form-label"><i class="ti ti-map-2"></i> Municipio</label>
-                      <input type="text" name="municipality" class="form-control" value="{{ old('municipality') }}">
-                  </div>
-                  <div class="col-md-4">
-                      <label class="form-label"><i class="ti ti-location"></i> Parroquia</label>
-                      <input type="text" name="parish" class="form-control" value="{{ old('parish') }}">
+                      <input type="text" name="country" class="form-control" value="Venezuela" readonly>
                   </div>
               </div>
 
@@ -307,11 +339,26 @@
         form.elements.notes.value = client.notes || '';
         // Ubicación
         form.elements.address.value = client.address || '';
-        form.elements.city.value = client.city || '';
-        form.elements.state.value = client.state || '';
-        form.elements.country.value = client.country || '';
-        form.elements.municipality.value = client.municipality || '';
-        form.elements.parish.value = client.parish || '';
+        // Set state first to trigger population of dependent selects
+        const stateValue = client.state || '';
+        form.elements.state.value = stateValue;
+        if (stateValue && locationData[stateValue]) {
+            // Trigger change to populate cities and municipalities
+            const data = locationData[stateValue];
+            populateSelect(citySelect, data.cities, 'Selecciona una ciudad');
+            populateSelect(municipalitySelect, data.municipalities, 'Selecciona un municipio');
+            populateSelect(parishSelect, [], 'Primero selecciona un municipio');
+            // Now set the actual values
+            citySelect.value = client.city || '';
+            municipalitySelect.value = client.municipality || '';
+            // Trigger municipality change to populate parishes
+            if (client.municipality && data.parishes?.[client.municipality]) {
+                const parishes = data.parishes[client.municipality];
+                populateSelect(parishSelect, Array.isArray(parishes) ? parishes : [parishes], 'Selecciona una parroquia');
+                parishSelect.value = client.parish || '';
+            }
+        }
+        form.elements.country.value = client.country || 'Venezuela';
         // Coordenadas
         form.elements.latitude.value = client.latitude || '';
         form.elements.longitude.value = client.longitude || '';
@@ -742,6 +789,137 @@
     bindEditButtons();
     bindViewButtons();
     openCreateMode();
+
+    // Smart Location Selects (Venezuela)
+    const locationData = {
+        'Distrito Capital': {
+            cities: ['Caracas', 'Baruta', 'Chacao', 'El Hatillo', 'Libertador'],
+            municipalities: ['Baruta', 'Chacao', 'El Hatillo', 'Libertador'],
+            parishes: {
+                'Baruta': ['Baruta', 'El Cafetal', 'Las Minas'],
+                'Chacao': ['Chacao'],
+                'El Hatillo': ['El Hatillo'],
+                'Libertador': ['Altagracia', 'Antímano', 'Caricuao', 'Catedral', 'Coche', 'El Junquito', 'El Paraíso', 'El Recreo', 'El Valle', 'La Candelaria', 'La Pastora', 'La Vega', 'Macarao', 'San Agustín', 'San Bernardino', 'San José', 'San Juan', 'San Pedro', 'Santa Rosalía', 'Santa Teresa', 'Sucre']
+            }
+        },
+        'Miranda': {
+            cities: ['Los Teques', 'San Antonio de Los Altos', 'Guarenas', 'Guatire', 'Petare', 'Baruta', 'Cúa', 'Santa Lucía'],
+            municipalities: ['Acevedo', 'Andrés Bello', 'Baruta', 'Brión', 'Buroz', 'Carrizal', 'Chacao', 'Cristóbal Rojas', 'El Hatillo', 'Guaicaipuro', 'Independencia', 'Lander', 'Los Salias', 'Páez', 'Pedro Gual', 'Plaza', 'Simón Bolívar', 'Sucre', 'Urdaneta', 'Zamora'],
+            parishes: {
+                'Acevedo': ['Aragüita', 'Aragüita Abajo'],
+                'Andrés Bello': ['Araira'],
+                'Baruta': ['Baruta', 'El Cafetal', 'Las Minas'],
+                'Brión': ['Caucagua', 'Mamporal'],
+                'Buroz': ['Mamporal'],
+                'Carrizal': ['Carrizal'],
+                'Chacao': ['Chacao'],
+                'Cristóbal Rojas': ['Charallave', 'Santa Rosa de Tucaco'],
+                'El Hatillo': ['El Hatillo'],
+                'Guaicaipuro': ['Los Teques', 'El Jarillo', 'San Pedro'],
+                'Independencia': ['Santa Teresa del Tuy', 'Cartanal', 'Marizapa'],
+                'Lander': ['Ocumare del Tuy', 'La Democracia'],
+                'Los Salias': ['San Antonio de Los Altos'],
+                'Páez': ['Río Chico'],
+                'Pedro Gual': ['Cúpira', 'Tacarigua'],
+                'Plaza': ['Guarenas'],
+                'Simón Bolívar': ['San Francisco de Yare', 'Santa Bárbara'],
+                'Sucre': ['Petare', 'Caucagüita', 'Fila de Mariches', 'La Dolorita', 'Leoncio Martínez'],
+                'Urdaneta': ['Cúa', 'Nueva Cúa'],
+                'Zamora': ['San Francisco de Yare']
+            }
+        },
+        'Vargas': {
+            cities: ['La Guaira', 'Maiquetía', 'Catia La Mar', 'Macuto'],
+            municipalities: ['Vargas'],
+            parishes: {
+                'Vargas': ['Caraballeda', 'Carayaca', 'Caruao', 'Catia La Mar', 'El Junko', 'La Guaira', 'Macuto', 'Maiquetía', 'Naiguatá', 'Oricao', 'Puerto Cruz', 'Río Chico', 'Urimare']
+            }
+        },
+        'Aragua': {
+            cities: ['Maracay', 'Turmero', 'Cagua', 'El Limón', 'La Victoria', 'Villa de Cura', 'San Mateo'],
+            municipalities: ['Bolívar', 'Camatagua', 'Francisco Linares Alcántara', 'Girardot', 'José Ángel Lamas', 'José Félix Ribas', 'José Rafael Revenga', 'Libertador', 'Mario Briceño Iragorry', 'Ocumare de La Costa de Oro', 'San Casimiro', 'San Sebastián', 'Santiago Mariño', 'Santos Michelena', 'Sucre', 'Tovar', 'Urdaneta', 'Zamora'],
+            parishes: {
+                'Bolívar': ['San Mateo', 'San Rafael'],
+                'Camatagua': ['Camatagua', 'Carmen'], 
+                'Francisco Linares Alcántara': ['Santa Rita'],
+                'Girardot': ['Maracay', 'Andrés Eloy Blanco', 'Choroní', 'Joaquín Crespo', 'José Casanova Godoy', 'Las Delicias', 'Los Tamarindos', 'Madre María de San José', 'Pedro José Ovalles'],
+                'José Ángel Lamas': ['Santa Cruz'],
+                'José Félix Ribas': ['La Victoria', 'Augusto Mijares', 'San José'],
+                'José Rafael Revenga': ['El Consejo'],
+                'Libertador': ['Palo Negro', 'San Martín'],
+                'Mario Briceño Iragorry': ['Caña de Azúcar', 'Las Acacias'],
+                'Ocumare de La Costa de Oro': ['Ocumare de La Costa'],
+                'San Casimiro': ['San Casimiro', 'Guiramaca'],
+                'San Sebastián': ['San Sebastián'],
+                'Santiago Mariño': ['Turmero', 'Arévalo Aponte', 'Chuao'],
+                'Santos Michelena': ['Las Tejerías'],
+                'Sucre': ['Cagua', 'Bella Vista'],
+                'Tovar': ['Colonia Tovar'],
+                'Urdaneta': 'Urdaneta',
+                'Zamora': ['Villa de Cura', 'Magdaleno']
+            }
+        },
+        'Carabobo': {
+            cities: ['Valencia', 'Puerto Cabello', 'Guacara', 'Naguanagua', 'San Joaquín', 'Mariara', 'Los Guayos'],
+            municipalities: ['Bejuma', 'Carlos Arvelo', 'Diego Ibarra', 'Guacara', 'Juan José Mora', 'Libertador', 'Los Guayos', 'Miranda', 'Montalbán', 'Naguanagua', 'Puerto Cabello', 'San Diego', 'San Joaquín', 'Valencia'],
+            parishes: {
+                'Bejuma': ['Bejuma', 'Canoabo', 'El Palito'],
+                'Carlos Arvelo': ['Güigüe', 'Belén'],
+                'Diego Ibarra': ['Mariara', 'Aguas Calientes'],
+                'Guacara': ['Guacara', 'Yagua'],
+                'Juan José Mora': ['Morón', 'Urama'],
+                'Libertador': ['Tocuyito', 'Independencia'],
+                'Los Guayos': ['Los Guayos'],
+                'Miranda': ['Miranda'],
+                'Montalbán': ['Montalbán'],
+                'Naguanagua': ['Naguanagua'],
+                'Puerto Cabello': ['Puerto Cabello', 'Borburata', 'Patanemo'],
+                'San Diego': ['San Diego'],
+                'San Joaquín': ['San Joaquín'],
+                'Valencia': ['Valencia', 'Candelaria', 'Catedral', 'El Socorro', 'Miguel Peña', 'Rafael Urdaneta', 'San Blas', 'San José', 'Santa Rosa', 'Negro Primero']
+            }
+        }
+    };
+
+    const stateSelect = document.getElementById('stateSelect');
+    const citySelect = document.getElementById('citySelect');
+    const municipalitySelect = document.getElementById('municipalitySelect');
+    const parishSelect = document.getElementById('parishSelect');
+
+    function populateSelect(select, options, placeholder) {
+        select.innerHTML = `<option value="">${placeholder}</option>`;
+        if (Array.isArray(options)) {
+            options.forEach(opt => {
+                select.innerHTML += `<option value="${opt}">${opt}</option>`;
+            });
+        }
+    }
+
+    stateSelect?.addEventListener('change', function() {
+        const state = this.value;
+        if (!state || !locationData[state]) {
+            populateSelect(citySelect, [], 'Primero selecciona un estado');
+            populateSelect(municipalitySelect, [], 'Primero selecciona un estado');
+            populateSelect(parishSelect, [], 'Primero selecciona un municipio');
+            return;
+        }
+
+        const data = locationData[state];
+        populateSelect(citySelect, data.cities, 'Selecciona una ciudad');
+        populateSelect(municipalitySelect, data.municipalities, 'Selecciona un municipio');
+        populateSelect(parishSelect, [], 'Primero selecciona un municipio');
+    });
+
+    municipalitySelect?.addEventListener('change', function() {
+        const state = stateSelect.value;
+        const municipality = this.value;
+        if (!state || !municipality || !locationData[state]?.parishes?.[municipality]) {
+            populateSelect(parishSelect, [], 'Primero selecciona un municipio');
+            return;
+        }
+        const parishes = locationData[state].parishes[municipality];
+        populateSelect(parishSelect, Array.isArray(parishes) ? parishes : [parishes], 'Selecciona una parroquia');
+    });
 
     // Google Maps Picker
     let mapPicker = null;
