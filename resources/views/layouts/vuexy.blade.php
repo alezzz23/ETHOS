@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.css">
@@ -15,6 +16,7 @@
     @stack('styles')
 </head>
 <body>
+    <a href="#mainContent" class="skip-link">Saltar al contenido</a>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Search Modal -->
@@ -104,10 +106,10 @@
             <a href="/admin/dashboard" class="app-brand-link">
                 <span class="brand-text">ETHOS</span>
             </a>
-            <button class="sidebar-toggler d-none d-xl-block" id="sidebarCollapse" title="Toggle sidebar">
+            <button class="sidebar-toggler d-none d-xl-block" id="sidebarCollapse" title="Toggle sidebar" aria-label="Alternar barra lateral">
                 <i class="ti ti-circle-dot"></i>
             </button>
-            <button class="sidebar-close d-xl-none" id="sidebarClose"><i class="ti ti-x"></i></button>
+            <button class="sidebar-close d-xl-none" id="sidebarClose" aria-label="Cerrar barra lateral"><i class="ti ti-x"></i></button>
         </div>
         <ul class="menu-inner" style="list-style:none;padding:0;">
             <li class="menu-header">Dashboards <span class="menu-badge badge-label bg-label-danger">5</span></li>
@@ -147,16 +149,16 @@
 
     <!-- Navbar -->
     <nav class="layout-navbar" id="layoutNavbar">
-        <button class="menu-toggle-btn" id="menuToggle"><i class="ti ti-menu-2"></i></button>
+        <button class="menu-toggle-btn" id="menuToggle" aria-label="Abrir barra lateral"><i class="ti ti-menu-2"></i></button>
         <div class="navbar-search" id="navbarSearchTrigger">
             <i class="ti ti-search"></i>
             <input type="text" placeholder="Search (Ctrl+/)" readonly>
         </div>
         <div class="navbar-end">
-            <button class="navbar-icon-btn" id="langSwitcher" title="Language"><i class="ti ti-language"></i></button>
-            <button class="navbar-icon-btn" id="themeSwitcher" title="Dark/Light Mode"><i class="ti ti-moon" id="themeIcon"></i></button>
-            <button class="navbar-icon-btn" id="shortcutsBtn" title="Shortcuts"><i class="ti ti-layout-grid-add"></i></button>
-            <button class="navbar-icon-btn" id="notifBtn" title="Notifications"><i class="ti ti-bell"></i><span class="badge-dot"></span></button>
+            <button class="navbar-icon-btn" id="langSwitcher" title="Language" aria-label="Cambiar idioma"><i class="ti ti-language"></i></button>
+            <button class="navbar-icon-btn" id="themeSwitcher" title="Dark/Light Mode" aria-label="Alternar modo oscuro"><i class="ti ti-moon" id="themeIcon"></i></button>
+            <button class="navbar-icon-btn" id="shortcutsBtn" title="Shortcuts" aria-label="Abrir accesos rápidos"><i class="ti ti-layout-grid-add"></i></button>
+            <button class="navbar-icon-btn" id="notifBtn" title="Notifications" aria-label="Abrir notificaciones"><i class="ti ti-bell"></i><span class="badge-dot"></span></button>
             <div class="navbar-user dropdown">
                 <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="navbar-user-avatar">AD</div>
@@ -189,7 +191,7 @@
     </nav>
 
     <div class="layout-page" id="layoutPage">
-        <div class="content-wrapper">@yield('content')</div>
+        <div class="content-wrapper" id="mainContent">@yield('content')</div>
         <footer class="content-footer">
             <div class="d-flex justify-content-between align-items-center">
                 <span>© {{ date('Y') }} <a href="/" class="text-primary text-decoration-none fw-semibold">ETHOS</a></span>

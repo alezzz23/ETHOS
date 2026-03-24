@@ -1,191 +1,307 @@
 @extends('layouts.vuexy')
-@section('title', 'Analytics Dashboard')
+@section('title', 'Dashboard')
+
+@push('styles')
+<style>
+    .ethos-stat-card{
+        border-radius: var(--ethos-radius);
+        box-shadow: var(--ethos-depth-1);
+        transition: transform 0.35s var(--ethos-ease), box-shadow 0.35s var(--ethos-ease), border-color 0.35s ease;
+        position: relative;
+        overflow: hidden;
+        background: var(--vz-card-bg);
+        border: 1px solid rgba(18, 45, 86, 0.12);
+    }
+    .ethos-stat-card::before{
+        content:'';
+        position:absolute;
+        inset:0;
+        background:
+            radial-gradient(900px 220px at 12% 0%, rgba(var(--vz-info-rgb), 0.18) 0%, rgba(var(--vz-info-rgb), 0) 60%),
+            linear-gradient(135deg, rgba(var(--vz-primary-rgb), 0.10) 0%, rgba(214,179,106,0.08) 55%, rgba(var(--vz-primary-rgb), 0.06) 100%);
+        pointer-events:none;
+        opacity:0.95;
+    }
+    .ethos-stat-card::after{
+        content:'';
+        position:absolute;
+        top:14px;
+        bottom:14px;
+        left:14px;
+        width:10px;
+        border-radius:999px;
+        background:
+            repeating-linear-gradient(
+                180deg,
+                rgba(214,179,106,0.26) 0,
+                rgba(214,179,106,0.26) 6px,
+                rgba(214,179,106,0) 6px,
+                rgba(214,179,106,0) 12px
+            );
+        pointer-events:none;
+        opacity:0.55;
+    }
+    .ethos-stat-card:hover{
+        transform: translateY(-4px);
+        box-shadow: var(--ethos-depth-2);
+        border-color: rgba(var(--vz-primary-rgb), 0.28);
+    }
+    .ethos-stat-card:focus-within{
+        border-color: rgba(var(--vz-info-rgb), 0.55);
+        box-shadow: 0 0 0 0.22rem rgba(var(--vz-info-rgb), 0.16), var(--ethos-depth-2);
+    }
+
+    .ethos-stat-card.primary-hover:hover{ border-color: rgba(var(--vz-primary-rgb), 0.30); }
+    .ethos-stat-card.info-hover:hover{ border-color: rgba(var(--vz-info-rgb), 0.38); }
+    .ethos-stat-card.warning-hover:hover{ border-color: rgba(var(--vz-warning-rgb), 0.40); }
+    .ethos-stat-card.success-hover:hover{ border-color: rgba(var(--vz-success-rgb), 0.34); }
+
+    .ethos-stat-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: color-mix(in srgb, var(--vz-body-color) 78%, transparent);
+    }
+    .ethos-stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--vz-heading-color);
+        line-height: 1.2;
+        font-family: var(--ethos-display-font);
+    }
+    
+    .ethos-glass-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .ethos-glass-table th {
+        background: rgba(var(--vz-primary-rgb), 0.04) !important;
+        color: color-mix(in srgb, var(--vz-body-color) 85%, transparent) !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        border-bottom: 1px solid var(--vz-border-color);
+        padding: 1rem 1.25rem;
+    }
+    .ethos-glass-table td {
+        background: transparent !important;
+        color: var(--vz-body-color);
+        border-bottom: 1px solid rgba(18, 45, 86, 0.10);
+        padding: 1rem 1.25rem;
+        vertical-align: middle;
+    }
+    .ethos-glass-table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+    .ethos-glass-table tbody tr:hover {
+        background-color: rgba(var(--vz-primary-rgb), 0.04) !important;
+    }
+    .ethos-glass-table tbody tr:hover td {
+        background-color: transparent !important;
+    }
+    
+    .ethos-badge-glow {
+        box-shadow: 0 0 10px currentcolor;
+    }
+    
+    /* ApexCharts Dark Mode Overrides */
+    .apexcharts-legend-text {
+        color: color-mix(in srgb, var(--vz-body-color) 85%, transparent) !important;
+    }
+    .apexcharts-tooltip {
+        background: var(--vz-card-bg) !important;
+        border: 1px solid var(--vz-border-color) !important;
+        box-shadow: var(--ethos-depth-1) !important;
+        color: var(--vz-heading-color) !important;
+    }
+    .apexcharts-tooltip-title {
+        background: rgba(var(--vz-primary-rgb), 0.04) !important;
+        border-bottom: 1px solid var(--vz-border-color) !important;
+        font-family: inherit !important;
+    }
+</style>
+@endpush
 
 @section('content')
-<!-- Welcome Banner -->
-<div class="row mb-4">
-    <div class="col-12 animate-fadein">
-        <div class="card" style="background: linear-gradient(72.47deg, rgba(115,103,240,0.7) 22.16%, var(--vz-primary) 76.47%); color: #fff; overflow: hidden; position: relative;">
-            <div class="card-body" style="position: relative; z-index: 1;">
-                <div class="row align-items-center">
-                    <div class="col-sm-7">
-                        <h4 class="text-white mb-1">¡Bienvenido de vuelta, Admin! 🎉</h4>
-                        <p class="mb-2" style="opacity:.85;">Tu rendimiento ha incrementado un 72% este mes. Revisa tu nuevo informe.</p>
-                        <a href="#" class="btn btn-sm" style="background: #fff; color: var(--vz-primary); font-weight: 600; border-radius: 6px; padding: .5rem 1.25rem;">Ver Informe</a>
-                    </div>
-                    <div class="col-sm-5 text-center d-none d-sm-block" style="opacity:.15;font-size:8rem;line-height:1;"><i class="ti ti-trophy"></i></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Stat Cards -->
+@php
+    $statusBadge = [
+        'capturado' => 'bg-label-primary',
+        'clasificacion_pendiente' => 'bg-label-warning',
+        'priorizado' => 'bg-label-info',
+        'asignacion_lider_pendiente' => 'bg-label-warning',
+        'en_diagnostico' => 'bg-label-dark',
+        'en_diseno' => 'bg-label-secondary',
+        'en_implementacion' => 'bg-label-primary',
+        'en_seguimiento' => 'bg-label-info',
+        'cerrado' => 'bg-label-success',
+    ];
+@endphp
 <div class="row g-4 mb-4">
-    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 animate-fadein">
-        <div class="card h-100"><div class="card-body">
-            <div class="stat-card">
-                <div><div class="stat-label">Clientes</div><div class="d-flex align-items-center gap-2"><div class="stat-value">92,647</div><span class="stat-change up"><i class="ti ti-chevron-up" style="font-size:14px;"></i>18.2%</span></div></div>
-                <div class="ms-auto"><div id="miniChart1" style="min-height:50px;"></div></div>
-            </div>
-        </div></div>
-    </div>
-    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 animate-fadein">
-        <div class="card h-100"><div class="card-body">
-            <div class="stat-card">
-                <div><div class="stat-label">Ingresos</div><div class="d-flex align-items-center gap-2"><div class="stat-value">$142,853</div><span class="stat-change up"><i class="ti ti-chevron-up" style="font-size:14px;"></i>24.6%</span></div></div>
-                <div class="ms-auto"><div id="miniChart2" style="min-height:50px;"></div></div>
-            </div>
-        </div></div>
-    </div>
-    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 animate-fadein">
-        <div class="card h-100"><div class="card-body">
-            <div class="stat-card">
-                <div><div class="stat-label">Consultorías</div><div class="d-flex align-items-center gap-2"><div class="stat-value">4,679</div><span class="stat-change down"><i class="ti ti-chevron-down" style="font-size:14px;"></i>8.1%</span></div></div>
-                <div class="ms-auto"><div id="miniChart3" style="min-height:50px;"></div></div>
-            </div>
-        </div></div>
-    </div>
-    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 animate-fadein">
-        <div class="card h-100"><div class="card-body">
-            <div class="stat-card">
-                <div><div class="stat-label">Proyectos Activos</div><div class="d-flex align-items-center gap-2"><div class="stat-value">256</div><span class="stat-change up"><i class="ti ti-chevron-up" style="font-size:14px;"></i>42.9%</span></div></div>
-                <div class="ms-auto"><div id="miniChart4" style="min-height:50px;"></div></div>
-            </div>
-        </div></div>
-    </div>
-</div>
-
-<!-- Revenue + Order Stats -->
-<div class="row g-4 mb-4">
-    <div class="col-xl-8 col-lg-7 animate-fadein">
-        <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Reporte de Ingresos</h5><p class="card-subtitle mb-0">Comparación interanual</p></div>
-                <div class="dropdown">
-                    <button class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" style="font-size:.8125rem;border:1px solid var(--vz-border-color);color:var(--vz-body-color);border-radius:6px;">2024</button>
-                    <ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">2024</a></li><li><a class="dropdown-item" href="#">2023</a></li><li><a class="dropdown-item" href="#">2022</a></li></ul>
-                </div>
-            </div>
-            <div class="card-body pt-2">
-                <div class="row align-items-end">
-                    <div class="col-md-8"><div id="revenueChart" style="min-height:280px;"></div></div>
-                    <div class="col-md-4">
-                        <div class="text-center px-3 pb-3">
-                            <div class="d-flex align-items-center justify-content-center gap-2 mb-2"><div style="width:10px;height:10px;border-radius:50%;background:var(--vz-primary);"></div><span style="font-size:.8125rem;color:var(--vz-body-color);">Ingreso</span></div>
-                            <h4 class="mb-0" style="color:var(--vz-heading-color);font-weight:700;">$25,825</h4>
-                            <p class="mb-3" style="font-size:.75rem;color:var(--vz-body-color);">Budget: 56,800</p>
-                            <div id="weeklyEarningChart" style="min-height:100px;"></div>
-                            <span class="badge-label bg-label-success mt-2 d-inline-block">+42.9%</span>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card primary-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Clientes</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ number_format($totalClients) }}</h3>
                         </div>
                     </div>
+                    <span class="avatar-md bg-label-primary rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-users fs-3"></i>
+                    </span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-lg-5 animate-fadein">
-        <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Estadísticas de Servicios</h5><p class="card-subtitle mb-0">42.82k Total de servicios</p></div>
-                <div class="dropdown"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical" style="font-size:1.25rem;"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Ver Más</a></li><li><a class="dropdown-item" href="#">Exportar</a></li></ul></div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card info-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Proyectos Totales</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ number_format($totalProjects) }}</h3>
+                        </div>
+                    </div>
+                    <span class="avatar-md bg-label-info rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-briefcase fs-3"></i>
+                    </span>
+                </div>
             </div>
-            <div class="card-body pt-1">
-                <div class="text-center mb-3"><div id="orderStatsDonut" style="min-height:150px;"></div></div>
-                <div class="order-stat-item"><div class="order-stat-icon" style="background:var(--vz-primary-lighter);color:var(--vz-primary);"><i class="ti ti-briefcase"></i></div><div class="order-stat-info"><div class="order-stat-title">Auditoría</div><div class="order-stat-sub">Interna y fiscal</div></div><div class="order-stat-value">82.5k</div></div>
-                <div class="order-stat-item"><div class="order-stat-icon" style="background:var(--vz-success-lighter);color:var(--vz-success);"><i class="ti ti-chart-bar"></i></div><div class="order-stat-info"><div class="order-stat-title">Consultoría</div><div class="order-stat-sub">Estratégica</div></div><div class="order-stat-value">23.8k</div></div>
-                <div class="order-stat-item"><div class="order-stat-icon" style="background:var(--vz-warning-lighter);color:var(--vz-warning);"><i class="ti ti-file-text"></i></div><div class="order-stat-info"><div class="order-stat-title">Procesos</div><div class="order-stat-sub">Diseño corporativo</div></div><div class="order-stat-value">23.4k</div></div>
-                <div class="order-stat-item"><div class="order-stat-icon" style="background:var(--vz-info-lighter);color:var(--vz-info);"><i class="ti ti-building"></i></div><div class="order-stat-info"><div class="order-stat-title">Estructuración</div><div class="order-stat-sub">Organizacional</div></div><div class="order-stat-value">12.5k</div></div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card warning-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Proyectos Activos</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ number_format($activeProjects) }}</h3>
+                        </div>
+                    </div>
+                    <span class="avatar-md bg-label-warning rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-progress fs-3"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card success-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Por Cerrar (30 Días)</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ number_format($endingSoon) }}</h3>
+                        </div>
+                    </div>
+                    <span class="avatar-md bg-label-success rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-calendar-check fs-3"></i>
+                    </span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Earning + Support + Sales -->
 <div class="row g-4 mb-4">
-    <div class="col-xl-4 col-lg-6 animate-fadein">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Reporte de Ganancias</h5><p class="card-subtitle mb-0">Resumen semanal</p></div>
-                <div class="dropdown"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical" style="font-size:1.25rem;"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Ver Más</a></li><li><a class="dropdown-item" href="#">Exportar</a></li></ul></div>
+    <div class="col-xl-8">
+        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+            <div class="card-header pb-1">
+                <h5 class="card-title mb-0 fw-bold">Proyectos creados por mes</h5>
             </div>
-            <div class="card-body pt-2">
-                <div class="d-flex align-items-center gap-3 mb-3"><div><h3 class="mb-0" style="color:var(--vz-heading-color);font-weight:700;">$468</h3><span class="badge-label bg-label-success">+4.2%</span></div></div>
-                <div id="earningBarChart" style="min-height:200px;"></div>
-                <div class="mt-3">
-                    <div class="d-flex align-items-center justify-content-between mb-2"><div class="d-flex align-items-center gap-2"><div style="width:8px;height:8px;border-radius:50%;background:var(--vz-primary);"></div><span style="font-size:.8125rem;color:var(--vz-heading-color);">Auditoría</span></div><span style="font-size:.8125rem;color:var(--vz-body-color);">$845.17</span></div>
-                    <div class="d-flex align-items-center justify-content-between mb-2"><div class="d-flex align-items-center gap-2"><div style="width:8px;height:8px;border-radius:50%;background:var(--vz-info);"></div><span style="font-size:.8125rem;color:var(--vz-heading-color);">Consultoría</span></div><span style="font-size:.8125rem;color:var(--vz-body-color);">$82.87</span></div>
-                    <div class="d-flex align-items-center justify-content-between"><div class="d-flex align-items-center gap-2"><div style="width:8px;height:8px;border-radius:50%;background:var(--vz-success);"></div><span style="font-size:.8125rem;color:var(--vz-heading-color);">Procesos</span></div><span style="font-size:.8125rem;color:var(--vz-body-color);">$282.12</span></div>
-                </div>
+            <div class="card-body">
+                <div id="projectsByMonthChart" style="min-height: 300px;"></div>
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-lg-6 animate-fadein">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Seguimiento de Soporte</h5><p class="card-subtitle mb-0">Tickets últimos 7 días</p></div>
-                <div class="dropdown"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical" style="font-size:1.25rem;"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Ver Más</a></li><li><a class="dropdown-item" href="#">Asignar</a></li></ul></div>
+    <div class="col-xl-4">
+        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+            <div class="card-header pb-1">
+                <h5 class="card-title mb-0 fw-bold">Distribución por estado</h5>
             </div>
-            <div class="card-body pt-2">
-                <div class="row align-items-center"><div class="col-5"><h3 class="mb-0" style="color:var(--vz-heading-color);font-weight:700;">164</h3><p style="font-size:.8125rem;color:var(--vz-body-color);">Total Tickets</p></div><div class="col-7"><div id="supportTrackerChart" style="min-height:150px;"></div></div></div>
-                <div class="row g-3 mt-3">
-                    <div class="col-4"><div class="d-flex align-items-center gap-2 mb-1"><div style="width:6px;height:6px;border-radius:50%;background:var(--vz-primary);"></div><span style="font-size:.75rem;color:var(--vz-body-color);">Nuevos</span></div><h6 class="mb-0" style="color:var(--vz-heading-color);font-weight:600;">29</h6></div>
-                    <div class="col-4"><div class="d-flex align-items-center gap-2 mb-1"><div style="width:6px;height:6px;border-radius:50%;background:var(--vz-success);"></div><span style="font-size:.75rem;color:var(--vz-body-color);">Abiertos</span></div><h6 class="mb-0" style="color:var(--vz-heading-color);font-weight:600;">63</h6></div>
-                    <div class="col-4"><div class="d-flex align-items-center gap-2 mb-1"><div style="width:6px;height:6px;border-radius:50%;background:var(--vz-warning);"></div><span style="font-size:.75rem;color:var(--vz-body-color);">Cerrados</span></div><h6 class="mb-0" style="color:var(--vz-heading-color);font-weight:600;">72</h6></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-4 col-lg-12 animate-fadein">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Ventas por País</h5><p class="card-subtitle mb-0">Distribución mensual</p></div>
-                <div class="dropdown"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical" style="font-size:1.25rem;"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Ver Más</a></li></ul></div>
-            </div>
-            <div class="card-body pt-1">
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-primary-lighter);color:var(--vz-primary);font-size:1.25rem;">🇻🇪</div><div class="transaction-info"><div class="transaction-title">Venezuela</div><div class="transaction-sub">Caracas, Valencia, Maracaibo</div></div><div class="text-end"><div class="transaction-amount text-success">$9,820</div><div style="font-size:.75rem;color:var(--vz-body-color);">25.8%</div></div></div>
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-success-lighter);font-size:1.25rem;">🇺🇸</div><div class="transaction-info"><div class="transaction-title">Estados Unidos</div><div class="transaction-sub">Miami, New York</div></div><div class="text-end"><div class="transaction-amount text-success">$7,450</div><div style="font-size:.75rem;color:var(--vz-body-color);">19.6%</div></div></div>
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-warning-lighter);font-size:1.25rem;">🇨🇴</div><div class="transaction-info"><div class="transaction-title">Colombia</div><div class="transaction-sub">Bogotá, Medellín</div></div><div class="text-end"><div class="transaction-amount text-success">$5,320</div><div style="font-size:.75rem;color:var(--vz-body-color);">14.0%</div></div></div>
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-info-lighter);font-size:1.25rem;">🇲🇽</div><div class="transaction-info"><div class="transaction-title">México</div><div class="transaction-sub">Ciudad de México</div></div><div class="text-end"><div class="transaction-amount text-success">$4,710</div><div style="font-size:.75rem;color:var(--vz-body-color);">12.4%</div></div></div>
-                <div class="transaction-item"><div class="transaction-icon" style="background:var(--vz-danger-lighter);font-size:1.25rem;">🇪🇸</div><div class="transaction-info"><div class="transaction-title">España</div><div class="transaction-sub">Madrid, Barcelona</div></div><div class="text-end"><div class="transaction-amount text-success">$3,280</div><div style="font-size:.75rem;color:var(--vz-body-color);">8.6%</div></div></div>
+            <div class="card-body">
+                <div id="projectsByStatusChart" style="min-height: 300px;"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Transactions + Invoice Table -->
-<div class="row g-4 mb-4">
-    <div class="col-xl-4 col-lg-6 animate-fadein">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Transacciones</h5><p class="card-subtitle mb-0">Total 48.5% de crecimiento 😎</p></div>
-                <div class="dropdown"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical" style="font-size:1.25rem;"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#">Últimas 28 días</a></li><li><a class="dropdown-item" href="#">Mes anterior</a></li><li><a class="dropdown-item" href="#">Último año</a></li></ul></div>
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+            <div class="card-header d-flex justify-content-between align-items-center border-bottom border-light border-opacity-10 pb-3">
+                <h5 class="card-title mb-0 fw-bold"><i class="ti ti-list-details me-2 text-primary"></i>Proyectos Recientes</h5>
+                <a href="{{ route('projects.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">
+                    Ver todos <i class="ti ti-arrow-right ms-1"></i>
+                </a>
             </div>
-            <div class="card-body pt-1">
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-primary-lighter);color:var(--vz-primary);"><i class="ti ti-wallet"></i></div><div class="transaction-info"><div class="transaction-title">Pagos</div><div class="transaction-sub">Servicios prestados</div></div><div class="transaction-amount text-success">+$2,450</div></div>
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-success-lighter);color:var(--vz-success);"><i class="ti ti-chart-bar"></i></div><div class="transaction-info"><div class="transaction-title">Ventas</div><div class="transaction-sub">Consultoría premium</div></div><div class="transaction-amount text-success">+$14,857</div></div>
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-danger-lighter);color:var(--vz-danger);"><i class="ti ti-credit-card"></i></div><div class="transaction-info"><div class="transaction-title">Gastos</div><div class="transaction-sub">Operativos</div></div><div class="transaction-amount text-danger">-$1,230</div></div>
-                <div class="transaction-item mb-3"><div class="transaction-icon" style="background:var(--vz-warning-lighter);color:var(--vz-warning);"><i class="ti ti-receipt"></i></div><div class="transaction-info"><div class="transaction-title">Profit</div><div class="transaction-sub">Neto del mes</div></div><div class="transaction-amount text-success">+$12,320</div></div>
-                <div class="transaction-item"><div class="transaction-icon" style="background:var(--vz-info-lighter);color:var(--vz-info);"><i class="ti ti-repeat"></i></div><div class="transaction-info"><div class="transaction-title">Reembolso</div><div class="transaction-sub">Ajuste de servicio</div></div><div class="transaction-amount text-danger">-$350</div></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-8 col-lg-6 animate-fadein">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><h5 class="card-title">Facturas Recientes</h5><p class="card-subtitle mb-0">Últimas operaciones</p></div>
-                <a href="#" class="btn btn-sm" style="background:var(--vz-primary-lighter);color:var(--vz-primary);font-weight:600;border-radius:6px;font-size:.8125rem;">Ver Todo</a>
-            </div>
-            <div class="card-body pt-0" style="overflow-x:auto;">
-                <table class="table-vz">
-                    <thead><tr><th>#</th><th><i class="ti ti-trending-up" style="font-size:1rem;"></i></th><th>Cliente</th><th>Total</th><th>Emitida</th><th>Balance</th><th>Acción</th></tr></thead>
-                    <tbody>
-                        <tr><td><a href="#" class="text-primary fw-semibold">#5089</a></td><td><span class="badge-label bg-label-success"><i class="ti ti-circle-check" style="font-size:14px;"></i></span></td><td><div class="d-flex align-items-center gap-2"><div class="avatar-sm bg-label-primary">JD</div><div><div class="fw-semibold" style="font-size:.875rem;color:var(--vz-heading-color);">Juan Díaz</div><div style="font-size:.75rem;color:var(--vz-body-color);">Auditoría</div></div></div></td><td style="color:var(--vz-heading-color);font-weight:500;">$3,450</td><td>17/03/2024</td><td><span class="badge-label bg-label-success">Pagado</span></td><td><div class="d-flex gap-1"><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Ver"><i class="ti ti-eye"></i></button><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Email"><i class="ti ti-mail"></i></button><div class="dropdown d-inline"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#"><i class="ti ti-download me-2"></i>Descargar</a></li><li><a class="dropdown-item" href="#"><i class="ti ti-pencil me-2"></i>Editar</a></li><li><a class="dropdown-item text-danger" href="#"><i class="ti ti-trash me-2"></i>Eliminar</a></li></ul></div></div></td></tr>
-                        <tr><td><a href="#" class="text-primary fw-semibold">#5088</a></td><td><span class="badge-label bg-label-warning"><i class="ti ti-clock" style="font-size:14px;"></i></span></td><td><div class="d-flex align-items-center gap-2"><div class="avatar-sm bg-label-success">MR</div><div><div class="fw-semibold" style="font-size:.875rem;color:var(--vz-heading-color);">María Rodríguez</div><div style="font-size:.75rem;color:var(--vz-body-color);">Consultoría</div></div></div></td><td style="color:var(--vz-heading-color);font-weight:500;">$5,200</td><td>15/03/2024</td><td><span class="badge-label bg-label-warning">Pendiente</span></td><td><div class="d-flex gap-1"><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Ver"><i class="ti ti-eye"></i></button><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Email"><i class="ti ti-mail"></i></button><div class="dropdown d-inline"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#"><i class="ti ti-download me-2"></i>Descargar</a></li><li><a class="dropdown-item" href="#"><i class="ti ti-pencil me-2"></i>Editar</a></li></ul></div></div></td></tr>
-                        <tr><td><a href="#" class="text-primary fw-semibold">#5087</a></td><td><span class="badge-label bg-label-success"><i class="ti ti-circle-check" style="font-size:14px;"></i></span></td><td><div class="d-flex align-items-center gap-2"><div class="avatar-sm bg-label-danger">CG</div><div><div class="fw-semibold" style="font-size:.875rem;color:var(--vz-heading-color);">Carlos García</div><div style="font-size:.75rem;color:var(--vz-body-color);">Procesos</div></div></div></td><td style="color:var(--vz-heading-color);font-weight:500;">$2,100</td><td>12/03/2024</td><td><span class="badge-label bg-label-success">Pagado</span></td><td><div class="d-flex gap-1"><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Ver"><i class="ti ti-eye"></i></button><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Email"><i class="ti ti-mail"></i></button><div class="dropdown d-inline"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#"><i class="ti ti-download me-2"></i>Descargar</a></li><li><a class="dropdown-item" href="#"><i class="ti ti-pencil me-2"></i>Editar</a></li></ul></div></div></td></tr>
-                        <tr><td><a href="#" class="text-primary fw-semibold">#5086</a></td><td><span class="badge-label bg-label-danger"><i class="ti ti-alert-circle" style="font-size:14px;"></i></span></td><td><div class="d-flex align-items-center gap-2"><div class="avatar-sm bg-label-warning">AL</div><div><div class="fw-semibold" style="font-size:.875rem;color:var(--vz-heading-color);">Ana López</div><div style="font-size:.75rem;color:var(--vz-body-color);">Estructuración</div></div></div></td><td style="color:var(--vz-heading-color);font-weight:500;">$7,800</td><td>10/03/2024</td><td><span class="badge-label bg-label-danger">Vencida</span></td><td><div class="d-flex gap-1"><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Ver"><i class="ti ti-eye"></i></button><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Email"><i class="ti ti-mail"></i></button><div class="dropdown d-inline"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#"><i class="ti ti-download me-2"></i>Descargar</a></li><li><a class="dropdown-item" href="#"><i class="ti ti-pencil me-2"></i>Editar</a></li></ul></div></div></td></tr>
-                        <tr><td><a href="#" class="text-primary fw-semibold">#5085</a></td><td><span class="badge-label bg-label-success"><i class="ti ti-circle-check" style="font-size:14px;"></i></span></td><td><div class="d-flex align-items-center gap-2"><div class="avatar-sm bg-label-info">PM</div><div><div class="fw-semibold" style="font-size:.875rem;color:var(--vz-heading-color);">Pedro Martínez</div><div style="font-size:.75rem;color:var(--vz-body-color);">Auditoría</div></div></div></td><td style="color:var(--vz-heading-color);font-weight:500;">$4,150</td><td>08/03/2024</td><td><span class="badge-label bg-label-success">Pagado</span></td><td><div class="d-flex gap-1"><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Ver"><i class="ti ti-eye"></i></button><button class="btn btn-sm p-1" style="background:none;border:none;color:var(--vz-body-color);" title="Email"><i class="ti ti-mail"></i></button><div class="dropdown d-inline"><button class="btn btn-sm p-1" data-bs-toggle="dropdown" style="background:none;border:none;color:var(--vz-body-color);"><i class="ti ti-dots-vertical"></i></button><ul class="dropdown-menu dropdown-menu-end"><li><a class="dropdown-item" href="#"><i class="ti ti-download me-2"></i>Descargar</a></li><li><a class="dropdown-item" href="#"><i class="ti ti-pencil me-2"></i>Editar</a></li></ul></div></div></td></tr>
-                    </tbody>
-                </table>
+            <div class="card-body p-0">
+                <div class="table-responsive text-nowrap">
+                    <table class="ethos-glass-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Cliente</th>
+                                <th>Estado</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentProjects as $project)
+                            <tr>
+                                <td class="fw-medium text-heading">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-label-primary rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                            <i class="ti ti-briefcase-2"></i>
+                                        </div>
+                                        {{ $project->title }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-building-skyscraper text-muted me-2"></i>
+                                        {{ $project->client?->name ?? 'Sin cliente' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill {{ $statusBadge[$project->status] ?? 'bg-label-secondary' }}">
+                                        {{ ucfirst(str_replace('_', ' ', $project->status)) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="ti ti-calendar-event me-1"></i>
+                                        {{ $project->starts_at ? \Carbon\Carbon::parse($project->starts_at)->format('d/m/Y') : 'Sin fecha' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="ti ti-calendar-check me-1"></i>
+                                        {{ $project->ends_at ? \Carbon\Carbon::parse($project->ends_at)->format('d/m/Y') : 'Sin fecha' }}
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="d-flex flex-column align-items-center justify-content-center opacity-50">
+                                        <i class="ti ti-inbox fs-1 mb-2"></i>
+                                        <p class="mb-0">Aún no hay proyectos registrados.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -194,23 +310,117 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const P='#7367F0',S='#28C76F',D='#EA5455',W='#FF9F43',I='#00CFE8',BC='#6F6B7D',LC='#5D596C';
-    const miniOpts=(color,data)=>({series:[{data}],chart:{height:50,width:100,type:'line',sparkline:{enabled:true}},stroke:{width:2,curve:'smooth'},colors:[color],tooltip:{enabled:false}});
-    new ApexCharts(document.querySelector('#miniChart1'),miniOpts(P,[20,40,30,50,45,60,55])).render();
-    new ApexCharts(document.querySelector('#miniChart2'),miniOpts(S,[30,25,45,35,55,40,60])).render();
-    new ApexCharts(document.querySelector('#miniChart3'),miniOpts(W,[45,35,40,30,25,35,20])).render();
-    new ApexCharts(document.querySelector('#miniChart4'),miniOpts(I,[15,35,25,45,50,55,65])).render();
+document.addEventListener('DOMContentLoaded', function () {
+    const css = getComputedStyle(document.documentElement);
+    const primary = (css.getPropertyValue('--vz-primary') || '#1F6FEB').trim();
+    const info = (css.getPropertyValue('--vz-info') || '#2ED3FF').trim();
+    const success = (css.getPropertyValue('--vz-success') || '#28C76F').trim();
+    const warning = (css.getPropertyValue('--vz-warning') || '#FF9F43').trim();
+    const secondary = (css.getPropertyValue('--vz-secondary') || '#A8AAAE').trim();
+    const headingColor = getComputedStyle(document.documentElement).getPropertyValue('--vz-heading-color').trim() || '#cfd3ec';
+    const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--vz-border-color').trim() || 'rgba(255,255,255,0.1)';
 
-    new ApexCharts(document.querySelector('#revenueChart'),{series:[{name:'Ingreso',type:'column',data:[95,177,284,256,105,63,168,218,72,120,160,230]},{name:'Gastos',type:'line',data:[30,50,75,60,42,38,55,78,35,55,48,85]}],chart:{height:280,type:'line',toolbar:{show:false},fontFamily:"'Public Sans',sans-serif"},plotOptions:{bar:{borderRadius:8,columnWidth:'35%'}},colors:[P,W],stroke:{width:[0,3],curve:'smooth'},fill:{opacity:[1,1]},grid:{borderColor:'#F1F0F2',strokeDashArray:4,padding:{top:-10,bottom:-8}},xaxis:{categories:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],axisBorder:{show:false},axisTicks:{show:false},labels:{style:{fontSize:'12px',colors:BC}}},yaxis:{labels:{style:{fontSize:'12px',colors:BC}}},legend:{show:true,position:'top',horizontalAlign:'left',fontSize:'13px',markers:{width:10,height:10,radius:50},labels:{colors:BC}},dataLabels:{enabled:false},tooltip:{theme:'light'}}).render();
+    const monthLabels = @json($monthlyProjects['labels']);
+    const monthValues = @json($monthlyProjects['series']);
+    const statusLabels = @json($projectsByStatus->pluck('label')->values());
+    const statusValues = @json($projectsByStatus->pluck('total')->values());
 
-    new ApexCharts(document.querySelector('#weeklyEarningChart'),{series:[78],chart:{height:100,type:'radialBar',sparkline:{enabled:true}},plotOptions:{radialBar:{hollow:{size:'55%'},track:{background:'#F1F0F2'},dataLabels:{name:{show:false},value:{offsetY:6,fontSize:'16px',fontWeight:600,color:LC}}}},colors:[P],states:{hover:{filter:{type:'none'}}}}).render();
+    const isDarkStyle = document.documentElement.classList.contains('dark-style') || document.body.classList.contains('dark-mode');
+    const themeMode = isDarkStyle ? 'dark' : 'light';
 
-    new ApexCharts(document.querySelector('#orderStatsDonut'),{series:[85,25,50,40],chart:{height:150,type:'donut'},labels:['Auditoría','Consultoría','Procesos','Estructuración'],colors:[P,S,W,I],plotOptions:{pie:{donut:{size:'70%',labels:{show:true,name:{fontSize:'12px',color:BC},value:{fontSize:'18px',fontWeight:700,color:LC,formatter:v=>v+'k'},total:{show:true,label:'Total',fontSize:'12px',color:BC,formatter:()=>'42.8k'}}}}},legend:{show:false},dataLabels:{enabled:false},stroke:{width:3,colors:['var(--vz-card-bg)']},states:{hover:{filter:{type:'none'}}},tooltip:{theme:'light'}}).render();
+    const monthElement = document.querySelector('#projectsByMonthChart');
+    if (monthElement) {
+        new ApexCharts(monthElement, {
+            chart: { 
+                type: 'bar', 
+                height: 300, 
+                toolbar: { show: false },
+                fontFamily: 'inherit',
+                foreColor: '#a8aaae'
+            },
+            series: [{ name: 'Proyectos', data: monthValues }],
+            colors: [primary],
+            plotOptions: { 
+                bar: { 
+                    borderRadius: 6, 
+                    columnWidth: '35%',
+                    colors: {
+                        backgroundBarColors: [borderColor],
+                        backgroundBarOpacity: 0.1,
+                        backgroundBarRadius: 6,
+                    }
+                } 
+            },
+            dataLabels: { enabled: false },
+            xaxis: { 
+                categories: monthLabels,
+                axisBorder: { show: false },
+                axisTicks: { show: false },
+                labels: { style: { colors: '#a8aaae' } }
+            },
+            yaxis: { 
+                min: 0, 
+                forceNiceScale: true,
+                labels: { style: { colors: '#a8aaae' } }
+            },
+            grid: {
+                borderColor: borderColor,
+                strokeDashArray: 4,
+                padding: { top: 0, bottom: 0, left: 10, right: 10 }
+            },
+            tooltip: { theme: themeMode }
+        }).render();
+    }
 
-    new ApexCharts(document.querySelector('#earningBarChart'),{series:[{name:'Ganancias',data:[28,40,36,52,38,60,55]}],chart:{height:200,type:'bar',toolbar:{show:false},fontFamily:"'Public Sans',sans-serif"},plotOptions:{bar:{borderRadius:7,columnWidth:'50%',distributed:true}},colors:['rgba(115,103,240,0.16)','rgba(115,103,240,0.16)','rgba(115,103,240,0.16)',P,'rgba(115,103,240,0.16)','rgba(115,103,240,0.16)','rgba(115,103,240,0.16)'],grid:{borderColor:'#F1F0F2',strokeDashArray:4,padding:{top:-15,bottom:-10}},xaxis:{categories:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],axisBorder:{show:false},axisTicks:{show:false},labels:{style:{fontSize:'12px',colors:BC}}},yaxis:{show:false},legend:{show:false},dataLabels:{enabled:false},tooltip:{theme:'light'}}).render();
-
-    new ApexCharts(document.querySelector('#supportTrackerChart'),{series:[85],chart:{height:150,type:'radialBar'},plotOptions:{radialBar:{hollow:{size:'60%'},startAngle:-140,endAngle:130,track:{background:'#F1F0F2',strokeWidth:'100%'},dataLabels:{name:{offsetY:-12,fontSize:'12px',fontWeight:400,color:BC},value:{offsetY:4,fontSize:'22px',fontWeight:700,color:LC}}}},fill:{type:'gradient',gradient:{shade:'dark',type:'horizontal',shadeIntensity:0.5,gradientToColors:[P],stops:[0,100]}},colors:[P],labels:['Completados'],states:{hover:{filter:{type:'none'}}}}).render();
+    const statusElement = document.querySelector('#projectsByStatusChart');
+    if (statusElement) {
+        new ApexCharts(statusElement, {
+            chart: { 
+                type: 'donut', 
+                height: 320,
+                fontFamily: 'inherit',
+                foreColor: '#a8aaae'
+            },
+            series: statusValues,
+            labels: statusLabels,
+            colors: [primary, warning, info, secondary, '#0B3D91', '#061B3D', '#4B8CFF', info, success],
+            legend: { 
+                position: 'bottom',
+                markers: { radius: 12 },
+                itemMargin: { horizontal: 10, vertical: 5 },
+                labels: { colors: '#a8aaae' }
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '75%',
+                        labels: {
+                            show: true,
+                            name: { fontSize: '0.875rem', color: '#a8aaae' },
+                            value: {
+                                fontSize: '2rem',
+                                fontWeight: 700,
+                                color: headingColor,
+                                formatter: function (val) { return val; }
+                            },
+                            total: {
+                                show: true,
+                                fontSize: '0.875rem',
+                                color: '#a8aaae',
+                                label: 'Total',
+                                formatter: function (w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            dataLabels: { enabled: false },
+            stroke: { width: 0 },
+            tooltip: { theme: themeMode }
+        }).render();
+    }
 });
 </script>
 @endpush
