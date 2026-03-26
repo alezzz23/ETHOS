@@ -370,8 +370,19 @@
     object-fit: cover;
 }
 
-.ethos-chat-bubble {
+.ethos-chat-msg-content {
+    display: flex;
+    flex-direction: column;
     max-width: calc(100% - 44px);
+    align-items: flex-start;
+}
+
+.user-msg .ethos-chat-msg-content {
+    align-items: flex-end;
+}
+
+.ethos-chat-bubble {
+    width: fit-content;
     padding: 0.6rem 0.85rem;
     border-radius: 1rem;
     font-size: 0.85rem;
@@ -696,9 +707,9 @@ function initEthosChat() {
         div.className = `ethos-chat-msg ${msgClass}`;
         div.innerHTML = `
             <div class="ethos-chat-msg-avatar ${avatarClass}">${avatarHtml}</div>
-            <div>
+            <div class="ethos-chat-msg-content">
                 <div class="ethos-chat-bubble ${bubbleClass}">${formattedContent}</div>
-                <div class="ethos-chat-time">${time ?? formatTime()}</div>
+                <div class="ethos-chat-time" style="${isUser ? 'text-align: right;' : ''}">${time ?? formatTime()}</div>
             </div>
         `;
         messages.appendChild(div);

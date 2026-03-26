@@ -12,7 +12,8 @@ class ClientController extends Controller
     {
         $this->middleware('permission:clients.view')->only(['index', 'show']);
         $this->middleware('permission:clients.create')->only(['create', 'store']);
-        $this->middleware('permission:clients.update')->only(['edit', 'update']);
+        $this->middleware('permission:clients.edit')->only(['edit', 'update']);
+        $this->middleware('permission:clients.delete')->only(['destroy']);
     }
 
     public function index()
@@ -214,6 +215,18 @@ class ClientController extends Controller
         }
 
         return redirect()->route('clients.index')->with('success', 'Cliente actualizado exitosamente');
+    }
+
+    public function destroy(Client $client)
+    {
+        $client->projects()->delete();
+        $client->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['message' => 'Cliente eliminado exitosamente']);
+        }
+
+        return redirect()->route('clients.index')->with('success', 'Cliente eliminado exitosamente');
     }
 
     private function mapClient(Client $client): array

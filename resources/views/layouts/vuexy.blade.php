@@ -72,13 +72,16 @@
             <button class="sidebar-close d-xl-none" id="sidebarClose" aria-label="Cerrar barra lateral"><i class="ti ti-x"></i></button>
         </div>
         <ul class="menu-inner" style="list-style:none;padding:0;">
-            <li class="menu-header">Dashboards <span class="menu-badge badge-label bg-label-danger">5</span></li>
+            <li class="menu-header">Dashboards</li>
             <li class="menu-item"><a href="/admin/dashboard" class="menu-link {{ request()->is('admin/dashboard') ? 'active' : '' }}"><i class="ti ti-smart-home"></i><span>Inicio</span></a></li>
             @can('clients.view')
             <li class="menu-item"><a href="/admin/clients" class="menu-link {{ request()->is('admin/clients*') ? 'active' : '' }}"><i class="ti ti-users"></i><span>Clientes</span></a></li>
             @endcan
             @can('projects.view')
             <li class="menu-item"><a href="/admin/projects" class="menu-link {{ request()->is('admin/projects*') ? 'active' : '' }}"><i class="ti ti-briefcase"></i><span>Proyectos</span></a></li>
+            @endcan
+            @can('users.manage')
+            <li class="menu-item"><a href="{{ route('users.index') }}" class="menu-link {{ request()->is('admin/users*') ? 'active' : '' }}"><i class="ti ti-users-group"></i><span>Usuarios</span></a></li>
             @endcan
          <!--    <li class="menu-header">Apps & Pages</li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-mail"></i><span>Email</span><span class="menu-badge badge-label bg-label-primary ms-auto">12</span></a></li>

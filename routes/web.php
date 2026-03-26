@@ -47,6 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->names('clients');
     Route::resource('admin/projects', App\Http\Controllers\Admin\ProjectController::class)
         ->names('projects');
+    Route::resource('admin/users', App\Http\Controllers\Admin\UserController::class)
+        ->names('users')
+        ->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::middleware('auth')->group(function () {

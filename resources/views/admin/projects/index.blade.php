@@ -4,7 +4,8 @@
 
 @section('content')
 @php
-    $canUpdateProjects = auth()->user()?->can('projects.update');
+    $canUpdateProjects = auth()->user()?->can('projects.edit');
+    $canDeleteProjects = auth()->user()?->can('projects.delete');
 @endphp
 <div class="row">
     <div class="col-12">
@@ -100,9 +101,14 @@
                                     <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-view-project" title="Ver detalles" data-project-id="{{ $project->id }}" aria-label="Ver detalles del proyecto {{ $project->title }}">
                                         <i class="ti ti-eye"></i>
                                     </button>
-                                    @can('projects.update')
+                                    @can('projects.edit')
                                     <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-project" title="Editar proyecto" data-project='@json($projectPayload)'>
                                         <i class="ti ti-edit"></i>
+                                    </button>
+                                    @endcan
+                                    @can('projects.delete')
+                                    <button type="button" class="btn btn-sm btn-icon btn-text-danger rounded-pill ethos-action-btn js-delete-project" title="Eliminar proyecto" data-project-id="{{ $project->id }}" data-project-title="{{ $project->title }}">
+                                        <i class="ti ti-trash"></i>
                                     </button>
                                     @endcan
                                 </td>
@@ -918,6 +924,28 @@
         });
     }
 })();
+
+    // ── Delete project ─────────────────────────────────────────────
+    document.getElementById('projectsTableBody')?.addEventListener('click', function(e) {
+        const btn = e.target.closest('.js-delete-project');
+        if (!btn) return;
+        const projectId    = btn.dataset.projectId;
+        const projectTitle = btn.dataset.projectTitle;
+        if (!confirm(`¿Eliminar el proyecto "${projectTitle}"? Esta acción no se puede deshacer.`)) return;
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        fetch(`/admin/projects/${projectId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.closest('tr').remove();
+            const fb = document.getElementById('projectsGlobalFeedback');
+            if (fb) { fb.textContent = data.message; fb.className = 'alert alert-success'; }
+        })
+        .catch(() => alert('Error al eliminar el proyecto.'));
+    });
 </script>
 @endpush
 

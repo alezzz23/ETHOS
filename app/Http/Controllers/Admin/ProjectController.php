@@ -15,7 +15,8 @@ class ProjectController extends Controller
     {
         $this->middleware('permission:projects.view')->only(['index', 'show']);
         $this->middleware('permission:projects.create')->only(['create', 'store']);
-        $this->middleware('permission:projects.update')->only(['edit', 'update']);
+        $this->middleware('permission:projects.edit')->only(['edit', 'update']);
+        $this->middleware('permission:projects.delete')->only(['destroy']);
     }
 
     public function index()
@@ -36,7 +37,7 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'client_id' => 'required|exists:clients,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -56,7 +57,13 @@ class ProjectController extends Controller
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
             'finished_at' => 'nullable|date',
-        ]);
+        ];
+
+        if (auth()->user()->hasRole('consultor')) {
+            $rules['assigned_to'] = 'required|exists:users,id';
+        }
+
+        $validated = $request->validate($rules);
 
         // Auto-asignar captured_by al usuario autenticado
         $validated['captured_by'] = auth()->id();
@@ -146,7 +153,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
-        $validated = $request->validate([
+        $rules = [
             'client_id' => 'required|exists:clients,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -166,7 +173,13 @@ class ProjectController extends Controller
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
             'finished_at' => 'nullable|date',
-        ]);
+        ];
+
+        if (auth()->user()->hasRole('consultor')) {
+            $rules['assigned_to'] = 'required|exists:users,id';
+        }
+
+        $validated = $request->validate($rules);
 
         $project->update($validated);
 
@@ -178,6 +191,17 @@ class ProjectController extends Controller
         }
 
         return redirect()->route('projects.index')->with('success', 'Proyecto actualizado exitosamente');
+    }
+
+    public function destroy(Project $project)
+    {
+        $project->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['message' => 'Proyecto eliminado exitosamente']);
+        }
+
+        return redirect()->route('projects.index')->with('success', 'Proyecto eliminado exitosamente');
     }
 
     private function mapProject(Project $project): array

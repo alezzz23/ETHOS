@@ -4,7 +4,8 @@
 
 @section('content')
 @php
-    $canUpdateClients = auth()->user()?->can('clients.update');
+    $canUpdateClients = auth()->user()?->can('clients.edit');
+    $canDeleteClients = auth()->user()?->can('clients.delete');
 @endphp
 <div class="row">
     <div class="col-12">
@@ -77,9 +78,14 @@
                                     <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-view-client" title="Ver detalles" data-client-id="{{ $client->id }}" aria-label="Ver detalles del cliente {{ $client->name }}">
                                         <i class="ti ti-eye"></i>
                                     </button>
-                                    @can('clients.update')
+                                    @can('clients.edit')
                                     <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-client" title="Editar cliente" data-client='@json($clientPayload)'>
                                         <i class="ti ti-edit"></i>
+                                    </button>
+                                    @endcan
+                                    @can('clients.delete')
+                                    <button type="button" class="btn btn-sm btn-icon btn-text-danger rounded-pill ethos-action-btn js-delete-client" title="Eliminar cliente" data-client-id="{{ $client->id }}" data-client-name="{{ $client->name }}">
+                                        <i class="ti ti-trash"></i>
                                     </button>
                                     @endcan
                                 </td>
@@ -1048,6 +1054,28 @@
         }, 500);
     };
 })();
+
+    // ── Delete client ─────────────────────────────────────────────
+    document.getElementById('clientsTableBody')?.addEventListener('click', function(e) {
+        const btn = e.target.closest('.js-delete-client');
+        if (!btn) return;
+        const clientId   = btn.dataset.clientId;
+        const clientName = btn.dataset.clientName;
+        if (!confirm(`¿Estás seguro de que deseas eliminar al cliente "${clientName}"?\nEsta acción también eliminará todos sus proyectos.`)) return;
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        fetch(`/admin/clients/${clientId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.closest('tr').remove();
+            const fb = document.getElementById('clientsGlobalFeedback');
+            if (fb) { fb.textContent = data.message; fb.className = 'alert alert-success'; }
+        })
+        .catch(() => alert('Error al eliminar el cliente.'));
+    });
 </script>
 @endpush
 

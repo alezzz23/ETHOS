@@ -140,6 +140,7 @@
     ];
 @endphp
 <div class="row g-4 mb-4">
+    @can('clients.view')
     <div class="col-xl-3 col-md-6">
         <div class="card h-100 ethos-stat-card primary-hover">
             <div class="card-body">
@@ -157,6 +158,8 @@
             </div>
         </div>
     </div>
+    @endcan
+    @can('projects.view')
     <div class="col-xl-3 col-md-6">
         <div class="card h-100 ethos-stat-card info-hover">
             <div class="card-body">
@@ -208,6 +211,7 @@
             </div>
         </div>
     </div>
+    @endcan
 </div>
 
 <div class="row g-4 mb-4">

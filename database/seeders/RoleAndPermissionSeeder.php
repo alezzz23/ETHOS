@@ -18,66 +18,113 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
+        // 1. Create permissions
         $permissions = [
+            'admin.access',
+            'users.manage',
             'clients.view',
             'clients.create',
-            'clients.update',
+            'clients.edit',
+            'clients.delete',
             'projects.view',
             'projects.create',
-            'projects.update',
-            'admin.access',
+            'projects.edit',
+            'projects.assign',
+            'projects.delete',
+            'tasks.manage',
+            'tasks.execute',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create roles
-        $roles = [
-            'presidente_vendedor',
-            'socio',
-            'consultor_estrategico',
-            'disenador_procesos',
-            'documentador_procesos',
-            'lider_proyecto',
-            'especialista_implementacion',
-            'experto_sistemas',
-            'marketing_diseno',
+        // 2. Create roles and assign specific permissions
+
+        // SUPER ADMIN
+        $roleSuperAdmin = Role::firstOrCreate(['name' => 'super_admin']);
+        $roleSuperAdmin->givePermissionTo(Permission::all());
+
+        // MARKETING (Captación)
+        $roleMarketing = Role::firstOrCreate(['name' => 'marketing']);
+        $roleMarketing->givePermissionTo([
+            'admin.access',
+            'clients.view',
+            'clients.create',
+            'clients.edit',
+            'projects.view',
+        ]);
+
+        // CONSULTOR
+        $roleConsultor = Role::firstOrCreate(['name' => 'consultor']);
+        $roleConsultor->givePermissionTo([
+            'admin.access',
+            'clients.view',
+            'projects.view',
+            'projects.create',
+            'projects.edit',
+            'projects.assign',
+        ]);
+
+        // LÍDER DE PROYECTO
+        $roleLider = Role::firstOrCreate(['name' => 'lider_proyecto']);
+        $roleLider->givePermissionTo([
+            'admin.access',
+            'clients.view',
+            'projects.view',
+            'projects.edit',
+            'tasks.manage',
+            'tasks.execute',
+        ]);
+
+        // EQUIPO DE LEVANTAMIENTO (Operativo)
+        $roleEquipo = Role::firstOrCreate(['name' => 'equipo_levantamiento']);
+        $roleEquipo->givePermissionTo([
+            'admin.access',
+            'projects.view', // Solo ver los suyos, se controlará a nivel de Query/Policy
+            'tasks.execute',
+        ]);
+
+        // 3. Create test users for the demo
+        $testUsers = [
+            [
+                'name' => 'Miguel (Super Admin)',
+                'email' => 'admin@ethos.com',
+                'role' => 'super_admin'
+            ],
+            [
+                'name' => 'Ana (Marketing)',
+                'email' => 'marketing@ethos.com',
+                'role' => 'marketing'
+            ],
+            [
+                'name' => 'Carlos (Consultor)',
+                'email' => 'consultor@ethos.com',
+                'role' => 'consultor'
+            ],
+            [
+                'name' => 'Laura (Líder Proyecto)',
+                'email' => 'lider@ethos.com',
+                'role' => 'lider_proyecto'
+            ],
+            [
+                'name' => 'Pedro (Equipo)',
+                'email' => 'equipo@ethos.com',
+                'role' => 'equipo_levantamiento'
+            ],
         ];
 
-        foreach ($roles as $role) {
-            $roleInstance = Role::firstOrCreate(['name' => $role]);
-            // For MVP give all permissions to all roles or just basic ones?
-            // "Permisos mínimos por MVP" all roles get these for now
-            $roleInstance->givePermissionTo($permissions);
-        }
+        foreach ($testUsers as $testUser) {
+            $user = User::firstOrCreate(
+                ['email' => $testUser['email']],
+                [
+                    'name' => $testUser['name'],
+                    'password' => Hash::make('password') // default password for testing
+                ]
+            );
 
-        // Create Users from ETHOS_logica_procesos.md
-        $team = [
-            // Miguel — Presidente y Vendedor Estratégico
-            ['name' => 'Miguel', 'email' => 'miguel@ethos.com', 'role' => 'presidente_vendedor'],
-            
-            // Documentadores de Procesos
-            ['name' => 'Leomar', 'email' => 'leomar@ethos.com', 'role' => 'documentador_procesos'],
-            ['name' => 'Gabriela', 'email' => 'gabriela@ethos.com', 'role' => 'documentador_procesos'],
-            ['name' => 'Doren', 'email' => 'doren@ethos.com', 'role' => 'documentador_procesos'],
-            ['name' => 'Luis', 'email' => 'luis@ethos.com', 'role' => 'documentador_procesos'],
-            
-            // Marketing y Diseño Gráfico
-            ['name' => 'Verónica', 'email' => 'veronica@ethos.com', 'role' => 'marketing_diseno'],
-            ['name' => 'Alejandra', 'email' => 'alejandra@ethos.com', 'role' => 'marketing_diseno'],
-        ];
-
-        foreach ($team as $member) {
-            $user = User::firstOrCreate([
-                'email' => $member['email']
-            ], [
-                'name' => $member['name'],
-                'password' => Hash::make('password') // default password
-            ]);
-
-            $user->assignRole($member['role']);
+            // Resync role just in case
+            $user->syncRoles([$testUser['role']]);
         }
     }
 }
