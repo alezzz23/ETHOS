@@ -1,0 +1,58 @@
+{
+    "format": "TOON/1",
+    "generated_at": "2026-03-24T17:41:00+00:00",
+    "source": {
+        "path": "storage/api-docs/api-docs.json",
+        "bytes": 73009,
+        "hash_sha256": "8816e7b5fa638615c7a3746a0afcee67c3437130bfeb7c4175aba6f35810efd5"
+    },
+    "target": {
+        "path": "storage/toon/api-docs.toon",
+        "bytes": 119580,
+        "hash_sha256": "d973d0acf3ef9177bc6550aea5a40249b6ad94c6ec371414a5a6b4c06f8b61bd"
+    },
+    "stats": {
+        "toon_line_count": 1378,
+        "source_model": {
+            "nodes": 1377,
+            "objects": 510,
+            "arrays": 137,
+            "strings": 597,
+            "numbers": 42,
+            "booleans": 91,
+            "nulls": 0,
+            "numeric_strings": 0
+        },
+        "toon_model": {
+            "nodes": 1377,
+            "objects": 510,
+            "arrays": 137,
+            "strings": 597,
+            "numbers": 42,
+            "booleans": 91,
+            "nulls": 0,
+            "numeric_strings": 0
+        }
+    },
+    "incompatibilities": {
+        "numeric_strings_detected": 0,
+        "notes": [
+            "TOON conserva números muy grandes como string para evitar pérdida de precisión."
+        ]
+    },
+    "validation": {
+        "enabled": true,
+        "passed": true,
+        "differences": [],
+        "toon_model": {
+            "nodes": 1377,
+            "objects": 510,
+            "arrays": 137,
+            "strings": 597,
+            "numbers": 42,
+            "booleans": 91,
+            "nulls": 0,
+            "numeric_strings": 0
+        }
+    }
+}

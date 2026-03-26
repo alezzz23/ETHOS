@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Client;
@@ -90,9 +92,94 @@ class MVPTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('admin.dashboard');
         $response->assertSeeText('Clientes');
-        $response->assertSeeText('Proyectos totales');
+        $response->assertSeeText('Proyectos Totales');
         $response->assertSeeText('2');
         $response->assertSeeText('1');
-        $response->assertSeeText('Proyectos recientes');
+        $response->assertSeeText('Proyectos Recientes');
+    }
+
+    public function test_assistant_route_returns_reply_with_default_openrouter_base_url()
+    {
+        config()->set('services.ai_assistant.api_key', 'test-key');
+        config()->set('services.ai_assistant.base_url', '');
+        config()->set('services.ai_assistant.model', 'mistralai/mistral-small-3.1-24b-instruct:free');
+
+        Http::fake([
+            'https://openrouter.ai/api/v1/chat/completions' => Http::response([
+                'choices' => [
+                    [
+                        'message' => [
+                            'content' => 'Respuesta de prueba',
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $response = $this->postJson('/assistant/chat', [
+            'message' => 'Hola',
+            'history' => [],
+        ]);
+
+        $response->assertOk();
+        $response->assertJson([
+            'reply' => 'Respuesta de prueba',
+        ]);
+    }
+
+    public function test_assistant_route_handles_missing_api_key()
+    {
+        config()->set('services.ai_assistant.api_key', '');
+        config()->set('services.ai_assistant.base_url', '');
+
+        $response = $this->postJson('/assistant/chat', [
+            'message' => 'Necesito soporte',
+            'history' => [],
+        ]);
+
+        $response->assertStatus(503);
+    }
+
+    public function test_landing_contains_clear_chat_controls_and_integration_hooks()
+    {
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('id="assistant-clear"', false);
+        $response->assertSee('Limpiar chat');
+        $response->assertSee('id="assistant-confirm"', false);
+        $response->assertSee('id="assistant-confirm-clear"', false);
+        $response->assertSee('id="assistant-cancel-clear"', false);
+        $response->assertSee('setAssistantClearButtonState', false);
+        $response->assertSee('clearAssistantHistory', false);
+    }
+
+    public function test_assistant_clear_endpoint_clears_session_history_and_logs_action()
+    {
+        Log::spy();
+
+        $response = $this->withSession([
+            'assistant_history' => [
+                ['role' => 'user', 'content' => 'Hola'],
+                ['role' => 'assistant', 'content' => '¡Hola!'],
+            ],
+        ])->postJson('/assistant/chat/clear', [
+            'cleared_count' => 2,
+        ]);
+
+        $response->assertOk();
+        $response->assertJson([
+            'cleared' => true,
+        ]);
+        $response->assertSessionMissing('assistant_history');
+
+        Log::shouldHaveReceived('info')
+            ->once()
+            ->withArgs(function (string $message, array $context): bool {
+                return $message === 'assistant_chat_cleared'
+                    && ($context['cleared_count'] ?? null) === 2
+                    && isset($context['session_id'])
+                    && isset($context['ip']);
+            });
     }
 }

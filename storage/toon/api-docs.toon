@@ -1,0 +1,1378 @@
+TOON/1
+/	object	6
+//k:openapi	string	"3.0.0"
+//k:info	object	3
+//k:info/k:title	string	"ETHOS Backend API"
+//k:info/k:description	string	"Documentación integral del backend de ETHOS. Incluye endpoints de autenticación, administración, CRM (clientes/proyectos), perfil de usuario y utilidades de API."
+//k:info/k:version	string	"1.0.0"
+//k:servers	array	1
+//k:servers/i:0	object	2
+//k:servers/i:0/k:url	string	"http://localhost"
+//k:servers/i:0/k:description	string	"Servidor principal de ETHOS"
+//k:paths	object	26
+//k:paths/k:~1	object	1
+//k:paths/k:~1/k:get	object	5
+//k:paths/k:~1/k:get/k:tags	array	1
+//k:paths/k:~1/k:get/k:tags/i:0	string	"General"
+//k:paths/k:~1/k:get/k:summary	string	"Landing pública de ETHOS"
+//k:paths/k:~1/k:get/k:description	string	"Entrega la vista principal del sitio sin autenticación."
+//k:paths/k:~1/k:get/k:operationId	string	"c2dc0510f0b1b41aaaee77dfedc26732"
+//k:paths/k:~1/k:get/k:responses	object	1
+//k:paths/k:~1/k:get/k:responses/k:200	object	1
+//k:paths/k:~1/k:get/k:responses/k:200/k:description	string	"Vista HTML de landing"
+//k:paths/k:~1login	object	2
+//k:paths/k:~1login/k:get	object	5
+//k:paths/k:~1login/k:get/k:tags	array	1
+//k:paths/k:~1login/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1login/k:get/k:summary	string	"Formulario de login"
+//k:paths/k:~1login/k:get/k:description	string	"Muestra el formulario de autenticación para usuarios invitados."
+//k:paths/k:~1login/k:get/k:operationId	string	"02bae7acbbfe6ec1db88b3158d1e406b"
+//k:paths/k:~1login/k:get/k:responses	object	2
+//k:paths/k:~1login/k:get/k:responses/k:200	object	1
+//k:paths/k:~1login/k:get/k:responses/k:200/k:description	string	"Vista HTML de login"
+//k:paths/k:~1login/k:get/k:responses/k:302	object	1
+//k:paths/k:~1login/k:get/k:responses/k:302/k:description	string	"Redirección si ya existe sesión"
+//k:paths/k:~1login/k:post	object	6
+//k:paths/k:~1login/k:post/k:tags	array	1
+//k:paths/k:~1login/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1login/k:post/k:summary	string	"Autenticar usuario"
+//k:paths/k:~1login/k:post/k:description	string	"Procesa credenciales y abre sesión. Requiere token CSRF."
+//k:paths/k:~1login/k:post/k:operationId	string	"4434926234c502aea8d3ff701e16c049"
+//k:paths/k:~1login/k:post/k:requestBody	object	2
+//k:paths/k:~1login/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1login/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	2
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"email"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:1	string	"password"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	3
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email	object	3
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:type	string	"string"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:format	string	"email"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:example	string	"miguel@ethos.com"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password	object	3
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:type	string	"string"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:format	string	"password"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:example	string	"password"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:remember	object	2
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:remember/k:type	string	"boolean"
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:remember/k:example	boolean	true
+//k:paths/k:~1login/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1login/k:post/k:responses	object	2
+//k:paths/k:~1login/k:post/k:responses/k:302	object	1
+//k:paths/k:~1login/k:post/k:responses/k:302/k:description	string	"Redirección al dashboard al autenticar"
+//k:paths/k:~1login/k:post/k:responses/k:422	object	2
+//k:paths/k:~1login/k:post/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1login/k:post/k:responses/k:422/k:content	object	1
+//k:paths/k:~1login/k:post/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1login/k:post/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1login/k:post/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1logout	object	1
+//k:paths/k:~1logout/k:post	object	6
+//k:paths/k:~1logout/k:post/k:tags	array	1
+//k:paths/k:~1logout/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1logout/k:post/k:summary	string	"Cerrar sesión"
+//k:paths/k:~1logout/k:post/k:description	string	"Cierra la sesión del usuario autenticado."
+//k:paths/k:~1logout/k:post/k:operationId	string	"8834a3779e81e333aa7061147fce2f55"
+//k:paths/k:~1logout/k:post/k:responses	object	2
+//k:paths/k:~1logout/k:post/k:responses/k:302	object	1
+//k:paths/k:~1logout/k:post/k:responses/k:302/k:description	string	"Redirección a /"
+//k:paths/k:~1logout/k:post/k:responses/k:401	object	1
+//k:paths/k:~1logout/k:post/k:responses/k:401/k:description	string	"No autenticado"
+//k:paths/k:~1logout/k:post/k:security	array	2
+//k:paths/k:~1logout/k:post/k:security/i:0	object	1
+//k:paths/k:~1logout/k:post/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1logout/k:post/k:security/i:1	object	1
+//k:paths/k:~1logout/k:post/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1register	object	2
+//k:paths/k:~1register/k:get	object	4
+//k:paths/k:~1register/k:get/k:tags	array	1
+//k:paths/k:~1register/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1register/k:get/k:summary	string	"Formulario de registro"
+//k:paths/k:~1register/k:get/k:operationId	string	"43e89caa1a33500b541fd2daf7be9512"
+//k:paths/k:~1register/k:get/k:responses	object	1
+//k:paths/k:~1register/k:get/k:responses/k:200	object	1
+//k:paths/k:~1register/k:get/k:responses/k:200/k:description	string	"Vista HTML de registro"
+//k:paths/k:~1register/k:post	object	6
+//k:paths/k:~1register/k:post/k:tags	array	1
+//k:paths/k:~1register/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1register/k:post/k:summary	string	"Registrar usuario"
+//k:paths/k:~1register/k:post/k:description	string	"Registra un nuevo usuario. Requiere token CSRF."
+//k:paths/k:~1register/k:post/k:operationId	string	"b22015ef1b382910bf558e65e4f6f8cf"
+//k:paths/k:~1register/k:post/k:requestBody	object	2
+//k:paths/k:~1register/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1register/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	4
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"name"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:1	string	"email"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:2	string	"password"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:3	string	"password_confirmation"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	4
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:name	object	2
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:name/k:type	string	"string"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:name/k:example	string	"Nuevo Usuario"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email	object	3
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:type	string	"string"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:format	string	"email"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:example	string	"nuevo@ethos.com"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password	object	3
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:type	string	"string"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:format	string	"password"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:example	string	"password"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation	object	3
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:type	string	"string"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:format	string	"password"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:example	string	"password"
+//k:paths/k:~1register/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1register/k:post/k:responses	object	2
+//k:paths/k:~1register/k:post/k:responses/k:302	object	1
+//k:paths/k:~1register/k:post/k:responses/k:302/k:description	string	"Redirección tras registro"
+//k:paths/k:~1register/k:post/k:responses/k:422	object	2
+//k:paths/k:~1register/k:post/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1register/k:post/k:responses/k:422/k:content	object	1
+//k:paths/k:~1register/k:post/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1register/k:post/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1register/k:post/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1admin~1dashboard	object	1
+//k:paths/k:~1admin~1dashboard/k:get	object	6
+//k:paths/k:~1admin~1dashboard/k:get/k:tags	array	1
+//k:paths/k:~1admin~1dashboard/k:get/k:tags/i:0	string	"Dashboard"
+//k:paths/k:~1admin~1dashboard/k:get/k:summary	string	"Dashboard administrativo"
+//k:paths/k:~1admin~1dashboard/k:get/k:description	string	"Vista principal de métricas y actividad del CRM. Requiere auth, email verificado y permiso admin.access."
+//k:paths/k:~1admin~1dashboard/k:get/k:operationId	string	"5e557469f064e41878190702e5ce82c2"
+//k:paths/k:~1admin~1dashboard/k:get/k:responses	object	3
+//k:paths/k:~1admin~1dashboard/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1dashboard/k:get/k:responses/k:200/k:description	string	"Vista HTML del dashboard"
+//k:paths/k:~1admin~1dashboard/k:get/k:responses/k:401	object	1
+//k:paths/k:~1admin~1dashboard/k:get/k:responses/k:401/k:description	string	"No autenticado"
+//k:paths/k:~1admin~1dashboard/k:get/k:responses/k:403	object	1
+//k:paths/k:~1admin~1dashboard/k:get/k:responses/k:403/k:description	string	"Sin permisos"
+//k:paths/k:~1admin~1dashboard/k:get/k:security	array	1
+//k:paths/k:~1admin~1dashboard/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1dashboard/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1search	object	1
+//k:paths/k:~1admin~1search/k:get	object	7
+//k:paths/k:~1admin~1search/k:get/k:tags	array	1
+//k:paths/k:~1admin~1search/k:get/k:tags/i:0	string	"Admin Search"
+//k:paths/k:~1admin~1search/k:get/k:summary	string	"Búsqueda global del panel"
+//k:paths/k:~1admin~1search/k:get/k:description	string	"Motor de búsqueda unificada para navegación, clientes y proyectos."
+//k:paths/k:~1admin~1search/k:get/k:operationId	string	"84cca46588cbf1b11383886eb31cb83c"
+//k:paths/k:~1admin~1search/k:get/k:parameters	array	2
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0	object	5
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:name	string	"q"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:in	string	"query"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:description	string	"Texto de búsqueda (2 a 60 caracteres)"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:schema	object	3
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:schema/k:type	string	"string"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:schema/k:maxLength	number	60
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:0/k:schema/k:minLength	number	2
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1	object	5
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:name	string	"category"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:in	string	"query"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:description	string	"Categoría de búsqueda"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:required	boolean	false
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema	object	3
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:type	string	"string"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:default	string	"all"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:enum	array	4
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:enum/i:0	string	"all"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:enum/i:1	string	"clients"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:enum/i:2	string	"projects"
+//k:paths/k:~1admin~1search/k:get/k:parameters/i:1/k:schema/k:enum/i:3	string	"navigation"
+//k:paths/k:~1admin~1search/k:get/k:responses	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:description	string	"Resultados encontrados"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content	object	1
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties	object	3
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:query	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:query/k:type	string	"string"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:query/k:example	string	"acme"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:category	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:category/k:type	string	"string"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:category/k:example	string	"all"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:items	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:items/k:type	string	"array"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:items/k:items	object	1
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:items/k:items/k:$ref	string	"#/components/schemas/SearchResultItem"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:type	string	"object"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:422	object	2
+//k:paths/k:~1admin~1search/k:get/k:responses/k:422/k:description	string	"Parámetros inválidos"
+//k:paths/k:~1admin~1search/k:get/k:responses/k:422/k:content	object	1
+//k:paths/k:~1admin~1search/k:get/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1search/k:get/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1search/k:get/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1admin~1search/k:get/k:security	array	1
+//k:paths/k:~1admin~1search/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1search/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients	object	2
+//k:paths/k:~1admin~1clients/k:get	object	6
+//k:paths/k:~1admin~1clients/k:get/k:tags	array	1
+//k:paths/k:~1admin~1clients/k:get/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients/k:get/k:summary	string	"Listado de clientes"
+//k:paths/k:~1admin~1clients/k:get/k:description	string	"Retorna vista HTML con listado paginado de clientes."
+//k:paths/k:~1admin~1clients/k:get/k:operationId	string	"5a8c7cbf713d02ceb6d16ed2014f0537"
+//k:paths/k:~1admin~1clients/k:get/k:responses	object	2
+//k:paths/k:~1admin~1clients/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1clients/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1admin~1clients/k:get/k:responses/k:403	object	1
+//k:paths/k:~1admin~1clients/k:get/k:responses/k:403/k:description	string	"Sin permisos"
+//k:paths/k:~1admin~1clients/k:get/k:security	array	1
+//k:paths/k:~1admin~1clients/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients/k:post	object	7
+//k:paths/k:~1admin~1clients/k:post/k:tags	array	1
+//k:paths/k:~1admin~1clients/k:post/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients/k:post/k:summary	string	"Crear cliente"
+//k:paths/k:~1admin~1clients/k:post/k:description	string	"Crea cliente nuevo. Soporta respuesta HTML o JSON (si Accept: application/json)."
+//k:paths/k:~1admin~1clients/k:post/k:operationId	string	"47fb5b8ec0febd8371f16524ed2d2ad5"
+//k:paths/k:~1admin~1clients/k:post/k:requestBody	object	2
+//k:paths/k:~1admin~1clients/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1admin~1clients/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1admin~1clients/k:post/k:requestBody/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients/k:post/k:requestBody/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1clients/k:post/k:requestBody/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ClientPayload"
+//k:paths/k:~1admin~1clients/k:post/k:responses	object	3
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200	object	2
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:description	string	"Cliente creado (modo JSON)"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema	object	2
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties	object	2
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:message	object	2
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:message/k:type	string	"string"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:message/k:example	string	"Cliente creado exitosamente"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:client	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:client/k:$ref	string	"#/components/schemas/ClientResource"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:type	string	"object"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:302	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:302/k:description	string	"Redirección a listado (modo HTML)"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:422	object	2
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:422/k:content	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1clients/k:post/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1admin~1clients/k:post/k:security	array	2
+//k:paths/k:~1admin~1clients/k:post/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients/k:post/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients/k:post/k:security/i:1	object	1
+//k:paths/k:~1admin~1clients/k:post/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1admin~1clients~1markers	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get	object	7
+//k:paths/k:~1admin~1clients~1markers/k:get/k:tags	array	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:summary	string	"Marcadores geográficos de clientes"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:description	string	"Devuelve clientes con coordenadas para visualización en mapa."
+//k:paths/k:~1admin~1clients~1markers/k:get/k:operationId	string	"7b10349c0291e306a111f397eb6b84e3"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters	array	3
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:name	string	"contact_type"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:in	string	"query"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:required	boolean	false
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:schema	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:schema/k:type	string	"string"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:schema/k:enum	array	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:schema/k:enum/i:0	string	"primary"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:0/k:schema/k:enum/i:1	string	"secondary"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:1	object	4
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:1/k:name	string	"status"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:1/k:in	string	"query"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:1/k:required	boolean	false
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:1/k:schema	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:1/k:schema/k:type	string	"string"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:2	object	4
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:2/k:name	string	"type"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:2/k:in	string	"query"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:2/k:required	boolean	false
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:2/k:schema	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:parameters/i:2/k:schema/k:type	string	"string"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:description	string	"Lista de marcadores"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:type	string	"array"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties	object	5
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:id	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:id/k:type	string	"integer"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:title	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:title/k:type	string	"string"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:type	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:type/k:type	string	"string"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:type/k:nullable	boolean	true
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:status	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:status/k:type	string	"string"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:status/k:nullable	boolean	true
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties/k:lat	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties/k:lat/k:type	string	"number"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties/k:lat/k:format	string	"float"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties/k:lng	object	2
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties/k:lng/k:type	string	"number"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:properties/k:lng/k:format	string	"float"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:properties/k:position/k:type	string	"object"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:markers/k:items/k:type	string	"object"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:type	string	"object"
+//k:paths/k:~1admin~1clients~1markers/k:get/k:security	array	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients~1markers/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients~1{client}	object	3
+//k:paths/k:~1admin~1clients~1{client}/k:get	object	7
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:tags	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:summary	string	"Detalle de cliente"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:description	string	"Muestra detalle de cliente. Si se envía Accept: application/json retorna payload completo."
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:operationId	string	"201d2e2e12b03b8808bfcaa74d6b8df6"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters/i:0/k:name	string	"client"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:responses	object	2
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:responses/k:200/k:description	string	"Detalle HTML o JSON"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:responses/k:404	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:responses/k:404/k:description	string	"Cliente no encontrado"
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:security	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients~1{client}/k:put	object	8
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:tags	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:summary	string	"Actualizar cliente (PUT)"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:description	string	"Actualiza un cliente existente."
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:operationId	string	"5652a912be2d59437e00fa9490f07c1d"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters/i:0/k:name	string	"client"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:requestBody	object	2
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:requestBody/k:required	boolean	true
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:requestBody/k:content	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:requestBody/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:requestBody/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:requestBody/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ClientPayload"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses	object	3
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:200	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:200/k:description	string	"Cliente actualizado (modo JSON)"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:302	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:302/k:description	string	"Redirección (modo HTML)"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:422	object	2
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:422/k:content	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:security	array	2
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:security/i:1	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:put/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1admin~1clients~1{client}/k:patch	object	8
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:tags	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:summary	string	"Actualizar cliente (PATCH)"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:description	string	"Actualiza parcialmente un cliente."
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:operationId	string	"57e1566271256d9499f1e634548aa6ed"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters	array	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters/i:0/k:name	string	"client"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:requestBody	object	2
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:requestBody/k:required	boolean	true
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:requestBody/k:content	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:requestBody/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:requestBody/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:requestBody/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ClientPayload"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:responses	object	2
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:responses/k:200	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:responses/k:200/k:description	string	"Cliente actualizado (modo JSON)"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:responses/k:302	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:responses/k:302/k:description	string	"Redirección (modo HTML)"
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:security	array	2
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:security/i:1	object	1
+//k:paths/k:~1admin~1clients~1{client}/k:patch/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1admin~1projects	object	2
+//k:paths/k:~1admin~1projects/k:get	object	5
+//k:paths/k:~1admin~1projects/k:get/k:tags	array	1
+//k:paths/k:~1admin~1projects/k:get/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects/k:get/k:summary	string	"Listado de proyectos"
+//k:paths/k:~1admin~1projects/k:get/k:operationId	string	"17e570be2ede03f14bf61541817db21d"
+//k:paths/k:~1admin~1projects/k:get/k:responses	object	2
+//k:paths/k:~1admin~1projects/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1projects/k:get/k:responses/k:200/k:description	string	"Vista HTML de proyectos"
+//k:paths/k:~1admin~1projects/k:get/k:responses/k:403	object	1
+//k:paths/k:~1admin~1projects/k:get/k:responses/k:403/k:description	string	"Sin permisos"
+//k:paths/k:~1admin~1projects/k:get/k:security	array	1
+//k:paths/k:~1admin~1projects/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects/k:post	object	7
+//k:paths/k:~1admin~1projects/k:post/k:tags	array	1
+//k:paths/k:~1admin~1projects/k:post/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects/k:post/k:summary	string	"Crear proyecto"
+//k:paths/k:~1admin~1projects/k:post/k:description	string	"Crea un nuevo proyecto ligado a un cliente."
+//k:paths/k:~1admin~1projects/k:post/k:operationId	string	"f551ca98fca0835b6f562fada10c98c7"
+//k:paths/k:~1admin~1projects/k:post/k:requestBody	object	2
+//k:paths/k:~1admin~1projects/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1admin~1projects/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1admin~1projects/k:post/k:requestBody/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1projects/k:post/k:requestBody/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1projects/k:post/k:requestBody/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ProjectPayload"
+//k:paths/k:~1admin~1projects/k:post/k:responses	object	3
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200	object	2
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:description	string	"Proyecto creado (modo JSON)"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema	object	2
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties	object	2
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:message	object	2
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:message/k:type	string	"string"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:message/k:example	string	"Proyecto creado exitosamente"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:project	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:project/k:$ref	string	"#/components/schemas/ProjectResource"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:200/k:content/k:application~1json/k:schema/k:type	string	"object"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:302	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:302/k:description	string	"Redirección a listado (modo HTML)"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:422	object	2
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:422/k:content	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1projects/k:post/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1admin~1projects/k:post/k:security	array	2
+//k:paths/k:~1admin~1projects/k:post/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects/k:post/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects/k:post/k:security/i:1	object	1
+//k:paths/k:~1admin~1projects/k:post/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1admin~1projects~1{project}	object	3
+//k:paths/k:~1admin~1projects~1{project}/k:get	object	7
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:tags	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:summary	string	"Detalle de proyecto"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:description	string	"Retorna JSON con detalle extendido cuando se solicita como JSON."
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:operationId	string	"464f1b5cf887d46540a8d0ada802d10c"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters/i:0/k:name	string	"project"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:responses	object	2
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:responses/k:200/k:description	string	"Detalle JSON o redirección HTML"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:responses/k:404	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:responses/k:404/k:description	string	"Proyecto no encontrado"
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:security	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects~1{project}/k:put	object	7
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:tags	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:summary	string	"Actualizar proyecto (PUT)"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:operationId	string	"3f6c7ca76c8ce2a9325a7f57a5a70548"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters/i:0/k:name	string	"project"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:requestBody	object	2
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:requestBody/k:required	boolean	true
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:requestBody/k:content	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:requestBody/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:requestBody/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:requestBody/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ProjectPayload"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses	object	3
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:200	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:200/k:description	string	"Proyecto actualizado (modo JSON)"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:302	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:302/k:description	string	"Redirección (modo HTML)"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:422	object	2
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:422/k:content	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:security	array	2
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:security/i:1	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:put/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1admin~1projects~1{project}/k:patch	object	7
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:tags	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:summary	string	"Actualizar proyecto (PATCH)"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:operationId	string	"2553237c3a68db41f21b8c7b82bc0cc9"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters	array	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters/i:0/k:name	string	"project"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:requestBody	object	2
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:requestBody/k:required	boolean	true
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:requestBody/k:content	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:requestBody/k:content/k:application~1json	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:requestBody/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:requestBody/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ProjectPayload"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:responses	object	2
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:responses/k:200	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:responses/k:200/k:description	string	"Proyecto actualizado (modo JSON)"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:responses/k:302	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:responses/k:302/k:description	string	"Redirección (modo HTML)"
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:security	array	2
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:security/i:1	object	1
+//k:paths/k:~1admin~1projects~1{project}/k:patch/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1admin~1clients~1create	object	1
+//k:paths/k:~1admin~1clients~1create/k:get	object	5
+//k:paths/k:~1admin~1clients~1create/k:get/k:tags	array	1
+//k:paths/k:~1admin~1clients~1create/k:get/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients~1create/k:get/k:summary	string	"Formulario de creación de cliente"
+//k:paths/k:~1admin~1clients~1create/k:get/k:operationId	string	"f412377d1244b88ad70735c7ed5c03d8"
+//k:paths/k:~1admin~1clients~1create/k:get/k:responses	object	2
+//k:paths/k:~1admin~1clients~1create/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1clients~1create/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1admin~1clients~1create/k:get/k:responses/k:403	object	1
+//k:paths/k:~1admin~1clients~1create/k:get/k:responses/k:403/k:description	string	"Sin permisos"
+//k:paths/k:~1admin~1clients~1create/k:get/k:security	array	1
+//k:paths/k:~1admin~1clients~1create/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients~1create/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1clients~1{client}~1edit	object	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get	object	6
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:tags	array	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:tags/i:0	string	"Clients"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:summary	string	"Formulario de edición de cliente"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:operationId	string	"6ed91043e2dde1a8291a160a1b40a090"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters	array	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters/i:0/k:name	string	"client"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:responses	object	2
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:responses/k:404	object	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:responses/k:404/k:description	string	"Cliente no encontrado"
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:security	array	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1clients~1{client}~1edit/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects~1create	object	1
+//k:paths/k:~1admin~1projects~1create/k:get	object	5
+//k:paths/k:~1admin~1projects~1create/k:get/k:tags	array	1
+//k:paths/k:~1admin~1projects~1create/k:get/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects~1create/k:get/k:summary	string	"Formulario de creación de proyecto"
+//k:paths/k:~1admin~1projects~1create/k:get/k:operationId	string	"63ba8124ef311e98f2d17cd0c1f6215d"
+//k:paths/k:~1admin~1projects~1create/k:get/k:responses	object	2
+//k:paths/k:~1admin~1projects~1create/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1projects~1create/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1admin~1projects~1create/k:get/k:responses/k:403	object	1
+//k:paths/k:~1admin~1projects~1create/k:get/k:responses/k:403/k:description	string	"Sin permisos"
+//k:paths/k:~1admin~1projects~1create/k:get/k:security	array	1
+//k:paths/k:~1admin~1projects~1create/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects~1create/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1admin~1projects~1{project}~1edit	object	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get	object	6
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:tags	array	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:tags/i:0	string	"Projects"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:summary	string	"Formulario de edición de proyecto"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:operationId	string	"e48761e2a0931375c8f27f5b74685777"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters	array	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters/i:0/k:name	string	"project"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:responses	object	2
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:responses/k:200	object	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:responses/k:404	object	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:responses/k:404/k:description	string	"Proyecto no encontrado"
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:security	array	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:security/i:0	object	1
+//k:paths/k:~1admin~1projects~1{project}~1edit/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1forgot-password	object	2
+//k:paths/k:~1forgot-password/k:get	object	4
+//k:paths/k:~1forgot-password/k:get/k:tags	array	1
+//k:paths/k:~1forgot-password/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1forgot-password/k:get/k:summary	string	"Formulario para solicitar recuperación de contraseña"
+//k:paths/k:~1forgot-password/k:get/k:operationId	string	"c1be60f9fb000e70c344c832c095d839"
+//k:paths/k:~1forgot-password/k:get/k:responses	object	1
+//k:paths/k:~1forgot-password/k:get/k:responses/k:200	object	1
+//k:paths/k:~1forgot-password/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1forgot-password/k:post	object	5
+//k:paths/k:~1forgot-password/k:post/k:tags	array	1
+//k:paths/k:~1forgot-password/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1forgot-password/k:post/k:summary	string	"Enviar enlace de recuperación de contraseña"
+//k:paths/k:~1forgot-password/k:post/k:operationId	string	"69b80dea593d9fcd14cf4eabfb21ab35"
+//k:paths/k:~1forgot-password/k:post/k:requestBody	object	2
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	1
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"email"
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	1
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email	object	3
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:type	string	"string"
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:format	string	"email"
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:example	string	"admin@ethos.com"
+//k:paths/k:~1forgot-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1forgot-password/k:post/k:responses	object	2
+//k:paths/k:~1forgot-password/k:post/k:responses/k:302	object	1
+//k:paths/k:~1forgot-password/k:post/k:responses/k:302/k:description	string	"Redirección con estado"
+//k:paths/k:~1forgot-password/k:post/k:responses/k:422	object	1
+//k:paths/k:~1forgot-password/k:post/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1reset-password~1{token}	object	1
+//k:paths/k:~1reset-password~1{token}/k:get	object	5
+//k:paths/k:~1reset-password~1{token}/k:get/k:tags	array	1
+//k:paths/k:~1reset-password~1{token}/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1reset-password~1{token}/k:get/k:summary	string	"Formulario de restablecimiento de contraseña"
+//k:paths/k:~1reset-password~1{token}/k:get/k:operationId	string	"30259ec2bdbcdf384deb4c3be53442e8"
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters	array	1
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters/i:0/k:name	string	"token"
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1reset-password~1{token}/k:get/k:parameters/i:0/k:schema/k:type	string	"string"
+//k:paths/k:~1reset-password~1{token}/k:get/k:responses	object	1
+//k:paths/k:~1reset-password~1{token}/k:get/k:responses/k:200	object	1
+//k:paths/k:~1reset-password~1{token}/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1sanctum~1csrf-cookie	object	1
+//k:paths/k:~1sanctum~1csrf-cookie/k:get	object	5
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:tags	array	1
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:tags/i:0	string	"API"
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:summary	string	"Obtener cookie CSRF para Sanctum"
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:description	string	"Inicializa cookies XSRF-TOKEN y laravel_session para clientes SPA."
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:operationId	string	"9126dd1b197be273388c8ed607cb42ee"
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:responses	object	1
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:responses/k:204	object	1
+//k:paths/k:~1sanctum~1csrf-cookie/k:get/k:responses/k:204/k:description	string	"Cookie CSRF emitida"
+//k:paths/k:~1reset-password	object	1
+//k:paths/k:~1reset-password/k:post	object	5
+//k:paths/k:~1reset-password/k:post/k:tags	array	1
+//k:paths/k:~1reset-password/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1reset-password/k:post/k:summary	string	"Restablecer contraseña"
+//k:paths/k:~1reset-password/k:post/k:operationId	string	"800cc882ed16953b6753361b44dc78b7"
+//k:paths/k:~1reset-password/k:post/k:requestBody	object	2
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	4
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"token"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:1	string	"email"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:2	string	"password"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:3	string	"password_confirmation"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	4
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:token	object	1
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:token/k:type	string	"string"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email	object	2
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:type	string	"string"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:format	string	"email"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password	object	2
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:type	string	"string"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:format	string	"password"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation	object	2
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:type	string	"string"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:format	string	"password"
+//k:paths/k:~1reset-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1reset-password/k:post/k:responses	object	2
+//k:paths/k:~1reset-password/k:post/k:responses/k:302	object	1
+//k:paths/k:~1reset-password/k:post/k:responses/k:302/k:description	string	"Redirección tras reset"
+//k:paths/k:~1reset-password/k:post/k:responses/k:422	object	1
+//k:paths/k:~1reset-password/k:post/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1verify-email	object	1
+//k:paths/k:~1verify-email/k:get	object	5
+//k:paths/k:~1verify-email/k:get/k:tags	array	1
+//k:paths/k:~1verify-email/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1verify-email/k:get/k:summary	string	"Aviso de verificación de email"
+//k:paths/k:~1verify-email/k:get/k:operationId	string	"65bb526a1c1feb532b3eca1ea966feca"
+//k:paths/k:~1verify-email/k:get/k:responses	object	2
+//k:paths/k:~1verify-email/k:get/k:responses/k:200	object	1
+//k:paths/k:~1verify-email/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1verify-email/k:get/k:responses/k:401	object	1
+//k:paths/k:~1verify-email/k:get/k:responses/k:401/k:description	string	"No autenticado"
+//k:paths/k:~1verify-email/k:get/k:security	array	1
+//k:paths/k:~1verify-email/k:get/k:security/i:0	object	1
+//k:paths/k:~1verify-email/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1verify-email~1{id}~1{hash}	object	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get	object	6
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:tags	array	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:summary	string	"Verificar email de usuario"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:operationId	string	"4d6283b2650708a49c4e9a4be153fb14"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters	array	2
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:0	object	4
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:0/k:name	string	"id"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:0/k:in	string	"path"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:0/k:required	boolean	true
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:0/k:schema	object	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:0/k:schema/k:type	string	"integer"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:1	object	4
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:1/k:name	string	"hash"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:1/k:in	string	"path"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:1/k:required	boolean	true
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:1/k:schema	object	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:parameters/i:1/k:schema/k:type	string	"string"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:responses	object	2
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:responses/k:302	object	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:responses/k:302/k:description	string	"Email verificado y redirección"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:responses/k:403	object	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:responses/k:403/k:description	string	"Hash o firma inválida"
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:security	array	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:security/i:0	object	1
+//k:paths/k:~1verify-email~1{id}~1{hash}/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1email~1verification-notification	object	1
+//k:paths/k:~1email~1verification-notification/k:post	object	5
+//k:paths/k:~1email~1verification-notification/k:post/k:tags	array	1
+//k:paths/k:~1email~1verification-notification/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1email~1verification-notification/k:post/k:summary	string	"Reenviar notificación de verificación"
+//k:paths/k:~1email~1verification-notification/k:post/k:operationId	string	"81c4e36318a1f451361c712b6c0b50f2"
+//k:paths/k:~1email~1verification-notification/k:post/k:responses	object	2
+//k:paths/k:~1email~1verification-notification/k:post/k:responses/k:302	object	1
+//k:paths/k:~1email~1verification-notification/k:post/k:responses/k:302/k:description	string	"Notificación reenviada"
+//k:paths/k:~1email~1verification-notification/k:post/k:responses/k:401	object	1
+//k:paths/k:~1email~1verification-notification/k:post/k:responses/k:401/k:description	string	"No autenticado"
+//k:paths/k:~1email~1verification-notification/k:post/k:security	array	2
+//k:paths/k:~1email~1verification-notification/k:post/k:security/i:0	object	1
+//k:paths/k:~1email~1verification-notification/k:post/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1email~1verification-notification/k:post/k:security/i:1	object	1
+//k:paths/k:~1email~1verification-notification/k:post/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1confirm-password	object	2
+//k:paths/k:~1confirm-password/k:get	object	5
+//k:paths/k:~1confirm-password/k:get/k:tags	array	1
+//k:paths/k:~1confirm-password/k:get/k:tags/i:0	string	"Auth"
+//k:paths/k:~1confirm-password/k:get/k:summary	string	"Formulario de confirmación de contraseña"
+//k:paths/k:~1confirm-password/k:get/k:operationId	string	"4c0c033fd268fa42e990e4dfb9b60dc6"
+//k:paths/k:~1confirm-password/k:get/k:responses	object	1
+//k:paths/k:~1confirm-password/k:get/k:responses/k:200	object	1
+//k:paths/k:~1confirm-password/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1confirm-password/k:get/k:security	array	1
+//k:paths/k:~1confirm-password/k:get/k:security/i:0	object	1
+//k:paths/k:~1confirm-password/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1confirm-password/k:post	object	6
+//k:paths/k:~1confirm-password/k:post/k:tags	array	1
+//k:paths/k:~1confirm-password/k:post/k:tags/i:0	string	"Auth"
+//k:paths/k:~1confirm-password/k:post/k:summary	string	"Confirmar contraseña actual"
+//k:paths/k:~1confirm-password/k:post/k:operationId	string	"edb279843d54ced071c160ebe8e3886a"
+//k:paths/k:~1confirm-password/k:post/k:requestBody	object	2
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:required	boolean	true
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content	object	1
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	1
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"password"
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	1
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password	object	2
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:type	string	"string"
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:format	string	"password"
+//k:paths/k:~1confirm-password/k:post/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1confirm-password/k:post/k:responses	object	2
+//k:paths/k:~1confirm-password/k:post/k:responses/k:302	object	1
+//k:paths/k:~1confirm-password/k:post/k:responses/k:302/k:description	string	"Contraseña confirmada"
+//k:paths/k:~1confirm-password/k:post/k:responses/k:422	object	1
+//k:paths/k:~1confirm-password/k:post/k:responses/k:422/k:description	string	"Contraseña inválida"
+//k:paths/k:~1confirm-password/k:post/k:security	array	2
+//k:paths/k:~1confirm-password/k:post/k:security/i:0	object	1
+//k:paths/k:~1confirm-password/k:post/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1confirm-password/k:post/k:security/i:1	object	1
+//k:paths/k:~1confirm-password/k:post/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1password	object	1
+//k:paths/k:~1password/k:put	object	6
+//k:paths/k:~1password/k:put/k:tags	array	1
+//k:paths/k:~1password/k:put/k:tags/i:0	string	"Auth"
+//k:paths/k:~1password/k:put/k:summary	string	"Actualizar contraseña de usuario autenticado"
+//k:paths/k:~1password/k:put/k:operationId	string	"05fca4787101d3e1b14eb2870e74d14e"
+//k:paths/k:~1password/k:put/k:requestBody	object	2
+//k:paths/k:~1password/k:put/k:requestBody/k:required	boolean	true
+//k:paths/k:~1password/k:put/k:requestBody/k:content	object	1
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	3
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"current_password"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:1	string	"password"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:2	string	"password_confirmation"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	3
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:current_password	object	2
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:current_password/k:type	string	"string"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:current_password/k:format	string	"password"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password	object	2
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:type	string	"string"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:format	string	"password"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation	object	2
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:type	string	"string"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password_confirmation/k:format	string	"password"
+//k:paths/k:~1password/k:put/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1password/k:put/k:responses	object	2
+//k:paths/k:~1password/k:put/k:responses/k:302	object	1
+//k:paths/k:~1password/k:put/k:responses/k:302/k:description	string	"Contraseña actualizada"
+//k:paths/k:~1password/k:put/k:responses/k:422	object	1
+//k:paths/k:~1password/k:put/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1password/k:put/k:security	array	2
+//k:paths/k:~1password/k:put/k:security/i:0	object	1
+//k:paths/k:~1password/k:put/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1password/k:put/k:security/i:1	object	1
+//k:paths/k:~1password/k:put/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1profile	object	3
+//k:paths/k:~1profile/k:get	object	6
+//k:paths/k:~1profile/k:get/k:tags	array	1
+//k:paths/k:~1profile/k:get/k:tags/i:0	string	"Profile"
+//k:paths/k:~1profile/k:get/k:summary	string	"Formulario de perfil"
+//k:paths/k:~1profile/k:get/k:description	string	"Muestra pantalla de edición del perfil autenticado."
+//k:paths/k:~1profile/k:get/k:operationId	string	"c276dd4e3d8e977106602d8a17de8041"
+//k:paths/k:~1profile/k:get/k:responses	object	2
+//k:paths/k:~1profile/k:get/k:responses/k:200	object	1
+//k:paths/k:~1profile/k:get/k:responses/k:200/k:description	string	"Vista HTML"
+//k:paths/k:~1profile/k:get/k:responses/k:401	object	1
+//k:paths/k:~1profile/k:get/k:responses/k:401/k:description	string	"No autenticado"
+//k:paths/k:~1profile/k:get/k:security	array	1
+//k:paths/k:~1profile/k:get/k:security/i:0	object	1
+//k:paths/k:~1profile/k:get/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1profile/k:delete	object	7
+//k:paths/k:~1profile/k:delete/k:tags	array	1
+//k:paths/k:~1profile/k:delete/k:tags/i:0	string	"Profile"
+//k:paths/k:~1profile/k:delete/k:summary	string	"Eliminar cuenta autenticada"
+//k:paths/k:~1profile/k:delete/k:description	string	"Requiere password actual para confirmar eliminación."
+//k:paths/k:~1profile/k:delete/k:operationId	string	"635e7e4b86475d4f5fa47b8b6aac3af9"
+//k:paths/k:~1profile/k:delete/k:requestBody	object	2
+//k:paths/k:~1profile/k:delete/k:requestBody/k:required	boolean	true
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content	object	1
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	1
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"password"
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	1
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password	object	3
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:type	string	"string"
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:format	string	"password"
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:password/k:example	string	"password"
+//k:paths/k:~1profile/k:delete/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1profile/k:delete/k:responses	object	2
+//k:paths/k:~1profile/k:delete/k:responses/k:302	object	1
+//k:paths/k:~1profile/k:delete/k:responses/k:302/k:description	string	"Redirección a / tras eliminar cuenta"
+//k:paths/k:~1profile/k:delete/k:responses/k:422	object	1
+//k:paths/k:~1profile/k:delete/k:responses/k:422/k:description	string	"Password inválida"
+//k:paths/k:~1profile/k:delete/k:security	array	2
+//k:paths/k:~1profile/k:delete/k:security/i:0	object	1
+//k:paths/k:~1profile/k:delete/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1profile/k:delete/k:security/i:1	object	1
+//k:paths/k:~1profile/k:delete/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1profile/k:patch	object	6
+//k:paths/k:~1profile/k:patch/k:tags	array	1
+//k:paths/k:~1profile/k:patch/k:tags/i:0	string	"Profile"
+//k:paths/k:~1profile/k:patch/k:summary	string	"Actualizar perfil de usuario"
+//k:paths/k:~1profile/k:patch/k:operationId	string	"2968807d1ef1f20602e96ecedd137de5"
+//k:paths/k:~1profile/k:patch/k:requestBody	object	2
+//k:paths/k:~1profile/k:patch/k:requestBody/k:required	boolean	true
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content	object	1
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded	object	1
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema	object	3
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required	array	2
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:0	string	"name"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:required/i:1	string	"email"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties	object	2
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:name	object	2
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:name/k:type	string	"string"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:name/k:example	string	"Admin"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email	object	3
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:type	string	"string"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:format	string	"email"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:properties/k:email/k:example	string	"admin@ethos.com"
+//k:paths/k:~1profile/k:patch/k:requestBody/k:content/k:application~1x-www-form-urlencoded/k:schema/k:type	string	"object"
+//k:paths/k:~1profile/k:patch/k:responses	object	2
+//k:paths/k:~1profile/k:patch/k:responses/k:302	object	1
+//k:paths/k:~1profile/k:patch/k:responses/k:302/k:description	string	"Redirección a /profile con estado profile-updated"
+//k:paths/k:~1profile/k:patch/k:responses/k:422	object	2
+//k:paths/k:~1profile/k:patch/k:responses/k:422/k:description	string	"Validación fallida"
+//k:paths/k:~1profile/k:patch/k:responses/k:422/k:content	object	1
+//k:paths/k:~1profile/k:patch/k:responses/k:422/k:content/k:application~1json	object	1
+//k:paths/k:~1profile/k:patch/k:responses/k:422/k:content/k:application~1json/k:schema	object	1
+//k:paths/k:~1profile/k:patch/k:responses/k:422/k:content/k:application~1json/k:schema/k:$ref	string	"#/components/schemas/ValidationErrorResponse"
+//k:paths/k:~1profile/k:patch/k:security	array	2
+//k:paths/k:~1profile/k:patch/k:security/i:0	object	1
+//k:paths/k:~1profile/k:patch/k:security/i:0/k:sessionAuth	array	0
+//k:paths/k:~1profile/k:patch/k:security/i:1	object	1
+//k:paths/k:~1profile/k:patch/k:security/i:1/k:csrfHeader	array	0
+//k:paths/k:~1api~1user	object	1
+//k:paths/k:~1api~1user/k:get	object	6
+//k:paths/k:~1api~1user/k:get/k:tags	array	1
+//k:paths/k:~1api~1user/k:get/k:tags/i:0	string	"API"
+//k:paths/k:~1api~1user/k:get/k:summary	string	"Obtener usuario autenticado (Sanctum)"
+//k:paths/k:~1api~1user/k:get/k:description	string	"Endpoint API protegido por auth:sanctum."
+//k:paths/k:~1api~1user/k:get/k:operationId	string	"de4defb071def7c66197627e1f026fb7"
+//k:paths/k:~1api~1user/k:get/k:responses	object	2
+//k:paths/k:~1api~1user/k:get/k:responses/k:200	object	2
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:description	string	"Usuario autenticado"
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content	object	1
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json	object	1
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema	object	2
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties	object	3
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:id	object	2
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:id/k:type	string	"integer"
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:id/k:example	number	1
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:name	object	2
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:name/k:type	string	"string"
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:name/k:example	string	"Admin"
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:email	object	2
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:email/k:type	string	"string"
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:properties/k:email/k:example	string	"admin@ethos.com"
+//k:paths/k:~1api~1user/k:get/k:responses/k:200/k:content/k:application~1json/k:schema/k:type	string	"object"
+//k:paths/k:~1api~1user/k:get/k:responses/k:401	object	1
+//k:paths/k:~1api~1user/k:get/k:responses/k:401/k:description	string	"No autenticado"
+//k:paths/k:~1api~1user/k:get/k:security	array	1
+//k:paths/k:~1api~1user/k:get/k:security/i:0	object	1
+//k:paths/k:~1api~1user/k:get/k:security/i:0/k:sanctumBearer	array	0
+//k:components	object	2
+//k:components/k:schemas	object	8
+//k:components/k:schemas/k:MessageResponse	object	2
+//k:components/k:schemas/k:MessageResponse/k:properties	object	1
+//k:components/k:schemas/k:MessageResponse/k:properties/k:message	object	2
+//k:components/k:schemas/k:MessageResponse/k:properties/k:message/k:type	string	"string"
+//k:components/k:schemas/k:MessageResponse/k:properties/k:message/k:example	string	"Operación completada exitosamente"
+//k:components/k:schemas/k:MessageResponse/k:type	string	"object"
+//k:components/k:schemas/k:ValidationErrorResponse	object	2
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties	object	2
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:message	object	2
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:message/k:type	string	"string"
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:message/k:example	string	"The given data was invalid."
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors	object	2
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors/k:type	string	"object"
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors/k:additionalProperties	object	3
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors/k:additionalProperties/k:schema	string	"ApiDocumentation"
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors/k:additionalProperties/k:type	string	"array"
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors/k:additionalProperties/k:items	object	1
+//k:components/k:schemas/k:ValidationErrorResponse/k:properties/k:errors/k:additionalProperties/k:items/k:type	string	"string"
+//k:components/k:schemas/k:ValidationErrorResponse/k:type	string	"object"
+//k:components/k:schemas/k:ApiDocumentation	object	2
+//k:components/k:schemas/k:ApiDocumentation/k:type	string	"array"
+//k:components/k:schemas/k:ApiDocumentation/k:items	object	1
+//k:components/k:schemas/k:ApiDocumentation/k:items/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource	object	2
+//k:components/k:schemas/k:ClientResource/k:properties	object	15
+//k:components/k:schemas/k:ClientResource/k:properties/k:id	object	2
+//k:components/k:schemas/k:ClientResource/k:properties/k:id/k:type	string	"integer"
+//k:components/k:schemas/k:ClientResource/k:properties/k:id/k:example	number	10
+//k:components/k:schemas/k:ClientResource/k:properties/k:name	object	2
+//k:components/k:schemas/k:ClientResource/k:properties/k:name/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:name/k:example	string	"Acme Corp"
+//k:components/k:schemas/k:ClientResource/k:properties/k:industry	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:industry/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:industry/k:example	string	"Manufactura"
+//k:components/k:schemas/k:ClientResource/k:properties/k:industry/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_name	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_name/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_name/k:example	string	"María Pérez"
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_name/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_email	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_email/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_email/k:example	string	"maria@acme.com"
+//k:components/k:schemas/k:ClientResource/k:properties/k:primary_contact_email/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:phone	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:phone/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:phone/k:example	string	"+58-412-0000000"
+//k:components/k:schemas/k:ClientResource/k:properties/k:phone/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:notes	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:notes/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:notes/k:example	string	"Cliente estratégico."
+//k:components/k:schemas/k:ClientResource/k:properties/k:notes/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:address	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:address/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:address/k:example	string	"Av. Libertador"
+//k:components/k:schemas/k:ClientResource/k:properties/k:address/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:city	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:city/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:city/k:example	string	"Caracas"
+//k:components/k:schemas/k:ClientResource/k:properties/k:city/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:state	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:state/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:state/k:example	string	"Distrito Capital"
+//k:components/k:schemas/k:ClientResource/k:properties/k:state/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:country	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:country/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:country/k:example	string	"Venezuela"
+//k:components/k:schemas/k:ClientResource/k:properties/k:country/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:municipality	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:municipality/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:municipality/k:example	string	"Libertador"
+//k:components/k:schemas/k:ClientResource/k:properties/k:municipality/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:parish	object	3
+//k:components/k:schemas/k:ClientResource/k:properties/k:parish/k:type	string	"string"
+//k:components/k:schemas/k:ClientResource/k:properties/k:parish/k:example	string	"Altagracia"
+//k:components/k:schemas/k:ClientResource/k:properties/k:parish/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:latitude	object	4
+//k:components/k:schemas/k:ClientResource/k:properties/k:latitude/k:type	string	"number"
+//k:components/k:schemas/k:ClientResource/k:properties/k:latitude/k:format	string	"float"
+//k:components/k:schemas/k:ClientResource/k:properties/k:latitude/k:example	number	10.5022
+//k:components/k:schemas/k:ClientResource/k:properties/k:latitude/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:properties/k:longitude	object	4
+//k:components/k:schemas/k:ClientResource/k:properties/k:longitude/k:type	string	"number"
+//k:components/k:schemas/k:ClientResource/k:properties/k:longitude/k:format	string	"float"
+//k:components/k:schemas/k:ClientResource/k:properties/k:longitude/k:example	number	-66.9146
+//k:components/k:schemas/k:ClientResource/k:properties/k:longitude/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientResource/k:type	string	"object"
+//k:components/k:schemas/k:ClientPayload	object	3
+//k:components/k:schemas/k:ClientPayload/k:required	array	1
+//k:components/k:schemas/k:ClientPayload/k:required/i:0	string	"name"
+//k:components/k:schemas/k:ClientPayload/k:properties	object	14
+//k:components/k:schemas/k:ClientPayload/k:properties/k:name	object	3
+//k:components/k:schemas/k:ClientPayload/k:properties/k:name/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:name/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:name/k:example	string	"Acme Corp"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:industry	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:industry/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:industry/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:industry/k:example	string	"Manufactura"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:industry/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_name	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_name/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_name/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_name/k:example	string	"María Pérez"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_name/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_email	object	5
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_email/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_email/k:format	string	"email"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_email/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_email/k:example	string	"maria@acme.com"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:primary_contact_email/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:phone	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:phone/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:phone/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:phone/k:example	string	"+58-412-0000000"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:phone/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:notes	object	3
+//k:components/k:schemas/k:ClientPayload/k:properties/k:notes/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:notes/k:example	string	"Notas relevantes"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:notes/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:address	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:address/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:address/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:address/k:example	string	"Av. Libertador"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:address/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:city	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:city/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:city/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:city/k:example	string	"Caracas"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:city/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:state	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:state/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:state/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:state/k:example	string	"Distrito Capital"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:state/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:country	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:country/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:country/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:country/k:example	string	"Venezuela"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:country/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:municipality	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:municipality/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:municipality/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:municipality/k:example	string	"Libertador"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:municipality/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:parish	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:parish/k:type	string	"string"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:parish/k:maxLength	number	255
+//k:components/k:schemas/k:ClientPayload/k:properties/k:parish/k:example	string	"Altagracia"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:parish/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:latitude	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:latitude/k:type	string	"number"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:latitude/k:format	string	"float"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:latitude/k:example	number	10.5022
+//k:components/k:schemas/k:ClientPayload/k:properties/k:latitude/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:properties/k:longitude	object	4
+//k:components/k:schemas/k:ClientPayload/k:properties/k:longitude/k:type	string	"number"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:longitude/k:format	string	"float"
+//k:components/k:schemas/k:ClientPayload/k:properties/k:longitude/k:example	number	-66.9146
+//k:components/k:schemas/k:ClientPayload/k:properties/k:longitude/k:nullable	boolean	true
+//k:components/k:schemas/k:ClientPayload/k:type	string	"object"
+//k:components/k:schemas/k:ProjectResource	object	2
+//k:components/k:schemas/k:ProjectResource/k:properties	object	20
+//k:components/k:schemas/k:ProjectResource/k:properties/k:id	object	2
+//k:components/k:schemas/k:ProjectResource/k:properties/k:id/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:id/k:example	number	25
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_id	object	2
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_id/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_id/k:example	number	10
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_name	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_name/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_name/k:example	string	"Acme Corp"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:client_name/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:title	object	2
+//k:components/k:schemas/k:ProjectResource/k:properties/k:title/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:title/k:example	string	"Transformación de procesos"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:description	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:description/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:description/k:example	string	"Proyecto de rediseño"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:description/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:status	object	2
+//k:components/k:schemas/k:ProjectResource/k:properties/k:status/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:status/k:example	string	"en_diseno"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:type	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:type/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:type/k:example	string	"consultoria"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:type/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:subtype	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:subtype/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:subtype/k:example	string	"auditoria_fiscal"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:subtype/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:complexity	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:complexity/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:complexity/k:example	string	"media"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:complexity/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:urgency	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:urgency/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:urgency/k:example	string	"alta"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:urgency/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:estimated_budget	object	4
+//k:components/k:schemas/k:ProjectResource/k:properties/k:estimated_budget/k:type	string	"number"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:estimated_budget/k:format	string	"float"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:estimated_budget/k:example	number	12000
+//k:components/k:schemas/k:ProjectResource/k:properties/k:estimated_budget/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:final_budget	object	4
+//k:components/k:schemas/k:ProjectResource/k:properties/k:final_budget/k:type	string	"number"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:final_budget/k:format	string	"float"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:final_budget/k:example	number	14000
+//k:components/k:schemas/k:ProjectResource/k:properties/k:final_budget/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:currency	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:currency/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:currency/k:example	string	"USD"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:currency/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_score	object	4
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_score/k:type	string	"number"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_score/k:format	string	"float"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_score/k:example	number	8.5
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_score/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_level	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_level/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_level/k:example	string	"alta"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:priority_level/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:assigned_to_id	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:assigned_to_id/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:assigned_to_id/k:example	number	2
+//k:components/k:schemas/k:ProjectResource/k:properties/k:assigned_to_id/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:validated_by_id	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:validated_by_id/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:validated_by_id/k:example	number	1
+//k:components/k:schemas/k:ProjectResource/k:properties/k:validated_by_id/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:progress	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:progress/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:progress/k:example	number	45
+//k:components/k:schemas/k:ProjectResource/k:properties/k:progress/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:starts_at_raw	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:starts_at_raw/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:starts_at_raw/k:example	string	"2026-03-20"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:starts_at_raw/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:properties/k:ends_at_raw	object	3
+//k:components/k:schemas/k:ProjectResource/k:properties/k:ends_at_raw/k:type	string	"string"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:ends_at_raw/k:example	string	"2026-06-20"
+//k:components/k:schemas/k:ProjectResource/k:properties/k:ends_at_raw/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectResource/k:type	string	"object"
+//k:components/k:schemas/k:ProjectPayload	object	3
+//k:components/k:schemas/k:ProjectPayload/k:required	array	3
+//k:components/k:schemas/k:ProjectPayload/k:required/i:0	string	"client_id"
+//k:components/k:schemas/k:ProjectPayload/k:required/i:1	string	"title"
+//k:components/k:schemas/k:ProjectPayload/k:required/i:2	string	"status"
+//k:components/k:schemas/k:ProjectPayload/k:properties	object	19
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:client_id	object	2
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:client_id/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:client_id/k:example	number	10
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:title	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:title/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:title/k:maxLength	number	255
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:title/k:example	string	"Transformación de procesos"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:description	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:description/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:description/k:example	string	"Detalle del proyecto"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:description/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status	object	2
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum	array	9
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:0	string	"capturado"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:1	string	"clasificacion_pendiente"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:2	string	"priorizado"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:3	string	"asignacion_lider_pendiente"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:4	string	"en_diagnostico"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:5	string	"en_diseno"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:6	string	"en_implementacion"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:7	string	"en_seguimiento"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:status/k:enum/i:8	string	"cerrado"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum	array	6
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum/i:0	string	"desarrollo_web"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum/i:1	string	"infraestructura"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum/i:2	string	"consultoria"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum/i:3	string	"soporte"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum/i:4	string	"mobile"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:enum/i:5	string	"otro"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:type/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:subtype	object	4
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:subtype/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:subtype/k:maxLength	number	100
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:subtype/k:example	string	"auditoria"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:subtype/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity/k:enum	array	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity/k:enum/i:0	string	"baja"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity/k:enum/i:1	string	"media"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity/k:enum/i:2	string	"alta"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:complexity/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency/k:enum	array	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency/k:enum/i:0	string	"baja"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency/k:enum/i:1	string	"media"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency/k:enum/i:2	string	"alta"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:urgency/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:estimated_budget	object	4
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:estimated_budget/k:type	string	"number"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:estimated_budget/k:format	string	"float"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:estimated_budget/k:example	number	12000
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:estimated_budget/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:final_budget	object	4
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:final_budget/k:type	string	"number"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:final_budget/k:format	string	"float"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:final_budget/k:example	number	14000
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:final_budget/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:currency	object	5
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:currency/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:currency/k:maxLength	number	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:currency/k:minLength	number	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:currency/k:example	string	"USD"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:currency/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score	object	6
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score/k:type	string	"number"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score/k:format	string	"float"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score/k:maximum	number	10
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score/k:minimum	number	1
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score/k:example	number	8.5
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_score/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level/k:enum	array	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level/k:enum/i:0	string	"baja"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level/k:enum/i:1	string	"media"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level/k:enum/i:2	string	"alta"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:priority_level/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:assigned_to	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:assigned_to/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:assigned_to/k:example	number	2
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:assigned_to/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:validated_by	object	3
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:validated_by/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:validated_by/k:example	number	1
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:validated_by/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:progress	object	5
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:progress/k:type	string	"integer"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:progress/k:maximum	number	100
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:progress/k:minimum	number	0
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:progress/k:example	number	45
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:progress/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:starts_at	object	4
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:starts_at/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:starts_at/k:format	string	"date"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:starts_at/k:example	string	"2026-03-20"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:starts_at/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:ends_at	object	4
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:ends_at/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:ends_at/k:format	string	"date"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:ends_at/k:example	string	"2026-06-20"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:ends_at/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:finished_at	object	4
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:finished_at/k:type	string	"string"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:finished_at/k:format	string	"date"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:finished_at/k:example	string	"2026-07-01"
+//k:components/k:schemas/k:ProjectPayload/k:properties/k:finished_at/k:nullable	boolean	true
+//k:components/k:schemas/k:ProjectPayload/k:type	string	"object"
+//k:components/k:schemas/k:SearchResultItem	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties	object	6
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:type	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:type/k:type	string	"string"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:type/k:example	string	"project"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:category	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:category/k:type	string	"string"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:category/k:example	string	"Proyectos"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:title	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:title/k:type	string	"string"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:title/k:example	string	"Transformación de procesos"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:subtitle	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:subtitle/k:type	string	"string"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:subtitle/k:example	string	"Acme Corp"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:url	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:url/k:type	string	"string"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:url/k:example	string	"/admin/projects"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:icon	object	2
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:icon/k:type	string	"string"
+//k:components/k:schemas/k:SearchResultItem/k:properties/k:icon/k:example	string	"ti ti-briefcase-2"
+//k:components/k:schemas/k:SearchResultItem/k:type	string	"object"
+//k:components/k:securitySchemes	object	3
+//k:components/k:securitySchemes/k:sessionAuth	object	4
+//k:components/k:securitySchemes/k:sessionAuth/k:type	string	"apiKey"
+//k:components/k:securitySchemes/k:sessionAuth/k:description	string	"Autenticación por sesión web de Laravel. Para métodos mutables (POST/PUT/PATCH/DELETE) envía también X-CSRF-TOKEN."
+//k:components/k:securitySchemes/k:sessionAuth/k:name	string	"laravel_session"
+//k:components/k:securitySchemes/k:sessionAuth/k:in	string	"cookie"
+//k:components/k:securitySchemes/k:csrfHeader	object	4
+//k:components/k:securitySchemes/k:csrfHeader/k:type	string	"apiKey"
+//k:components/k:securitySchemes/k:csrfHeader/k:description	string	"Token CSRF requerido para peticiones mutables de rutas web protegidas."
+//k:components/k:securitySchemes/k:csrfHeader/k:name	string	"X-CSRF-TOKEN"
+//k:components/k:securitySchemes/k:csrfHeader/k:in	string	"header"
+//k:components/k:securitySchemes/k:sanctumBearer	object	4
+//k:components/k:securitySchemes/k:sanctumBearer/k:type	string	"http"
+//k:components/k:securitySchemes/k:sanctumBearer/k:description	string	"Bearer token para rutas API con auth:sanctum."
+//k:components/k:securitySchemes/k:sanctumBearer/k:bearerFormat	string	"token"
+//k:components/k:securitySchemes/k:sanctumBearer/k:scheme	string	"bearer"
+//k:tags	array	8
+//k:tags/i:0	object	2
+//k:tags/i:0/k:name	string	"General"
+//k:tags/i:0/k:description	string	"General"
+//k:tags/i:1	object	2
+//k:tags/i:1/k:name	string	"Auth"
+//k:tags/i:1/k:description	string	"Auth"
+//k:tags/i:2	object	2
+//k:tags/i:2/k:name	string	"Dashboard"
+//k:tags/i:2/k:description	string	"Dashboard"
+//k:tags/i:3	object	2
+//k:tags/i:3/k:name	string	"Admin Search"
+//k:tags/i:3/k:description	string	"Admin Search"
+//k:tags/i:4	object	2
+//k:tags/i:4/k:name	string	"Clients"
+//k:tags/i:4/k:description	string	"Clients"
+//k:tags/i:5	object	2
+//k:tags/i:5/k:name	string	"Projects"
+//k:tags/i:5/k:description	string	"Projects"
+//k:tags/i:6	object	2
+//k:tags/i:6/k:name	string	"API"
+//k:tags/i:6/k:description	string	"API"
+//k:tags/i:7	object	2
+//k:tags/i:7/k:name	string	"Profile"
+//k:tags/i:7/k:description	string	"Profile"

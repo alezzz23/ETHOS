@@ -1,0 +1,1984 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ETHOS Backend API",
+        "description": "Documentación integral del backend de ETHOS. Incluye endpoints de autenticación, administración, CRM (clientes/proyectos), perfil de usuario y utilidades de API.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost",
+            "description": "Servidor principal de ETHOS"
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "General"
+                ],
+                "summary": "Landing pública de ETHOS",
+                "description": "Entrega la vista principal del sitio sin autenticación.",
+                "operationId": "c2dc0510f0b1b41aaaee77dfedc26732",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML de landing"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Formulario de login",
+                "description": "Muestra el formulario de autenticación para usuarios invitados.",
+                "operationId": "02bae7acbbfe6ec1db88b3158d1e406b",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML de login"
+                    },
+                    "302": {
+                        "description": "Redirección si ya existe sesión"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Autenticar usuario",
+                "description": "Procesa credenciales y abre sesión. Requiere token CSRF.",
+                "operationId": "4434926234c502aea8d3ff701e16c049",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "miguel@ethos.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    },
+                                    "remember": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirección al dashboard al autenticar"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesión",
+                "description": "Cierra la sesión del usuario autenticado.",
+                "operationId": "8834a3779e81e333aa7061147fce2f55",
+                "responses": {
+                    "302": {
+                        "description": "Redirección a /"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/register": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Formulario de registro",
+                "operationId": "43e89caa1a33500b541fd2daf7be9512",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML de registro"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrar usuario",
+                "description": "Registra un nuevo usuario. Requiere token CSRF.",
+                "operationId": "b22015ef1b382910bf558e65e4f6f8cf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Nuevo Usuario"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "nuevo@ethos.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirección tras registro"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/dashboard": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Dashboard administrativo",
+                "description": "Vista principal de métricas y actividad del CRM. Requiere auth, email verificado y permiso admin.access.",
+                "operationId": "5e557469f064e41878190702e5ce82c2",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML del dashboard"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Sin permisos"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/search": {
+            "get": {
+                "tags": [
+                    "Admin Search"
+                ],
+                "summary": "Búsqueda global del panel",
+                "description": "Motor de búsqueda unificada para navegación, clientes y proyectos.",
+                "operationId": "84cca46588cbf1b11383886eb31cb83c",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Texto de búsqueda (2 a 60 caracteres)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "maxLength": 60,
+                            "minLength": 2
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Categoría de búsqueda",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "all",
+                            "enum": [
+                                "all",
+                                "clients",
+                                "projects",
+                                "navigation"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resultados encontrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "query": {
+                                            "type": "string",
+                                            "example": "acme"
+                                        },
+                                        "category": {
+                                            "type": "string",
+                                            "example": "all"
+                                        },
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/SearchResultItem"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Parámetros inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/clients": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Listado de clientes",
+                "description": "Retorna vista HTML con listado paginado de clientes.",
+                "operationId": "5a8c7cbf713d02ceb6d16ed2014f0537",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "403": {
+                        "description": "Sin permisos"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Crear cliente",
+                "description": "Crea cliente nuevo. Soporta respuesta HTML o JSON (si Accept: application/json).",
+                "operationId": "47fb5b8ec0febd8371f16524ed2d2ad5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente creado (modo JSON)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cliente creado exitosamente"
+                                        },
+                                        "client": {
+                                            "$ref": "#/components/schemas/ClientResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "302": {
+                        "description": "Redirección a listado (modo HTML)"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/clients/markers": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Marcadores geográficos de clientes",
+                "description": "Devuelve clientes con coordenadas para visualización en mapa.",
+                "operationId": "7b10349c0291e306a111f397eb6b84e3",
+                "parameters": [
+                    {
+                        "name": "contact_type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "primary",
+                                "secondary"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de marcadores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "markers": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "position": {
+                                                        "properties": {
+                                                            "lat": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                            },
+                                                            "lng": {
+                                                                "type": "number",
+                                                                "format": "float"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/clients/{client}": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Detalle de cliente",
+                "description": "Muestra detalle de cliente. Si se envía Accept: application/json retorna payload completo.",
+                "operationId": "201d2e2e12b03b8808bfcaa74d6b8df6",
+                "parameters": [
+                    {
+                        "name": "client",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle HTML o JSON"
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Actualizar cliente (PUT)",
+                "description": "Actualiza un cliente existente.",
+                "operationId": "5652a912be2d59437e00fa9490f07c1d",
+                "parameters": [
+                    {
+                        "name": "client",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado (modo JSON)"
+                    },
+                    "302": {
+                        "description": "Redirección (modo HTML)"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Actualizar cliente (PATCH)",
+                "description": "Actualiza parcialmente un cliente.",
+                "operationId": "57e1566271256d9499f1e634548aa6ed",
+                "parameters": [
+                    {
+                        "name": "client",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClientPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado (modo JSON)"
+                    },
+                    "302": {
+                        "description": "Redirección (modo HTML)"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/projects": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Listado de proyectos",
+                "operationId": "17e570be2ede03f14bf61541817db21d",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML de proyectos"
+                    },
+                    "403": {
+                        "description": "Sin permisos"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Crear proyecto",
+                "description": "Crea un nuevo proyecto ligado a un cliente.",
+                "operationId": "f551ca98fca0835b6f562fada10c98c7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Proyecto creado (modo JSON)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Proyecto creado exitosamente"
+                                        },
+                                        "project": {
+                                            "$ref": "#/components/schemas/ProjectResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "302": {
+                        "description": "Redirección a listado (modo HTML)"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/projects/{project}": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Detalle de proyecto",
+                "description": "Retorna JSON con detalle extendido cuando se solicita como JSON.",
+                "operationId": "464f1b5cf887d46540a8d0ada802d10c",
+                "parameters": [
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle JSON o redirección HTML"
+                    },
+                    "404": {
+                        "description": "Proyecto no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Actualizar proyecto (PUT)",
+                "operationId": "3f6c7ca76c8ce2a9325a7f57a5a70548",
+                "parameters": [
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Proyecto actualizado (modo JSON)"
+                    },
+                    "302": {
+                        "description": "Redirección (modo HTML)"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Actualizar proyecto (PATCH)",
+                "operationId": "2553237c3a68db41f21b8c7b82bc0cc9",
+                "parameters": [
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProjectPayload"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Proyecto actualizado (modo JSON)"
+                    },
+                    "302": {
+                        "description": "Redirección (modo HTML)"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/clients/create": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Formulario de creación de cliente",
+                "operationId": "f412377d1244b88ad70735c7ed5c03d8",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "403": {
+                        "description": "Sin permisos"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/clients/{client}/edit": {
+            "get": {
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Formulario de edición de cliente",
+                "operationId": "6ed91043e2dde1a8291a160a1b40a090",
+                "parameters": [
+                    {
+                        "name": "client",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "404": {
+                        "description": "Cliente no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/projects/create": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Formulario de creación de proyecto",
+                "operationId": "63ba8124ef311e98f2d17cd0c1f6215d",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "403": {
+                        "description": "Sin permisos"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/admin/projects/{project}/edit": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Formulario de edición de proyecto",
+                "operationId": "e48761e2a0931375c8f27f5b74685777",
+                "parameters": [
+                    {
+                        "name": "project",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "404": {
+                        "description": "Proyecto no encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/forgot-password": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Formulario para solicitar recuperación de contraseña",
+                "operationId": "c1be60f9fb000e70c344c832c095d839",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Enviar enlace de recuperación de contraseña",
+                "operationId": "69b80dea593d9fcd14cf4eabfb21ab35",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@ethos.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirección con estado"
+                    },
+                    "422": {
+                        "description": "Validación fallida"
+                    }
+                }
+            }
+        },
+        "/reset-password/{token}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Formulario de restablecimiento de contraseña",
+                "operationId": "30259ec2bdbcdf384deb4c3be53442e8",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    }
+                }
+            }
+        },
+        "/sanctum/csrf-cookie": {
+            "get": {
+                "tags": [
+                    "API"
+                ],
+                "summary": "Obtener cookie CSRF para Sanctum",
+                "description": "Inicializa cookies XSRF-TOKEN y laravel_session para clientes SPA.",
+                "operationId": "9126dd1b197be273388c8ed607cb42ee",
+                "responses": {
+                    "204": {
+                        "description": "Cookie CSRF emitida"
+                    }
+                }
+            }
+        },
+        "/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Restablecer contraseña",
+                "operationId": "800cc882ed16953b6753361b44dc78b7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirección tras reset"
+                    },
+                    "422": {
+                        "description": "Validación fallida"
+                    }
+                }
+            }
+        },
+        "/verify-email": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Aviso de verificación de email",
+                "operationId": "65bb526a1c1feb532b3eca1ea966feca",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/verify-email/{id}/{hash}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verificar email de usuario",
+                "operationId": "4d6283b2650708a49c4e9a4be153fb14",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Email verificado y redirección"
+                    },
+                    "403": {
+                        "description": "Hash o firma inválida"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/email/verification-notification": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reenviar notificación de verificación",
+                "operationId": "81c4e36318a1f451361c712b6c0b50f2",
+                "responses": {
+                    "302": {
+                        "description": "Notificación reenviada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/confirm-password": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Formulario de confirmación de contraseña",
+                "operationId": "4c0c033fd268fa42e990e4dfb9b60dc6",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Confirmar contraseña actual",
+                "operationId": "edb279843d54ced071c160ebe8e3886a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Contraseña confirmada"
+                    },
+                    "422": {
+                        "description": "Contraseña inválida"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/password": {
+            "put": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Actualizar contraseña de usuario autenticado",
+                "operationId": "05fca4787101d3e1b14eb2870e74d14e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "current_password",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Contraseña actualizada"
+                    },
+                    "422": {
+                        "description": "Validación fallida"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Formulario de perfil",
+                "description": "Muestra pantalla de edición del perfil autenticado.",
+                "operationId": "c276dd4e3d8e977106602d8a17de8041",
+                "responses": {
+                    "200": {
+                        "description": "Vista HTML"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Eliminar cuenta autenticada",
+                "description": "Requiere password actual para confirmar eliminación.",
+                "operationId": "635e7e4b86475d4f5fa47b8b6aac3af9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "password"
+                                ],
+                                "properties": {
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirección a / tras eliminar cuenta"
+                    },
+                    "422": {
+                        "description": "Password inválida"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Actualizar perfil de usuario",
+                "operationId": "2968807d1ef1f20602e96ecedd137de5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Admin"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@ethos.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirección a /profile con estado profile-updated"
+                    },
+                    "422": {
+                        "description": "Validación fallida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    },
+                    {
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "API"
+                ],
+                "summary": "Obtener usuario autenticado (Sanctum)",
+                "description": "Endpoint API protegido por auth:sanctum.",
+                "operationId": "de4defb071def7c66197627e1f026fb7",
+                "responses": {
+                    "200": {
+                        "description": "Usuario autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Admin"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "admin@ethos.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctumBearer": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "MessageResponse": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Operación completada exitosamente"
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationErrorResponse": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "schema": "ApiDocumentation",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ApiDocumentation": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "ClientResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Acme Corp"
+                    },
+                    "industry": {
+                        "type": "string",
+                        "example": "Manufactura",
+                        "nullable": true
+                    },
+                    "primary_contact_name": {
+                        "type": "string",
+                        "example": "María Pérez",
+                        "nullable": true
+                    },
+                    "primary_contact_email": {
+                        "type": "string",
+                        "example": "maria@acme.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+58-412-0000000",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Cliente estratégico.",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Av. Libertador",
+                        "nullable": true
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Caracas",
+                        "nullable": true
+                    },
+                    "state": {
+                        "type": "string",
+                        "example": "Distrito Capital",
+                        "nullable": true
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Venezuela",
+                        "nullable": true
+                    },
+                    "municipality": {
+                        "type": "string",
+                        "example": "Libertador",
+                        "nullable": true
+                    },
+                    "parish": {
+                        "type": "string",
+                        "example": "Altagracia",
+                        "nullable": true
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10.5022,
+                        "nullable": true
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "format": "float",
+                        "example": -66.9146,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ClientPayload": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Acme Corp"
+                    },
+                    "industry": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Manufactura",
+                        "nullable": true
+                    },
+                    "primary_contact_name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "María Pérez",
+                        "nullable": true
+                    },
+                    "primary_contact_email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "example": "maria@acme.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "+58-412-0000000",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Notas relevantes",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Av. Libertador",
+                        "nullable": true
+                    },
+                    "city": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Caracas",
+                        "nullable": true
+                    },
+                    "state": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Distrito Capital",
+                        "nullable": true
+                    },
+                    "country": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Venezuela",
+                        "nullable": true
+                    },
+                    "municipality": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Libertador",
+                        "nullable": true
+                    },
+                    "parish": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Altagracia",
+                        "nullable": true
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10.5022,
+                        "nullable": true
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "format": "float",
+                        "example": -66.9146,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "client_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "client_name": {
+                        "type": "string",
+                        "example": "Acme Corp",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Transformación de procesos"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Proyecto de rediseño",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "en_diseno"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "consultoria",
+                        "nullable": true
+                    },
+                    "subtype": {
+                        "type": "string",
+                        "example": "auditoria_fiscal",
+                        "nullable": true
+                    },
+                    "complexity": {
+                        "type": "string",
+                        "example": "media",
+                        "nullable": true
+                    },
+                    "urgency": {
+                        "type": "string",
+                        "example": "alta",
+                        "nullable": true
+                    },
+                    "estimated_budget": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 12000,
+                        "nullable": true
+                    },
+                    "final_budget": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 14000,
+                        "nullable": true
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD",
+                        "nullable": true
+                    },
+                    "priority_score": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 8.5,
+                        "nullable": true
+                    },
+                    "priority_level": {
+                        "type": "string",
+                        "example": "alta",
+                        "nullable": true
+                    },
+                    "assigned_to_id": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "validated_by_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "progress": {
+                        "type": "integer",
+                        "example": 45,
+                        "nullable": true
+                    },
+                    "starts_at_raw": {
+                        "type": "string",
+                        "example": "2026-03-20",
+                        "nullable": true
+                    },
+                    "ends_at_raw": {
+                        "type": "string",
+                        "example": "2026-06-20",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectPayload": {
+                "required": [
+                    "client_id",
+                    "title",
+                    "status"
+                ],
+                "properties": {
+                    "client_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "title": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Transformación de procesos"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Detalle del proyecto",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "capturado",
+                            "clasificacion_pendiente",
+                            "priorizado",
+                            "asignacion_lider_pendiente",
+                            "en_diagnostico",
+                            "en_diseno",
+                            "en_implementacion",
+                            "en_seguimiento",
+                            "cerrado"
+                        ]
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "desarrollo_web",
+                            "infraestructura",
+                            "consultoria",
+                            "soporte",
+                            "mobile",
+                            "otro"
+                        ],
+                        "nullable": true
+                    },
+                    "subtype": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "auditoria",
+                        "nullable": true
+                    },
+                    "complexity": {
+                        "type": "string",
+                        "enum": [
+                            "baja",
+                            "media",
+                            "alta"
+                        ],
+                        "nullable": true
+                    },
+                    "urgency": {
+                        "type": "string",
+                        "enum": [
+                            "baja",
+                            "media",
+                            "alta"
+                        ],
+                        "nullable": true
+                    },
+                    "estimated_budget": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 12000,
+                        "nullable": true
+                    },
+                    "final_budget": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 14000,
+                        "nullable": true
+                    },
+                    "currency": {
+                        "type": "string",
+                        "maxLength": 3,
+                        "minLength": 3,
+                        "example": "USD",
+                        "nullable": true
+                    },
+                    "priority_score": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 10,
+                        "minimum": 1,
+                        "example": 8.5,
+                        "nullable": true
+                    },
+                    "priority_level": {
+                        "type": "string",
+                        "enum": [
+                            "baja",
+                            "media",
+                            "alta"
+                        ],
+                        "nullable": true
+                    },
+                    "assigned_to": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "validated_by": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "progress": {
+                        "type": "integer",
+                        "maximum": 100,
+                        "minimum": 0,
+                        "example": 45,
+                        "nullable": true
+                    },
+                    "starts_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-03-20",
+                        "nullable": true
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-06-20",
+                        "nullable": true
+                    },
+                    "finished_at": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-07-01",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "SearchResultItem": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "example": "project"
+                    },
+                    "category": {
+                        "type": "string",
+                        "example": "Proyectos"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Transformación de procesos"
+                    },
+                    "subtitle": {
+                        "type": "string",
+                        "example": "Acme Corp"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "/admin/projects"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "example": "ti ti-briefcase-2"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sessionAuth": {
+                "type": "apiKey",
+                "description": "Autenticación por sesión web de Laravel. Para métodos mutables (POST/PUT/PATCH/DELETE) envía también X-CSRF-TOKEN.",
+                "name": "laravel_session",
+                "in": "cookie"
+            },
+            "csrfHeader": {
+                "type": "apiKey",
+                "description": "Token CSRF requerido para peticiones mutables de rutas web protegidas.",
+                "name": "X-CSRF-TOKEN",
+                "in": "header"
+            },
+            "sanctumBearer": {
+                "type": "http",
+                "description": "Bearer token para rutas API con auth:sanctum.",
+                "bearerFormat": "token",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "General",
+            "description": "General"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Dashboard",
+            "description": "Dashboard"
+        },
+        {
+            "name": "Admin Search",
+            "description": "Admin Search"
+        },
+        {
+            "name": "Clients",
+            "description": "Clients"
+        },
+        {
+            "name": "Projects",
+            "description": "Projects"
+        },
+        {
+            "name": "API",
+            "description": "API"
+        },
+        {
+            "name": "Profile",
+            "description": "Profile"
+        }
+    ]
+}

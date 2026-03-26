@@ -36,4 +36,11 @@ return [
         'map_id' => env('GOOGLE_MAPS_MAP_ID'),
     ],
 
+    'ai_assistant' => [
+        'api_key' => env('IA_API'),
+        'base_url' => env('IA_BASE_URL', 'https://openrouter.ai/api/v1'),
+        'model' => env('IA_MODEL', 'mistralai/mistral-small-3.1-24b-instruct:free'),
+        'timeout' => (int) env('IA_TIMEOUT', 30),
+    ],
+
 ];

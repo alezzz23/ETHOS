@@ -734,6 +734,166 @@
             background: rgba(0, 102, 204, 0.2);
             color: #071f33;
         }
+
+        .assistant-fab {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: 3.75rem;
+            height: 3.75rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: linear-gradient(135deg, #0c88f0 0%, #0052a3 100%);
+            color: #ffffff;
+            box-shadow: 0 20px 44px rgba(0, 82, 163, 0.34);
+            z-index: 80;
+            transition: transform .24s ease, box-shadow .24s ease, opacity .24s ease;
+        }
+
+        .assistant-fab:hover,
+        .assistant-fab:focus-visible {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 24px 52px rgba(0, 82, 163, 0.42);
+        }
+
+        .assistant-modal {
+            position: fixed;
+            right: 1rem;
+            bottom: 5.75rem;
+            width: min(24rem, calc(100vw - 1.5rem));
+            max-height: min(80vh, 44rem);
+            border-radius: 1rem;
+            border: 1px solid rgba(5, 67, 128, 0.15);
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 30px 80px rgba(7, 31, 51, 0.28);
+            z-index: 80;
+            transform-origin: bottom right;
+            transition: transform .24s ease, opacity .24s ease, visibility .24s ease;
+        }
+
+        .assistant-hidden {
+            opacity: 0;
+            transform: scale(.94) translateY(10px);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .assistant-header {
+            background: linear-gradient(135deg, #071f33 0%, #0052a3 60%, #0c88f0 100%);
+            color: #ffffff;
+        }
+
+        .assistant-messages {
+            max-height: 21rem;
+            overflow-y: auto;
+            background: linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+        }
+
+        .assistant-bubble-user {
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            color: #ffffff;
+        }
+
+        .assistant-bubble-ai {
+            background: #eef6ff;
+            color: #0a3a5c;
+            border: 1px solid rgba(12, 136, 240, 0.2);
+        }
+
+        .assistant-suggestions button {
+            border: 1px solid rgba(12, 136, 240, 0.22);
+            color: #054380;
+            background: #ffffff;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .assistant-suggestions button:hover,
+        .assistant-suggestions button:focus-visible {
+            background: #eef6ff;
+        }
+
+        .assistant-clear-btn {
+            border: 1px solid rgba(220, 38, 38, 0.28);
+            background: #ffffff;
+            color: #991b1b;
+            transition: all .2s ease;
+        }
+
+        .assistant-clear-btn:hover,
+        .assistant-clear-btn:focus-visible {
+            background: #fff1f2;
+            border-color: rgba(220, 38, 38, 0.42);
+            color: #7f1d1d;
+        }
+
+        .assistant-clear-btn:active {
+            transform: translateY(1px);
+            background: #ffe4e6;
+        }
+
+        .assistant-clear-btn:disabled {
+            cursor: not-allowed;
+            opacity: .55;
+            background: #f8fafc;
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.38);
+        }
+
+        .assistant-confirm-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(7, 31, 51, 0.52);
+            backdrop-filter: blur(2px);
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .assistant-confirm-modal {
+            width: 100%;
+            max-width: 20rem;
+            border-radius: .9rem;
+            border: 1px solid rgba(5, 67, 128, 0.15);
+            background: #ffffff;
+            box-shadow: 0 20px 55px rgba(7, 31, 51, 0.2);
+        }
+
+        .assistant-typing span {
+            width: .4rem;
+            height: .4rem;
+            border-radius: 9999px;
+            background: #0c88f0;
+            animation: assistantTyping 1s infinite ease-in-out;
+        }
+
+        .assistant-typing span:nth-child(2) {
+            animation-delay: .12s;
+        }
+
+        .assistant-typing span:nth-child(3) {
+            animation-delay: .24s;
+        }
+
+        @keyframes assistantTyping {
+            0%, 80%, 100% { transform: scale(.6); opacity: .5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 640px) {
+            .assistant-fab {
+                right: .75rem;
+                bottom: .75rem;
+            }
+
+            .assistant-modal {
+                right: .75rem;
+                bottom: 5.3rem;
+                width: calc(100vw - 1.5rem);
+            }
+        }
     </style>
 </head>
 <body class="font-body antialiased text-gray-800 bg-white overflow-x-hidden">
@@ -1716,6 +1876,62 @@
             </div>
         </div>
     </footer>
+
+    <button id="assistant-fab" class="assistant-fab flex items-center justify-center" type="button" aria-label="Abrir asistente ETHOS" aria-controls="assistant-modal" aria-expanded="false">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 10h8M8 14h5m-1 7a9 9 0 10-9-9c0 1.7.48 3.29 1.31 4.64L3 21l4.6-1.31A8.96 8.96 0 0012 21z"/>
+        </svg>
+    </button>
+
+    <section id="assistant-modal" class="assistant-modal assistant-hidden" role="dialog" aria-modal="true" aria-labelledby="assistant-title" aria-describedby="assistant-subtitle">
+        <header class="assistant-header px-4 py-3 flex items-start justify-between gap-3">
+            <div>
+                <h3 id="assistant-title" class="font-display text-lg font-semibold leading-tight">Asistente ETHOS</h3>
+                <p id="assistant-subtitle" class="text-xs text-white/80">Preguntas sobre servicios, horarios, compras y soporte</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="assistant-minimize" type="button" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20" aria-label="Minimizar chat">−</button>
+                <button id="assistant-close" type="button" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20" aria-label="Cerrar chat">×</button>
+            </div>
+        </header>
+
+        <div id="assistant-panel" class="bg-white">
+            <div id="assistant-messages" class="assistant-messages p-4 space-y-3" aria-live="polite"></div>
+
+            <div class="assistant-suggestions px-4 pb-3 flex flex-wrap gap-2">
+                <button type="button" data-assistant-question="¿Qué servicios ofrece ETHOS?" class="text-xs rounded-full px-3 py-1.5">Servicios</button>
+                <button type="button" data-assistant-question="¿Cuál es el horario de atención?" class="text-xs rounded-full px-3 py-1.5">Horarios</button>
+                <button type="button" data-assistant-question="¿Cómo es el proceso de compra?" class="text-xs rounded-full px-3 py-1.5">Compra</button>
+                <button type="button" data-assistant-question="Necesito soporte técnico" class="text-xs rounded-full px-3 py-1.5">Soporte</button>
+            </div>
+
+            <div class="px-4 pb-3">
+                <button id="assistant-clear" type="button" class="assistant-clear-btn w-full inline-flex items-center justify-center gap-2 text-sm rounded-xl px-3 py-2" aria-label="Limpiar chat" disabled>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m-8 0l1 12a1 1 0 001 .9h6a1 1 0 001-.9l1-12"/>
+                    </svg>
+                    <span>Limpiar chat</span>
+                </button>
+            </div>
+
+            <form id="assistant-form" class="p-4 border-t border-gray-100 flex items-end gap-2">
+                <label for="assistant-input" class="sr-only">Mensaje para el asistente</label>
+                <textarea id="assistant-input" rows="1" maxlength="1200" class="input-premium w-full rounded-xl px-3 py-2 text-sm resize-none" placeholder="Escribe tu pregunta..."></textarea>
+                <button id="assistant-send" type="submit" class="btn-premium text-white px-4 py-2 rounded-xl text-sm">Enviar</button>
+            </form>
+        </div>
+
+        <div id="assistant-confirm" class="assistant-confirm-backdrop hidden" role="alertdialog" aria-modal="true" aria-labelledby="assistant-confirm-title" aria-describedby="assistant-confirm-description">
+            <div class="assistant-confirm-modal p-4">
+                <h4 id="assistant-confirm-title" class="font-display text-lg text-ethos-900 font-semibold">¿Limpiar conversación?</h4>
+                <p id="assistant-confirm-description" class="mt-2 text-sm text-gray-600">Se eliminarán todos los mensajes del chat actual.</p>
+                <div class="mt-4 flex gap-2 justify-end">
+                    <button id="assistant-cancel-clear" type="button" class="text-sm px-3 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">Cancelar</button>
+                    <button id="assistant-confirm-clear" type="button" class="text-sm px-3 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Sí, limpiar</button>
+                </div>
+            </div>
+        </div>
+    </section>
  
     <!-- JavaScript -->
     <script>
@@ -1830,6 +2046,263 @@
                 });
             }
         });
+
+        const assistantState = {
+            isOpen: false,
+            isMinimized: false,
+            loading: false,
+            history: [],
+            sessionKey: 'ethos_ai_chat_history',
+        };
+
+        const assistantRefs = {
+            fab: document.getElementById('assistant-fab'),
+            modal: document.getElementById('assistant-modal'),
+            panel: document.getElementById('assistant-panel'),
+            close: document.getElementById('assistant-close'),
+            minimize: document.getElementById('assistant-minimize'),
+            clear: document.getElementById('assistant-clear'),
+            confirm: document.getElementById('assistant-confirm'),
+            confirmClear: document.getElementById('assistant-confirm-clear'),
+            cancelClear: document.getElementById('assistant-cancel-clear'),
+            form: document.getElementById('assistant-form'),
+            input: document.getElementById('assistant-input'),
+            messages: document.getElementById('assistant-messages'),
+            suggestions: document.querySelectorAll('[data-assistant-question]'),
+        };
+
+        const escapeHtml = (value) => {
+            return String(value).replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        };
+
+        const renderAssistantHistory = () => {
+            assistantRefs.messages.innerHTML = assistantState.history.map((item) => {
+                const side = item.role === 'user' ? 'justify-end' : 'justify-start';
+                const bubble = item.role === 'user' ? 'assistant-bubble-user' : 'assistant-bubble-ai';
+                return `<div class="flex ${side}"><div class="max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${bubble}">${escapeHtml(item.content)}</div></div>`;
+            }).join('');
+
+            if (assistantState.loading) {
+                assistantRefs.messages.insertAdjacentHTML(
+                    'beforeend',
+                    '<div class="flex justify-start"><div class="assistant-bubble-ai rounded-2xl px-3 py-2"><div class="assistant-typing inline-flex gap-1"><span></span><span></span><span></span></div></div></div>'
+                );
+            }
+
+            assistantRefs.messages.scrollTop = assistantRefs.messages.scrollHeight;
+            sessionStorage.setItem(assistantState.sessionKey, JSON.stringify(assistantState.history.slice(-20)));
+            setAssistantClearButtonState();
+        };
+
+        const setAssistantClearButtonState = () => {
+            if (!assistantRefs.clear) {
+                return;
+            }
+            const hasMessages = assistantState.history.length > 0;
+            assistantRefs.clear.disabled = assistantState.loading || !hasMessages;
+            assistantRefs.clear.setAttribute('aria-disabled', assistantRefs.clear.disabled ? 'true' : 'false');
+        };
+
+        const setAssistantOpen = (value) => {
+            assistantState.isOpen = value;
+            assistantRefs.modal.classList.toggle('assistant-hidden', !value);
+            assistantRefs.fab.setAttribute('aria-expanded', value ? 'true' : 'false');
+            if (value && !assistantState.isMinimized) {
+                setTimeout(() => assistantRefs.input.focus(), 120);
+            }
+        };
+
+        const setAssistantMinimized = (value) => {
+            assistantState.isMinimized = value;
+            assistantRefs.panel.classList.toggle('hidden', value);
+            assistantRefs.minimize.textContent = value ? '+' : '−';
+            assistantRefs.minimize.setAttribute('aria-label', value ? 'Expandir chat' : 'Minimizar chat');
+        };
+
+        const setAssistantClearConfirmOpen = (value) => {
+            if (!assistantRefs.confirm) {
+                return;
+            }
+            assistantRefs.confirm.classList.toggle('hidden', !value);
+            if (value) {
+                setTimeout(() => assistantRefs.confirmClear?.focus(), 60);
+            } else {
+                setTimeout(() => assistantRefs.clear?.focus(), 60);
+            }
+        };
+
+        const clearAssistantHistory = async () => {
+            if (assistantState.loading) {
+                return;
+            }
+            const clearedCount = assistantState.history.length;
+            assistantState.history = [];
+            sessionStorage.removeItem(assistantState.sessionKey);
+            renderAssistantHistory();
+            setAssistantClearConfirmOpen(false);
+            try {
+                await fetch('/assistant/chat/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        cleared_count: clearedCount
+                    }),
+                });
+            } catch (_) {}
+        };
+
+        const sendAssistantMessage = async (message) => {
+            const content = String(message || '').trim();
+            if (!content || assistantState.loading) {
+                return;
+            }
+
+            assistantState.history.push({ role: 'user', content });
+            assistantState.loading = true;
+            renderAssistantHistory();
+            assistantRefs.input.value = '';
+            assistantRefs.input.style.height = 'auto';
+
+            try {
+                const response = await fetch('/assistant/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        message: content,
+                        history: assistantState.history.slice(-10),
+                    }),
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok || !payload.reply) {
+                    throw new Error(payload.message || 'No fue posible obtener respuesta.');
+                }
+
+                assistantState.history.push({ role: 'assistant', content: payload.reply });
+            } catch (error) {
+                assistantState.history.push({
+                    role: 'assistant',
+                    content: 'No pude conectarme en este momento. Intenta nuevamente o contáctanos por correo para atención inmediata.'
+                });
+            } finally {
+                assistantState.loading = false;
+                renderAssistantHistory();
+            }
+        };
+
+        if (
+            assistantRefs.fab &&
+            assistantRefs.modal &&
+            assistantRefs.panel &&
+            assistantRefs.close &&
+            assistantRefs.minimize &&
+            assistantRefs.clear &&
+            assistantRefs.confirm &&
+            assistantRefs.confirmClear &&
+            assistantRefs.cancelClear &&
+            assistantRefs.form &&
+            assistantRefs.input &&
+            assistantRefs.messages
+        ) {
+            const storedHistory = sessionStorage.getItem(assistantState.sessionKey);
+
+            if (storedHistory) {
+                try {
+                    const parsed = JSON.parse(storedHistory);
+                    if (Array.isArray(parsed)) {
+                        assistantState.history = parsed.slice(-20);
+                    }
+                } catch (_) {}
+            }
+
+            if (assistantState.history.length === 0) {
+                assistantState.history.push({
+                    role: 'assistant',
+                    content: 'Hola. Soy el asistente ETHOS. Te ayudo con información de servicios,horarios, procesos de compra y soporte técnico.'
+                });
+            }
+
+            renderAssistantHistory();
+
+            assistantRefs.fab.addEventListener('click', () => {
+                setAssistantOpen(!assistantState.isOpen);
+                if (assistantState.isMinimized) {
+                    setAssistantMinimized(false);
+                }
+            });
+
+            assistantRefs.close.addEventListener('click', () => {
+                setAssistantOpen(false);
+            });
+
+            assistantRefs.minimize.addEventListener('click', () => {
+                setAssistantMinimized(!assistantState.isMinimized);
+            });
+
+            assistantRefs.clear.addEventListener('click', () => {
+                setAssistantClearConfirmOpen(true);
+            });
+
+            assistantRefs.cancelClear.addEventListener('click', () => {
+                setAssistantClearConfirmOpen(false);
+            });
+
+            assistantRefs.confirmClear.addEventListener('click', () => {
+                clearAssistantHistory();
+            });
+
+            assistantRefs.form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                sendAssistantMessage(assistantRefs.input.value);
+            });
+
+            assistantRefs.input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    sendAssistantMessage(assistantRefs.input.value);
+                }
+            });
+
+            assistantRefs.input.addEventListener('input', () => {
+                assistantRefs.input.style.height = 'auto';
+                assistantRefs.input.style.height = `${Math.min(assistantRefs.input.scrollHeight, 132)}px`;
+            });
+
+            assistantRefs.suggestions.forEach((button) => {
+                button.addEventListener('click', () => {
+                    setAssistantOpen(true);
+                    if (assistantState.isMinimized) {
+                        setAssistantMinimized(false);
+                    }
+                    sendAssistantMessage(button.dataset.assistantQuestion);
+                });
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !assistantRefs.confirm.classList.contains('hidden')) {
+                    setAssistantClearConfirmOpen(false);
+                    return;
+                }
+                if (event.key === 'Escape' && assistantState.isOpen) {
+                    setAssistantOpen(false);
+                }
+            });
+        }
     </script>
 </body>
 </html>

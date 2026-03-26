@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SearchController;
+use App\Http\Controllers\LandingAssistantController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('landing');
 });
+
+Route::post('/assistant/chat', LandingAssistantController::class)
+    ->name('assistant.chat')
+    ->middleware('throttle:30,1');
+
+Route::post('/assistant/chat/clear', [LandingAssistantController::class, 'clearHistory'])
+    ->name('assistant.chat.clear')
+    ->middleware('throttle:30,1');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', DashboardController::class)
