@@ -1,25 +1,24 @@
-```markdown
 <div align="center">
-  <img src="Landingpreview.png" alt="Vista previa de ETHOS" width="100%" />
+  <img src="Landingpreview.png" alt="ETHOS Landing Preview" width="100%" />
 
   # Plataforma ETHOS
   
-  **Landing Page para Firma de Consultoría y Sistema de Gestión Interna**
+  **Landing Page de Consultoría y Sistema de Gestión Interna**
 </div>
 
-## 📖 Resumen
+## 📖 Visión General
 
-ETHOS es una plataforma integral de grado de producción diseñada para una firma de consultoría. Cumple dos propósitos principales:
-1. **Landing Page Pública**: Un sitio web público premium de alta conversión con una estética de lujo oscura, animaciones dinámicas y propuestas de valor de servicio claras.
-2. **CRM Interno y Panel de Administración**: Un sistema de gestión interna rico en funciones que integra la plantilla de administración Vuexy, permitiendo al personal gestionar clientes, proyectos, transacciones POS y controles de acceso de manera fluida.
+ETHOS es una plataforma integral de nivel de producción diseñada para una firma de consultoría. Cumple con dos propósitos principales:
+1. **Landing Page Pública**: Un sitio web público de alta conversión con una estética de lujo oscura, animaciones dinámicas y propuestas de valor claras para los servicios.
+2. **CRM Interno y Panel de Administración**: Un sistema de gestión interna rico en funcionalidades que integra la plantilla de administración Vuexy, permitiendo al personal gestionar clientes, proyectos, transacciones de punto de venta (POS) y controles de acceso de manera fluida.
 
 ## ✨ Características Principales
 
-- 🌟 **Landing Page Premium**: Un sitio orientado al público visualmente impactante con cursores personalizados, efectos de glassmorphism suaves y embudos de conversión distintos.
-- 📊 **Panel de Administración Vuexy**: Un área de administración backend pulida para gestionar operaciones con paridad visual y funcional completa.
-- 🔐 **Control de Acceso Basado en Roles**: Permisos y roles altamente granulares implementados de forma segura utilizando Spatie Laravel Permission.
-- 💼 **CRM y Gestión de Proyectos**: Herramientas a medida para el seguimiento de relaciones con clientes, avance de proyectos activos y organización de tareas.
-- 💳 **Integración de Punto de Venta (POS)**: Manejo de registro de pagos personalizados, incluyendo la alineación correcta de extractos bancarios para la conciliación manual.
+- 🌟 **Landing Page Premium**: Un sitio orientado al público visualmente impactante con cursores personalizados, efectos de glassmorphism suaves y embudos de conversión diferenciados.
+- 📊 **Panel de Administración Vuexy**: Un área administrativa de backend pulida para gestionar operaciones con una paridad visual y funcional completa.
+- 🔐 **Control de Acceso Basado en Roles (RBAC)**: Permisos y roles altamente granulares implementados de forma segura mediante Spatie Laravel Permission.
+- 💼 **Gestión de CRM y Proyectos**: Herramientas a medida para el seguimiento de las relaciones con los clientes, el avance de proyectos activos y la organización de tareas.
+- 💳 **Integración de Punto de Venta (POS)**: Manejo personalizado del registro de pagos, incluyendo la alineación correcta con los estados de cuenta bancarios para la conciliación manual.
 - ⚡ **Rendimiento Optimizado**: Impulsado por Laravel 10, Vite, Tailwind CSS y Alpine.js para tiempos de carga rápidos y una experiencia de desarrollo óptima.
 
 ## 🛠 Stack Tecnológico
@@ -31,7 +30,7 @@ ETHOS es una plataforma integral de grado de producción diseñada para una firm
 - Documentación de API: L5-Swagger
 
 **Arquitectura Frontend**
-- Framework CSS: [Tailwind CSS](https://tailwindcss.com/)
+- Framework de CSS: [Tailwind CSS](https://tailwindcss.com/)
 - JavaScript: [Alpine.js](https://alpinejs.dev/)
 - Empaquetador de Activos: [Vite](https://vitejs.dev/)
 - Plantilla de UI: Vuexy Admin
@@ -45,7 +44,7 @@ Sigue estos pasos para configurar el proyecto localmente para el desarrollo.
 - **PHP**: `^8.1`
 - **Composer** (Gestor de dependencias para PHP)
 - **Node.js** y **NPM/Yarn**
-- **Base de datos**: MySQL, PostgreSQL o SQLite
+- **Base de Datos**: MySQL, PostgreSQL o SQLite
 
 ### Guía de Instalación
 
@@ -66,7 +65,7 @@ Sigue estos pasos para configurar el proyecto localmente para el desarrollo.
    ```bash
    php artisan migrate --seed
    ```
-   *Este comando prepara la estructura inicial de la base de datos junto con los roles, permisos y usuarios de muestra necesarios.*
+   *Este comando prepara la estructura inicial de la base de datos junto con los roles, permisos y usuarios de prueba necesarios.*
 
 4. **Iniciar Servidores de Desarrollo**:
    Abre dos ventanas de terminal para ejecutar tanto Vite como el servidor de Laravel simultáneamente.
@@ -83,9 +82,8 @@ Sigue estos pasos para configurar el proyecto localmente para el desarrollo.
 
 5. **Acceder a la Aplicación**:
    - Plataforma Web: [http://localhost:8000](http://localhost:8000)
-   - Inicio de Sesión Admin: [http://localhost:8000/login](http://localhost:8000/login)
+   - Acceso Administrativo: [http://localhost:8000/login](http://localhost:8000/login)
 
 ## 📄 Licencia
 
 Esta aplicación es software propietario. Todos los derechos reservados por ETHOS.
-```
