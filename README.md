@@ -1,89 +1,91 @@
+```markdown
 <div align="center">
-  <img src="Landingpreview.png" alt="ETHOS Landing Preview" width="100%" />
+  <img src="Landingpreview.png" alt="Vista previa de ETHOS" width="100%" />
 
-  # ETHOS Platform
+  # Plataforma ETHOS
   
-  **Consulting Firm Landing Page & Internal Management System**
+  **Landing Page para Firma de Consultoría y Sistema de Gestión Interna**
 </div>
 
-## 📖 Overview
+## 📖 Resumen
 
-ETHOS is a comprehensive, production-grade platform tailored for a consulting firm. It serves two main purposes:
-1. **Public Landing Page**: A premium, high-converting public website featuring a dark luxury aesthetic, dynamic animations, and clear service value propositions.
-2. **Internal CRM & Admin Dashboard**: A feature-rich internal management system integrating the Vuexy admin template, allowing staff to manage clients, projects, POS transactions, and access controls seamlessly.
+ETHOS es una plataforma integral de grado de producción diseñada para una firma de consultoría. Cumple dos propósitos principales:
+1. **Landing Page Pública**: Un sitio web público premium de alta conversión con una estética de lujo oscura, animaciones dinámicas y propuestas de valor de servicio claras.
+2. **CRM Interno y Panel de Administración**: Un sistema de gestión interna rico en funciones que integra la plantilla de administración Vuexy, permitiendo al personal gestionar clientes, proyectos, transacciones POS y controles de acceso de manera fluida.
 
-## ✨ Key Features
+## ✨ Características Principales
 
-- 🌟 **Premium Landing Page**: A visually striking public-facing site with custom cursors, smooth glassmorphism effects, and distinct conversion funnels.
-- 📊 **Vuexy Administration Dashboard**: A polished backend administration area for managing operations with complete visual and functional parity.
-- 🔐 **Role-Based Access Control**: Highly granular permissions and roles securely implemented using Spatie Laravel Permission.
-- 💼 **CRM & Project Management**: Tailor-made tools for tracking client relationships, advancing active projects, and organizing tasks.
-- 💳 **Point-Of-Sale (POS) Integration**: Custom payment registration handling, including correct bank statement alignment for manual reconciliation.
-- ⚡ **Optimized Performance**: Driven by Laravel 10, Vite, Tailwind CSS, and Alpine.js for rapid load times and optimal developer experience.
+- 🌟 **Landing Page Premium**: Un sitio orientado al público visualmente impactante con cursores personalizados, efectos de glassmorphism suaves y embudos de conversión distintos.
+- 📊 **Panel de Administración Vuexy**: Un área de administración backend pulida para gestionar operaciones con paridad visual y funcional completa.
+- 🔐 **Control de Acceso Basado en Roles**: Permisos y roles altamente granulares implementados de forma segura utilizando Spatie Laravel Permission.
+- 💼 **CRM y Gestión de Proyectos**: Herramientas a medida para el seguimiento de relaciones con clientes, avance de proyectos activos y organización de tareas.
+- 💳 **Integración de Punto de Venta (POS)**: Manejo de registro de pagos personalizados, incluyendo la alineación correcta de extractos bancarios para la conciliación manual.
+- ⚡ **Rendimiento Optimizado**: Impulsado por Laravel 10, Vite, Tailwind CSS y Alpine.js para tiempos de carga rápidos y una experiencia de desarrollo óptima.
 
-## 🛠 Tech Stack
+## 🛠 Stack Tecnológico
 
-**Backend System**
+**Sistema Backend**
 - Framework: [Laravel 10](https://laravel.com/) (PHP 8.1+)
-- Authentication: Laravel Breeze
-- Authorization: [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission)
-- API Docs: L5-Swagger
+- Autenticación: Laravel Breeze
+- Autorización: [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission)
+- Documentación de API: L5-Swagger
 
-**Frontend Architecture**
-- CSS Framework: [Tailwind CSS](https://tailwindcss.com/)
+**Arquitectura Frontend**
+- Framework CSS: [Tailwind CSS](https://tailwindcss.com/)
 - JavaScript: [Alpine.js](https://alpinejs.dev/)
-- Asset Bundler: [Vite](https://vitejs.dev/)
-- UI Template: Vuexy Admin
+- Empaquetador de Activos: [Vite](https://vitejs.dev/)
+- Plantilla de UI: Vuexy Admin
 
-## 🚀 Getting Started
+## 🚀 Primeros Pasos
 
-Follow these steps to set up the project locally for development.
+Sigue estos pasos para configurar el proyecto localmente para el desarrollo.
 
-### Prerequisites
+### Requisitos Previos
 
 - **PHP**: `^8.1`
-- **Composer** (Dependency Manager for PHP)
-- **Node.js** & **NPM/Yarn**
-- **Database**: MySQL, PostgreSQL, or SQLite
+- **Composer** (Gestor de dependencias para PHP)
+- **Node.js** y **NPM/Yarn**
+- **Base de datos**: MySQL, PostgreSQL o SQLite
 
-### Installation Guide
+### Guía de Instalación
 
-1. **Install Dependencies**:
+1. **Instalar Dependencias**:
    ```bash
    composer install
    npm install
    ```
 
-2. **Environment Configuration**:
+2. **Configuración del Entorno**:
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-   *Make sure to configure your `DB_*` credentials in the new `.env` file.*
+   *Asegúrate de configurar tus credenciales `DB_*` en el nuevo archivo `.env`.*
 
-3. **Run Migrations & Database Seeding**:
+3. **Ejecutar Migraciones y Seeders**:
    ```bash
    php artisan migrate --seed
    ```
-   *This commands scaffolds the initial database setup alongside necessary roles, permissions, and sample users.*
+   *Este comando prepara la estructura inicial de la base de datos junto con los roles, permisos y usuarios de muestra necesarios.*
 
-4. **Start Development Servers**:
-   Open two terminal windows to run both Vite and the Laravel server concurrently.
+4. **Iniciar Servidores de Desarrollo**:
+   Abre dos ventanas de terminal para ejecutar tanto Vite como el servidor de Laravel simultáneamente.
    
-   **Terminal 1** (Compile frontend assets):
+   **Terminal 1** (Compilar activos frontend):
    ```bash
    npm run dev
    ```
    
-   **Terminal 2** (Serve application locally):
+   **Terminal 2** (Servir la aplicación localmente):
    ```bash
    php artisan serve
    ```
 
-5. **Access the Application**:
-   - Web Platform: [http://localhost:8000](http://localhost:8000)
-   - Admin Login: [http://localhost:8000/login](http://localhost:8000/login)
+5. **Acceder a la Aplicación**:
+   - Plataforma Web: [http://localhost:8000](http://localhost:8000)
+   - Inicio de Sesión Admin: [http://localhost:8000/login](http://localhost:8000/login)
 
-## 📄 License
+## 📄 Licencia
 
-This application is proprietary software. All rights reserved by ETHOS.
+Esta aplicación es software propietario. Todos los derechos reservados por ETHOS.
+```
