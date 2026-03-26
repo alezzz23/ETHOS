@@ -31,6 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('permission:admin.access')->group(function () {
         Route::get('/admin/search', SearchController::class)->name('admin.search');
+
+        // Admin AI Chatbot
+        Route::post('/admin/chat',         [App\Http\Controllers\Admin\DashboardChatController::class, 'chat'])->name('admin.chat')->middleware('throttle:40,1');
+        Route::post('/admin/chat/clear',   [App\Http\Controllers\Admin\DashboardChatController::class, 'clearHistory'])->name('admin.chat.clear');
+        Route::get ('/admin/chat/audit',   [App\Http\Controllers\Admin\DashboardChatController::class, 'auditLog'])->name('admin.chat.audit');
     });
     
     // Rutas para clientes y proyectos
@@ -47,6 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar');
+    Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

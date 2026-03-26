@@ -14,6 +14,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.css">
     <link rel="stylesheet" href="{{ asset('css/vuexy.css') }}">
     @stack('styles')
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.remove('light-style');
+                document.documentElement.classList.add('dark-style');
+            }
+        })();
+    </script>
 </head>
 <body>
     <a href="#mainContent" class="skip-link">Saltar al contenido</a>
@@ -107,20 +116,40 @@
         </div>
         <div class="navbar-end">
             <button class="navbar-icon-btn" id="themeSwitcher" title="Dark/Light Mode" aria-label="Alternar modo oscuro"><i class="ti ti-moon" id="themeIcon"></i></button>
-            <div class="navbar-user dropdown">
+                <div class="navbar-user dropdown">
+                @php
+                    $navUser = auth()->user();
+                    $navInitials = $navUser?->initials ?? 'U';
+                    $navRole = $navUser?->getRoleNames()->first() ?? 'Usuario';
+                @endphp
                 <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="navbar-user-avatar">AD</div>
+                    <div class="navbar-user-avatar" id="navAvatarTop">
+                        @if($navUser?->avatar_url)
+                            <img src="{{ $navUser->avatar_url }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+                        @else
+                            {{ $navInitials }}
+                        @endif
+                    </div>
                     <div class="navbar-user-info d-none d-md-flex">
-                        <span class="navbar-user-name">Admin</span>
-                        <span class="navbar-user-role">Administrador</span>
+                        <span class="navbar-user-name">{{ $navUser?->name ?? 'Usuario' }}</span>
+                        <span class="navbar-user-role">{{ $navRole }}</span>
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" style="min-width:220px;">
                     <li class="px-3 py-2 d-flex align-items-center gap-2 border-bottom mb-1">
-                        <div class="navbar-user-avatar" style="width:42px;height:42px;font-size:1rem;">AD</div>
-                        <div><div class="fw-semibold" style="color:var(--vz-heading-color)">Admin</div><small class="text-muted">admin@ethos.com</small></div>
+                        <div class="navbar-user-avatar" style="width:42px;height:42px;font-size:1rem;">
+                            @if($navUser?->avatar_url)
+                                <img src="{{ $navUser->avatar_url }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+                            @else
+                                {{ $navInitials }}
+                            @endif
+                        </div>
+                        <div>
+                            <div class="fw-semibold" style="color:var(--vz-heading-color)">{{ $navUser?->name ?? 'Usuario' }}</div>
+                            <small class="text-muted">{{ $navUser?->email ?? '' }}</small>
+                        </div>
                     </li>
-                    <li><a class="dropdown-item" href="#"><i class="ti ti-user me-2"></i>Mi Perfil<span class="badge-label bg-label-danger ms-auto">4</span></a></li>
+                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="ti ti-user me-2"></i>Mi Perfil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
@@ -176,16 +205,23 @@
 
         // Dark mode
         $('#themeSwitcher')?.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark-style');
-            document.documentElement.classList.toggle('light-style');
-            const isDark = document.documentElement.classList.contains('dark-style');
+            const isDark = !document.documentElement.classList.contains('dark-style');
+            if (isDark) {
+                document.documentElement.classList.remove('light-style');
+                document.documentElement.classList.add('dark-style');
+            } else {
+                document.documentElement.classList.remove('dark-style');
+                document.documentElement.classList.add('light-style');
+            }
             $('#themeIcon').className = isDark ? 'ti ti-sun' : 'ti ti-moon';
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
-        if(localStorage.getItem('theme')==='dark'){
-            document.documentElement.classList.add('dark-style');
-            document.documentElement.classList.remove('light-style');
-            if($('#themeIcon')) $('#themeIcon').className='ti ti-sun';
+        
+        // Sync icon on load
+        if (document.documentElement.classList.contains('dark-style')) {
+            if ($('#themeIcon')) $('#themeIcon').className = 'ti ti-sun';
+        } else {
+            if ($('#themeIcon')) $('#themeIcon').className = 'ti ti-moon';
         }
 
         // Search modal
@@ -254,11 +290,11 @@
 
         function escapeHtml(value){
             return String(value ?? '')
-                .replaceAll('&','&amp;')
-                .replaceAll('<','&lt;')
-                .replaceAll('>','&gt;')
-                .replaceAll('"','&quot;')
-                .replaceAll("'",'&#039;');
+                .replaceAll('\x26','\x26amp;')
+                .replaceAll('\x3c','\x26lt;')
+                .replaceAll('\x3e','\x26gt;')
+                .replaceAll('\x22','\x26quot;')
+                .replaceAll("\x27",'\x26#039;');
         }
 
         function fmtTime(iso){
@@ -439,5 +475,10 @@
     })();
     </script>
     @stack('scripts')
+    @auth
+        @if(auth()->user()?->can('admin.access'))
+            @include('admin.chatbot')
+        @endif
+    @endauth
 </body>
 </html>

@@ -43,4 +43,11 @@ return [
         'timeout' => (int) env('IA_TIMEOUT', 30),
     ],
 
+    'ai_dashboard' => [
+        'api_key'  => env('IA_DASHBOARD_API'),
+        'base_url' => env('IA_DASHBOARD_BASE_URL', 'https://openrouter.ai/api/v1'),
+        'model'    => env('IA_DASHBOARD_MODEL', 'nvidia/llama-nemotron-super-49b-v1:free'),
+        'timeout'  => (int) env('IA_DASHBOARD_TIMEOUT', 30),
+    ],
+
 ];

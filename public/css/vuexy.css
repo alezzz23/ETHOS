@@ -590,7 +590,7 @@ a {
     overflow: hidden;
 }
 
-.card > * {
+.card>* {
     position: relative;
     z-index: 1;
 }
@@ -620,13 +620,11 @@ a {
     left: 14px;
     width: 10px;
     background:
-        repeating-linear-gradient(
-            90deg,
+        repeating-linear-gradient(90deg,
             rgba(214, 179, 106, 0.24) 0px,
             rgba(214, 179, 106, 0.24) 1px,
             rgba(214, 179, 106, 0) 1px,
-            rgba(214, 179, 106, 0) 4px
-        );
+            rgba(214, 179, 106, 0) 4px);
     border-radius: 999px;
     opacity: 0.55;
     pointer-events: none;
@@ -1612,16 +1610,55 @@ a {
     white-space: nowrap;
 }
 
-.ethos-status-capturado { background: rgba(var(--vz-info-rgb), 0.14); color: #0b8da3; }
-.ethos-status-clasificacion-pendiente { background: rgba(var(--vz-warning-rgb), 0.18); color: #a56418; }
-.ethos-status-priorizado { background: rgba(var(--vz-primary-rgb), 0.14); color: var(--vz-primary); }
-.ethos-status-asignacion-lider-pendiente { background: rgba(123, 128, 154, 0.2); color: #505970; }
-.ethos-status-en-diagnostico { background: rgba(var(--vz-danger-rgb), 0.15); color: #ba4143; }
-.ethos-status-en-diseno { background: rgba(94, 96, 206, 0.16); color: #4f50aa; }
-.ethos-status-en-implementacion { background: rgba(57, 173, 123, 0.16); color: #20895e; }
-.ethos-status-en-seguimiento { background: rgba(18, 132, 170, 0.17); color: #0b7092; }
-.ethos-status-cerrado { background: rgba(var(--vz-success-rgb), 0.18); color: #17784a; }
-.ethos-status-default { background: rgba(var(--vz-primary-rgb), 0.12); color: var(--vz-primary); }
+.ethos-status-capturado {
+    background: rgba(var(--vz-info-rgb), 0.14);
+    color: #0b8da3;
+}
+
+.ethos-status-clasificacion-pendiente {
+    background: rgba(var(--vz-warning-rgb), 0.18);
+    color: #a56418;
+}
+
+.ethos-status-priorizado {
+    background: rgba(var(--vz-primary-rgb), 0.14);
+    color: var(--vz-primary);
+}
+
+.ethos-status-asignacion-lider-pendiente {
+    background: rgba(123, 128, 154, 0.2);
+    color: #505970;
+}
+
+.ethos-status-en-diagnostico {
+    background: rgba(var(--vz-danger-rgb), 0.15);
+    color: #ba4143;
+}
+
+.ethos-status-en-diseno {
+    background: rgba(94, 96, 206, 0.16);
+    color: #4f50aa;
+}
+
+.ethos-status-en-implementacion {
+    background: rgba(57, 173, 123, 0.16);
+    color: #20895e;
+}
+
+.ethos-status-en-seguimiento {
+    background: rgba(18, 132, 170, 0.17);
+    color: #0b7092;
+}
+
+.ethos-status-cerrado {
+    background: rgba(var(--vz-success-rgb), 0.18);
+    color: #17784a;
+}
+
+.ethos-status-default {
+    background: rgba(var(--vz-primary-rgb), 0.12);
+    color: var(--vz-primary);
+}
 
 .ethos-create-modal .ethos-crm-card {
     border: 1px solid rgba(var(--vz-primary-rgb), 0.14);
@@ -1684,6 +1721,7 @@ a {
         background-color: rgba(var(--vz-primary-rgb), 0.15);
         box-shadow: inset 4px 0 0 rgba(var(--vz-primary-rgb), 0.6);
     }
+
     100% {
         background-color: transparent;
         box-shadow: none;
@@ -1699,6 +1737,7 @@ a {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1799,6 +1838,7 @@ a {
     0% {
         background: rgba(var(--vz-success-rgb), 0.18);
     }
+
     100% {
         background: transparent;
     }
@@ -1827,6 +1867,15 @@ a {
     border-color: rgba(173, 184, 232, 0.28);
     background: linear-gradient(180deg, rgba(39, 45, 70, 0.96) 0%, rgba(31, 36, 56, 1) 100%);
     box-shadow: 0 16px 38px -30px rgba(8, 10, 18, 0.95);
+}
+
+.dark-style .ethos-action-btn {
+    color: rgba(226, 232, 255, 0.7) !important;
+}
+
+.dark-style .ethos-action-btn:hover {
+    background: rgba(var(--vz-primary-rgb), 0.19);
+    color: var(--vz-primary) !important;
 }
 
 .dark-style .ethos-data-table {
@@ -2012,6 +2061,7 @@ a {
         opacity: 0;
         transform: translateY(-20px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -2231,4 +2281,100 @@ a {
         flex-direction: column;
         gap: 0.75rem;
     }
+}
+
+/* ── Custom Pagination & Datatable Navigation ── */
+.mt-3 nav .text-muted {
+    font-size: 0.85rem;
+}
+
+.pagination {
+    gap: 0.35rem;
+}
+
+.page-item .page-link {
+    border-radius: 0.4rem;
+    margin: 0;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    padding: 0 0.5rem;
+    border: 1px solid var(--vz-border-color);
+}
+
+.dark-style .page-item .page-link {
+    background-color: rgba(26, 31, 48, 0.7);
+    border-color: rgba(173, 184, 232, 0.15);
+    color: rgba(226, 232, 255, 0.8);
+}
+
+.dark-style .page-item .page-link:hover {
+    background-color: rgba(var(--vz-primary-rgb), 0.25);
+    color: #ffffff;
+    border-color: rgba(var(--vz-primary-rgb), 0.4);
+}
+
+.dark-style .page-item.active .page-link {
+    background-color: var(--vz-primary);
+    border-color: var(--vz-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 10px -2px rgba(var(--vz-primary-rgb), 0.6);
+}
+
+.dark-style .page-item.disabled .page-link {
+    background-color: rgba(26, 31, 48, 0.3);
+    border-color: rgba(173, 184, 232, 0.05);
+    color: rgba(226, 232, 255, 0.3);
+}
+
+/* Fix "Showing X to Y of Z results" text in dark mode */
+.dark-style .mt-3 nav .text-muted,
+.dark-style .mt-3 nav div>p.text-muted,
+.dark-style .mt-3 nav p.small.text-muted {
+    color: rgba(226, 232, 255, 0.6) !important;
+}
+
+/* ── Global Form Dark Mode ── */
+.dark-style .form-control,
+.dark-style .form-select,
+.dark-style .input-group-text {
+    background-color: rgba(26, 31, 48, 0.9);
+    color: #e5e8ff;
+    border-color: rgba(150, 186, 255, 0.25);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.dark-style .form-control:focus,
+.dark-style .form-select:focus {
+    background-color: rgba(22, 26, 41, 0.95);
+    border-color: rgba(var(--vz-primary-rgb), 0.75);
+    box-shadow: 0 0 0 0.25rem rgba(var(--vz-primary-rgb), 0.25);
+    color: #ffffff;
+}
+
+.dark-style .form-control::placeholder {
+    color: rgba(213, 218, 245, 0.45);
+}
+
+.dark-style .form-control:disabled,
+.dark-style .form-control[readonly] {
+    background-color: rgba(26, 31, 48, 0.5);
+    opacity: 0.7;
+}
+
+.dark-style .input-group .btn-outline-secondary {
+    border-color: rgba(150, 186, 255, 0.25);
+    color: rgba(226, 232, 255, 0.8);
+    background-color: rgba(26, 31, 48, 0.9);
+}
+
+.dark-style .input-group .btn-outline-secondary:hover,
+.dark-style .input-group .btn-outline-secondary:focus {
+    background-color: rgba(var(--vz-primary-rgb), 0.15);
+    border-color: rgba(var(--vz-primary-rgb), 0.5);
+    color: #fff;
 }

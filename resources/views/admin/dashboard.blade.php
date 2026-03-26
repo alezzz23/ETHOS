@@ -277,14 +277,14 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center text-muted">
-                                        <i class="ti ti-calendar-event me-1"></i>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-calendar-event text-muted me-2"></i>
                                         {{ $project->starts_at ? \Carbon\Carbon::parse($project->starts_at)->format('d/m/Y') : 'Sin fecha' }}
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex align-items-center text-muted">
-                                        <i class="ti ti-calendar-check me-1"></i>
+                                    <div class="d-flex align-items-center">
+                                        <i class="ti ti-calendar-check text-muted me-2"></i>
                                         {{ $project->ends_at ? \Carbon\Carbon::parse($project->ends_at)->format('d/m/Y') : 'Sin fecha' }}
                                     </div>
                                 </td>
