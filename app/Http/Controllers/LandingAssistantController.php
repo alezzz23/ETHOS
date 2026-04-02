@@ -38,7 +38,7 @@ class LandingAssistantController extends Controller
         $apiKey = (string) config('services.ai_assistant.api_key');
         $configuredBaseUrl = trim((string) config('services.ai_assistant.base_url'));
         $baseUrl = $configuredBaseUrl !== '' ? rtrim($configuredBaseUrl, '/') : 'https://openrouter.ai/api/v1';
-        $model = (string) config('services.ai_assistant.model', 'nvidia/nemotron-3-super-120b-a12b:free');
+        $model = (string) config('services.ai_assistant.model', 'minimax/minimax-m2.5:free');
         $timeout = (int) config('services.ai_assistant.timeout', 30);
 
         if ($apiKey === '') {
