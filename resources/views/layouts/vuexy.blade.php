@@ -80,8 +80,21 @@
             @can('projects.view')
             <li class="menu-item"><a href="/admin/projects" class="menu-link {{ request()->is('admin/projects*') ? 'active' : '' }}"><i class="ti ti-briefcase"></i><span>Proyectos</span></a></li>
             @endcan
+            @can('services.view')
+            <li class="menu-item"><a href="{{ route('services.index') }}" class="menu-link {{ request()->is('admin/services*') ? 'active' : '' }}"><i class="ti ti-tools"></i><span>Servicios</span></a></li>
+            @endcan
             @can('users.manage')
             <li class="menu-item"><a href="{{ route('users.index') }}" class="menu-link {{ request()->is('admin/users*') ? 'active' : '' }}"><i class="ti ti-users-group"></i><span>Usuarios</span></a></li>
+            @endcan
+            @can('admin.access')
+            <li class="menu-item"><a href="{{ route('restricted-topics.index') }}" class="menu-link {{ request()->is('admin/restricted-topics*') ? 'active' : '' }}"><i class="ti ti-shield-lock"></i><span>Tópicos Restringidos</span></a></li>
+            @endcan
+            @can('proposals.view')
+            <li class="menu-item"><a href="{{ route('proposals.index') }}" class="menu-link {{ request()->is('admin/proposals*') ? 'active' : '' }}"><i class="ti ti-file-description"></i><span>Propuestas</span></a></li>
+            <li class="menu-item"><a href="{{ route('checklists.index') }}" class="menu-link {{ request()->is('admin/checklists*') ? 'active' : '' }}"><i class="ti ti-list-check"></i><span>Levantamiento</span></a></li>
+            @endcan
+            @can('admin.access')
+            <li class="menu-item"><a href="{{ route('knowledge-base.dashboard') }}" class="menu-link {{ request()->is('admin/knowledge-base*') ? 'active' : '' }}"><i class="ti ti-brain"></i><span>Base de Conocimiento</span></a></li>
             @endcan
          <!--    <li class="menu-header">Apps & Pages</li>
             <li class="menu-item"><a href="#" class="menu-link"><i class="ti ti-mail"></i><span>Email</span><span class="menu-badge badge-label bg-label-primary ms-auto">12</span></a></li>

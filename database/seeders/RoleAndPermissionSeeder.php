@@ -33,6 +33,16 @@ class RoleAndPermissionSeeder extends Seeder
             'projects.delete',
             'tasks.manage',
             'tasks.execute',
+            // Services (Module 1)
+            'services.view',
+            'services.create',
+            'services.edit',
+            'services.deactivate',
+            // Proposals (Module 4)
+            'proposals.view',
+            'proposals.create',
+            'proposals.edit',
+            'proposals.approve',
         ];
 
         foreach ($permissions as $permission) {
@@ -53,6 +63,7 @@ class RoleAndPermissionSeeder extends Seeder
             'clients.create',
             'clients.edit',
             'projects.view',
+            'services.view',
         ]);
 
         // CONSULTOR
@@ -64,6 +75,11 @@ class RoleAndPermissionSeeder extends Seeder
             'projects.create',
             'projects.edit',
             'projects.assign',
+            'services.view',
+            'services.edit',
+            'proposals.view',
+            'proposals.create',
+            'proposals.edit',
         ]);
 
         // LÍDER DE PROYECTO
@@ -75,6 +91,8 @@ class RoleAndPermissionSeeder extends Seeder
             'projects.edit',
             'tasks.manage',
             'tasks.execute',
+            'proposals.view',
+            'proposals.approve',
         ]);
 
         // EQUIPO DE LEVANTAMIENTO (Operativo)

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AdminChatLog;
 use App\Models\Client;
+use App\Models\KnowledgeBaseEntry;
 use App\Models\Project;
+use App\Models\RestrictedTopic;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 class DashboardChatController extends Controller
 {
     // ── Render stats context for the system prompt ──────────────────
-    private function buildSystemPrompt(): string
+    private function buildSystemPrompt(?string $userQuery = null): string
     {
         $now = now()->timezone(config('app.timezone', 'America/Caracas'));
 
@@ -25,6 +27,18 @@ class DashboardChatController extends Controller
             'total_proyectos' => class_exists(Project::class) ? Project::count() : 0,
         ];
 
+        // ── RAG: inject relevant knowledge base entries ────────────
+        $kbContext = '';
+        if ($userQuery) {
+            $entries = KnowledgeBaseEntry::search($userQuery, 3);
+            if ($entries->isNotEmpty()) {
+                $kbContext = "\n\nBASE DE CONOCIMIENTO RELEVANTE:\n";
+                foreach ($entries as $entry) {
+                    $kbContext .= "--- {$entry->title} ({$entry->category}) ---\n";
+                    $kbContext .= ($entry->embedding_summary ?? substr($entry->content, 0, 400)) . "\n\n";
+                }
+            }
+        }
         return <<<PROMPT
 Eres ETHOS AI, el asistente inteligente exclusivo del panel de administración de ETHOS.
 
@@ -49,6 +63,7 @@ ESTILO:
 - Respuestas claras, estructuradas y profesionales.
 - Usa listas y formato Markdown para mayor claridad cuando sea apropiado.
 - Sé conciso pero completo.
+{$kbContext}
 PROMPT;
     }
 
@@ -62,11 +77,20 @@ PROMPT;
             'history.*.content' => ['required_with:history', 'string', 'max:2000'],
         ]);
 
+        // ── Restricted topics check ────────────────────────────────
+        $userMessage = trim($validated['message']);
+        $blocked     = RestrictedTopic::active()->get()
+            ->first(fn (RestrictedTopic $t): bool => $t->matches($userMessage));
+
+        if ($blocked) {
+            return response()->json(['reply' => $blocked->response_message]);
+        }
+
         /** @var \App\Models\User $user */
         $user    = $request->user();
         $apiKey  = (string) config('services.ai_dashboard.api_key', '');
         $baseUrl = rtrim((string) config('services.ai_dashboard.base_url', 'https://openrouter.ai/api/v1'), '/');
-        $model   = (string) config('services.ai_dashboard.model', 'nvidia/llama-nemotron-super-49b-v1:free');
+        $model   = (string) config('services.ai_dashboard.model', 'minimax/minimax-m2.5:free');
         $timeout = (int) config('services.ai_dashboard.timeout', 30);
 
         if ($apiKey === '') {
@@ -84,9 +108,9 @@ PROMPT;
             ->all();
 
         $messages = array_merge(
-            [['role' => 'system', 'content' => $this->buildSystemPrompt()]],
+            [['role' => 'system', 'content' => $this->buildSystemPrompt($userMessage)]],
             $history,
-            [['role' => 'user', 'content' => trim($validated['message'])]]
+            [['role' => 'user', 'content' => $userMessage]]
         );
 
         $startMs = (int) round(microtime(true) * 1000);
@@ -132,7 +156,7 @@ PROMPT;
             'user_id'     => $user->id,
             'session_id'  => $sessionId,
             'role'        => 'user',
-            'content'     => trim($validated['message']),
+            'content'     => $userMessage,
             'model'       => $model,
             'ip_address'  => $ip,
             'user_agent'  => $ua,
@@ -159,7 +183,7 @@ PROMPT;
         // ── Update session history ────────────────────────────────
         $sessionHistory = array_slice(array_merge(
             $history,
-            [['role' => 'user',      'content' => trim($validated['message'])]],
+            [['role' => 'user',      'content' => $userMessage]],
             [['role' => 'assistant', 'content' => $reply]]
         ), -30);
 
@@ -171,6 +195,28 @@ PROMPT;
             'response_ms' => $responseMs,
             'model'       => $model,
         ]);
+    }
+
+    // ── Chat feedback (thumbs up/down) ───────────────────────────────
+    public function feedback(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'rating'           => ['required', 'in:helpful,not_helpful'],
+            'user_message'     => ['nullable', 'string', 'max:2000'],
+            'assistant_message'=> ['nullable', 'string', 'max:2000'],
+            'improvement_note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        \App\Models\ChatFeedback::create([
+            'context'           => 'dashboard',
+            'rating'            => $validated['rating'],
+            'user_message'      => $validated['user_message']      ?? null,
+            'assistant_message' => $validated['assistant_message'] ?? null,
+            'improvement_note'  => $validated['improvement_note']  ?? null,
+            'session_id'        => $request->session()->getId(),
+        ]);
+
+        return response()->json(['message' => 'Feedback registrado.']);
     }
 
     // ── Clear history ────────────────────────────────────────────────

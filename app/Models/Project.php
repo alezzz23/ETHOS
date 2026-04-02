@@ -83,6 +83,21 @@ class Project extends Model
         return $this->belongsTo(User::class, 'validated_by');
     }
 
+    public function tasks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function proposals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    public function checklists(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ProjectChecklist::class);
+    }
+
     // ─── Accessors ───────────────────────────────────────────────
 
     public function getBudgetDifferenceAttribute(): ?float

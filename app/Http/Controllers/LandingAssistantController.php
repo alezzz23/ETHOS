@@ -6,9 +6,26 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\KnowledgeBaseEntry;
+use App\Models\RestrictedTopic;
 
 class LandingAssistantController extends Controller
 {
+    private function buildSystemPrompt(string $userQuery): string
+    {
+        $base = 'Eres el asistente virtual de ETHOS. Responde en español claro, breve y profesional. Resuelve preguntas frecuentes sobre servicios, precios, horarios, compra y soporte técnico. Si falta información exacta, dilo con transparencia y sugiere contacto humano.';
+
+        $entries = KnowledgeBaseEntry::search($userQuery, 3);
+        if ($entries->isNotEmpty()) {
+            $base .= "\n\nINFORMACIÓN DE ETHOS RELEVANTE:\n";
+            foreach ($entries as $entry) {
+                $base .= "--- {$entry->title} ---\n";
+                $base .= ($entry->embedding_summary ?? substr($entry->content, 0, 300)) . "\n\n";
+            }
+        }
+
+        return $base;
+    }
     public function __invoke(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -30,6 +47,15 @@ class LandingAssistantController extends Controller
             ], 503);
         }
 
+        // ── Restricted topics check ────────────────────────────────
+        $userMessage = trim($validated['message']);
+        $blocked = RestrictedTopic::active()->get()
+            ->first(fn (RestrictedTopic $t): bool => $t->matches($userMessage));
+
+        if ($blocked) {
+            return response()->json(['reply' => $blocked->response_message]);
+        }
+
         $history = collect($validated['history'] ?? [])
             ->map(function (array $item): array {
                 return [
@@ -45,12 +71,12 @@ class LandingAssistantController extends Controller
         $messages = array_merge(
             [[
                 'role' => 'system',
-                'content' => 'Eres el asistente virtual de ETHOS. Responde en español claro, breve y profesional. Resuelve preguntas frecuentes sobre servicios, precios, horarios, compra y soporte técnico. Si falta información exacta, dilo con transparencia y sugiere contacto humano.',
+                'content' => $this->buildSystemPrompt($userMessage),
             ]],
             $history,
             [[
                 'role' => 'user',
-                'content' => trim($validated['message']),
+                'content' => $userMessage,
             ]]
         );
 
@@ -86,7 +112,7 @@ class LandingAssistantController extends Controller
             $history,
             [[
                 'role' => 'user',
-                'content' => trim($validated['message']),
+                'content' => $userMessage,
             ]],
             [[
                 'role' => 'assistant',

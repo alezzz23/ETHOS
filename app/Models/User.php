@@ -70,4 +70,14 @@ class User extends Authenticatable
         }
         return null;
     }
+
+    public function functionalAreas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserFunctionalArea::class);
+    }
+
+    public function tasks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
 }
