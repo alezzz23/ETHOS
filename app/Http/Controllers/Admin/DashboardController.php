@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Project;
+use App\Models\Service;
+use App\Models\SurveyResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -13,27 +15,19 @@ class DashboardController extends Controller
     public function __invoke()
     {
         $statusOrder = [
-            'capturado',
-            'clasificacion_pendiente',
-            'priorizado',
-            'asignacion_lider_pendiente',
-            'en_diagnostico',
-            'en_diseno',
-            'en_implementacion',
-            'en_seguimiento',
-            'cerrado',
+            Project::STATUS_CAPTURADO,
+            Project::STATUS_EN_ANALISIS,
+            Project::STATUS_APROBADO,
+            Project::STATUS_EN_EJECUCION,
+            Project::STATUS_CERRADO,
         ];
 
         $statusLabels = [
-            'capturado' => 'Capturado',
-            'clasificacion_pendiente' => 'Clasificación pendiente',
-            'priorizado' => 'Priorizado',
-            'asignacion_lider_pendiente' => 'Asignación líder pendiente',
-            'en_diagnostico' => 'En diagnóstico',
-            'en_diseno' => 'En diseño',
-            'en_implementacion' => 'En implementación',
-            'en_seguimiento' => 'En seguimiento',
-            'cerrado' => 'Cerrado',
+            Project::STATUS_CAPTURADO     => 'Capturado',
+            Project::STATUS_EN_ANALISIS   => 'En análisis',
+            Project::STATUS_APROBADO      => 'Aprobado',
+            Project::STATUS_EN_EJECUCION  => 'En ejecución',
+            Project::STATUS_CERRADO       => 'Cerrado',
         ];
 
         $totalClients = Client::count();
@@ -82,15 +76,45 @@ class DashboardController extends Controller
             ->whereDate('ends_at', '<=', Carbon::today()->addDays(30))
             ->count();
 
+        // ─── KPIs ejecutivos adicionales ──────────────────────────
+        $totalRevenue = Project::where('status', Project::STATUS_CERRADO)
+            ->whereNotNull('final_budget')
+            ->sum('final_budget');
+
+        $avgDeviation = Project::whereNotNull('deviation_percent')
+            ->avg('deviation_percent');
+
+        $avgCloseDays = Project::where('status', Project::STATUS_CERRADO)
+            ->whereNotNull('closed_at')
+            ->selectRaw('AVG(DATEDIFF(closed_at, created_at)) as avg_days')
+            ->value('avg_days');
+
+        $topServices = Service::query()
+            ->select('services.id', 'services.short_name',
+                     DB::raw('COUNT(projects.id) as projects_count'))
+            ->leftJoin('projects', 'projects.service_id', '=', 'services.id')
+            ->groupBy('services.id', 'services.short_name')
+            ->orderByDesc('projects_count')
+            ->take(5)
+            ->get();
+
+        $npsAverage = SurveyResponse::avg('nps_score');
+
         return view('admin.dashboard', [
-            'totalClients' => $totalClients,
-            'totalProjects' => $totalProjects,
+            'totalClients'   => $totalClients,
+            'totalProjects'  => $totalProjects,
             'activeProjects' => $activeProjects,
             'closedProjects' => $closedProjects,
             'projectsByStatus' => $projectsByStatus,
-            'monthlyProjects' => $monthlyProjects,
-            'recentProjects' => $recentProjects,
-            'endingSoon' => $endingSoon,
+            'monthlyProjects'  => $monthlyProjects,
+            'recentProjects'   => $recentProjects,
+            'endingSoon'       => $endingSoon,
+            // nuevos KPIs
+            'totalRevenue'  => $totalRevenue,
+            'avgDeviation'  => round((float) $avgDeviation, 1),
+            'avgCloseDays'  => round((float) $avgCloseDays),
+            'topServices'   => $topServices,
+            'npsAverage'    => $npsAverage !== null ? round((float) $npsAverage, 1) : null,
         ]);
     }
 }

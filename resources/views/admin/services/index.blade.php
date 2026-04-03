@@ -9,6 +9,7 @@
     $canDeactivate = auth()->user()?->can('services.deactivate');
 @endphp
 
+<div x-data="serviceForm()" x-init="init()">
 <div class="row g-4">
     {{-- Header + filters --}}
     <div class="col-12">
@@ -20,7 +21,8 @@
                 </h5>
                 @if($canCreate)
                 <button type="button" class="btn btn-primary ethos-create-btn"
-                    @click="openCreate()" x-data>
+                    data-bs-toggle="modal" data-bs-target="#serviceFormModal"
+                    @click="openCreate()">
                     <i class="ti ti-plus"></i>
                     <span>Nuevo Servicio</span>
                 </button>
@@ -139,6 +141,7 @@
                                 <td>
                                     <button type="button"
                                         class="btn btn-sm btn-icon btn-text-secondary rounded-pill js-view-service"
+                                        data-bs-toggle="modal" data-bs-target="#viewServiceModal"
                                         title="Ver detalle"
                                         data-service-id="{{ $service->id }}">
                                         <i class="ti ti-eye"></i>
@@ -146,6 +149,7 @@
                                     @if($canEdit)
                                     <button type="button"
                                         class="btn btn-sm btn-icon btn-text-secondary rounded-pill js-edit-service"
+                                        data-bs-toggle="modal" data-bs-target="#serviceFormModal"
                                         title="Editar"
                                         data-service='{{ json_encode(["id"=>$service->id,"short_name"=>$service->short_name,"description"=>$service->description,"functional_areas"=>$service->functional_areas,"client_types"=>$service->client_types,"documents"=>$service->documents->map(fn($d)=>["name"=>$d->name,"type"=>$d->type,"description"=>$d->description])->values(),"requirements"=>$service->requirements->map(fn($r)=>["description"=>$r->description])->values()]) }}'>
                                         <i class="ti ti-pencil"></i>
@@ -199,8 +203,7 @@
 </div>
 
 {{-- ─── Create / Edit Modal ────────────────────────────────────────── --}}
-<div class="modal fade" id="serviceFormModal" tabindex="-1" aria-labelledby="serviceFormModalLabel" aria-hidden="true"
-     x-data="serviceForm()" x-init="init()">
+<div class="modal fade" id="serviceFormModal" tabindex="-1" aria-labelledby="serviceFormModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -339,7 +342,7 @@
                 </button>
             </div>
         </div>
-    </div>
+</div>
 </div>
 @endsection
 
@@ -382,7 +385,6 @@ function serviceForm() {
             this.editingId = null;
             this.errors = {};
             this.form = { short_name:'', description:'', functional_areas:[], client_types:[], documents:[], requirements:[] };
-            new bootstrap.Modal(document.getElementById('serviceFormModal')).show();
         },
 
         openEdit(data) {
@@ -396,13 +398,11 @@ function serviceForm() {
                 documents:        (data.documents || []).map(d => ({name: d.name, type: d.type, description: d.description||''})),
                 requirements:     (data.requirements || []).map(r => ({description: r.description})),
             };
-            new bootstrap.Modal(document.getElementById('serviceFormModal')).show();
         },
 
         openView(serviceId) {
             const body = document.getElementById('viewServiceBody');
             body.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div></div>';
-            new bootstrap.Modal(document.getElementById('viewServiceModal')).show();
 
             fetch(`/admin/services/${serviceId}`, {
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }

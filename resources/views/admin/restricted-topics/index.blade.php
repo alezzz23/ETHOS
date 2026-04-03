@@ -12,7 +12,9 @@
                     <i class="ti ti-shield-lock"></i>
                     <span>Tópicos Restringidos del Chatbot</span>
                 </h5>
-                <button type="button" class="btn btn-primary ethos-create-btn" @click="openCreate()">
+                <button type="button" class="btn btn-primary ethos-create-btn"
+                        data-bs-toggle="modal" data-bs-target="#topicFormModal"
+                        @click="openCreate()">
                     <i class="ti ti-plus"></i>
                     <span>Nuevo Tópico</span>
                 </button>
@@ -57,6 +59,7 @@
                                 </div>
                                 <div class="card-footer bg-transparent d-flex gap-2">
                                     <button type="button" class="btn btn-sm btn-outline-secondary flex-fill"
+                                            data-bs-toggle="modal" data-bs-target="#topicFormModal"
                                             @click="openEdit(topic)">
                                         <i class="ti ti-pencil"></i> Editar
                                     </button>
@@ -150,7 +153,6 @@ function restrictedTopics() {
             document.getElementById('topicResponse').value = '';
             document.getElementById('topicIsActive').checked = true;
             renderKeywords([]);
-            new bootstrap.Modal(document.getElementById('topicFormModal')).show();
         },
 
         openEdit(topic) {
@@ -160,7 +162,6 @@ function restrictedTopics() {
             document.getElementById('topicResponse').value = topic.response_message;
             document.getElementById('topicIsActive').checked = topic.is_active;
             renderKeywords(topic.keywords || []);
-            new bootstrap.Modal(document.getElementById('topicFormModal')).show();
         },
 
         async deleteTopic(id) {

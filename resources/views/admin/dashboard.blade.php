@@ -128,15 +128,11 @@
 @section('content')
 @php
     $statusBadge = [
-        'capturado' => 'bg-label-primary',
-        'clasificacion_pendiente' => 'bg-label-warning',
-        'priorizado' => 'bg-label-info',
-        'asignacion_lider_pendiente' => 'bg-label-warning',
-        'en_diagnostico' => 'bg-label-dark',
-        'en_diseno' => 'bg-label-secondary',
-        'en_implementacion' => 'bg-label-primary',
-        'en_seguimiento' => 'bg-label-info',
-        'cerrado' => 'bg-label-success',
+        'capturado'     => 'bg-label-primary',
+        'en_analisis'   => 'bg-label-warning',
+        'aprobado'      => 'bg-label-info',
+        'en_ejecucion'  => 'bg-label-dark',
+        'cerrado'       => 'bg-label-success',
     ];
 @endphp
 <div class="row g-4 mb-4">
@@ -214,7 +210,108 @@
     @endcan
 </div>
 
+{{-- ─── KPIs Ejecutivos ─────────────────────────────────────────────── --}}
 <div class="row g-4 mb-4">
+    @can('projects.view')
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card success-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Ingresos cerrados</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">${{ number_format($totalRevenue, 0, ',', '.') }}</h3>
+                        </div>
+                        <small class="text-muted">Suma de presupuesto final</small>
+                    </div>
+                    <span class="avatar-md bg-label-success rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-currency-dollar fs-3"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card {{ abs($avgDeviation) >= 20 ? 'danger-hover' : (abs($avgDeviation) >= 10 ? 'warning-hover' : 'success-hover') }}">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Desvío promedio</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ $avgDeviation }}%</h3>
+                        </div>
+                        <small class="text-muted">Horas reales vs estimadas</small>
+                    </div>
+                    <span class="avatar-md bg-label-{{ abs($avgDeviation) >= 20 ? 'danger' : (abs($avgDeviation) >= 10 ? 'warning' : 'success') }} rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-trending-up fs-3"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card info-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">Días promedio de cierre</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ $avgCloseDays ?: '—' }}</h3>
+                        </div>
+                        <small class="text-muted">Desde captura hasta cerrado</small>
+                    </div>
+                    <span class="avatar-md bg-label-info rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-clock fs-3"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card h-100 ethos-stat-card primary-hover">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="ethos-stat-title">NPS promedio</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="ethos-stat-value mb-0">{{ $npsAverage ?? '—' }}</h3>
+                        </div>
+                        <small class="text-muted">Encuestas de satisfacción (0-10)</small>
+                    </div>
+                    <span class="avatar-md bg-label-primary rounded p-2 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-mood-happy fs-3"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endcan
+</div>
+
+{{-- ─── Top Servicios + Gráficas ────────────────────────────────────── --}}
+<div class="row g-4 mb-4">
+    <div class="col-xl-4">
+        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+            <div class="card-header pb-1">
+                <h5 class="card-title mb-0 fw-bold"><i class="ti ti-star me-2 text-warning"></i>Servicios más usados</h5>
+            </div>
+            <div class="card-body">
+                @forelse($topServices as $svc)
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="avatar-sm bg-label-primary rounded d-flex align-items-center justify-content-center">
+                            <i class="ti ti-tool"></i>
+                        </span>
+                        <span class="small fw-semibold">{{ $svc->short_name }}</span>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ $svc->projects_count }}</span>
+                </div>
+                @empty
+                <p class="text-muted text-center py-3">Sin datos aún</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
     <div class="col-xl-8">
         <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
             <div class="card-header pb-1">
@@ -225,6 +322,9 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="row g-4 mb-4">
     <div class="col-xl-4">
         <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
             <div class="card-header pb-1">
@@ -235,11 +335,8 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="row g-4">
-    <div class="col-12">
-        <div class="card ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+    <div class="col-xl-8">
+        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
             <div class="card-header d-flex justify-content-between align-items-center border-bottom border-light border-opacity-10 pb-3">
                 <h5 class="card-title mb-0 fw-bold"><i class="ti ti-list-details me-2 text-primary"></i>Proyectos Recientes</h5>
                 <a href="{{ route('projects.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">

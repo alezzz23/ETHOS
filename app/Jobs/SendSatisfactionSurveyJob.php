@@ -20,7 +20,7 @@ class SendSatisfactionSurveyJob implements ShouldQueue
     public function handle(): void
     {
         // Only send for closed projects with a client
-        if ($this->project->status !== 'completed' || !$this->project->client_id) {
+        if ($this->project->status !== Project::STATUS_CERRADO || !$this->project->client_id) {
             return;
         }
 

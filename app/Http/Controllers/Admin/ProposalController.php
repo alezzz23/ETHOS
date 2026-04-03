@@ -197,6 +197,10 @@ class ProposalController extends Controller
             'approved_at' => now(),
         ]);
 
+        // Advance project to 'aprobado' so the observer can fire onAprobado()
+        $proposal->load('project');
+        $proposal->project->update(['status' => Project::STATUS_APROBADO]);
+
         // Auto-generate checklist on approval
         $this->checklistGenerator->generateFromProposal($proposal);
 

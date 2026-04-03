@@ -55,6 +55,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->names('clients');
     Route::resource('admin/projects', App\Http\Controllers\Admin\ProjectController::class)
         ->names('projects');
+
+    // ─── Project lifecycle endpoints ──────────────────────────────
+    Route::patch('admin/projects/{project}/analyze', [App\Http\Controllers\Admin\ProjectController::class, 'analyze'])
+        ->name('projects.analyze');
+    Route::patch('admin/projects/{project}/approve', [App\Http\Controllers\Admin\ProjectController::class, 'approve'])
+        ->name('projects.approve');
+    Route::patch('admin/projects/{project}/start-execution', [App\Http\Controllers\Admin\ProjectController::class, 'startExecution'])
+        ->name('projects.start-execution');
+    Route::post('admin/projects/{project}/progress', [App\Http\Controllers\Admin\ProjectController::class, 'logProgress'])
+        ->name('projects.progress');
+    Route::patch('admin/projects/{project}/close', [App\Http\Controllers\Admin\ProjectController::class, 'close'])
+        ->name('projects.close');
+    Route::get('admin/projects/{project}/report', [App\Http\Controllers\Admin\ProjectController::class, 'progressReport'])
+        ->name('projects.report')
+        ->middleware('permission:projects.view');
+
     Route::resource('admin/users', App\Http\Controllers\Admin\UserController::class)
         ->names('users')
         ->only(['index', 'store', 'update', 'destroy']);
