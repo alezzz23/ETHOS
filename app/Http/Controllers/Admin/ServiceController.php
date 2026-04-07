@@ -63,7 +63,7 @@ class ServiceController extends Controller
             $query->where('status', $request->status);
         }
 
-        $services = $query->latest()->paginate(12);
+        $services = $query->with(['documents', 'requirements', 'processes.methods'])->latest()->paginate(12);
 
         if ($request->expectsJson()) {
             return response()->json(['services' => $services]);
@@ -81,7 +81,7 @@ class ServiceController extends Controller
 
     public function show(Service $service, Request $request): View|JsonResponse
     {
-        $service->load(['documents', 'requirements', 'auditLogs.changedBy']);
+        $service->load(['documents', 'requirements', 'auditLogs.changedBy', 'processes.methods']);
 
         if ($request->expectsJson()) {
             return response()->json(['service' => $service]);
@@ -112,6 +112,11 @@ class ServiceController extends Controller
             'documents.*.description'      => 'nullable|string|max:500',
             'requirements'                 => 'nullable|array|max:30',
             'requirements.*.description'   => 'required_with:requirements|string|max:500',
+            'processes'                    => 'nullable|array|max:5',
+            'processes.*.name'             => 'required_with:processes|string|in:levantamiento,diagnostico,propuesta,implementacion,seguimiento',
+            'processes.*.methods'          => 'nullable|array',
+            'processes.*.methods.*.method' => 'required_with:processes.*.methods|string|in:encuesta,entrevista,observacion,documental',
+            'processes.*.methods.*.standard_hours' => 'required_with:processes.*.methods|numeric|min:0.1|max:999',
         ]);
 
         $service = Service::create([
@@ -127,11 +132,12 @@ class ServiceController extends Controller
 
         $this->syncDocuments($service, $validated['documents'] ?? []);
         $this->syncRequirements($service, $validated['requirements'] ?? []);
+        $this->syncProcesses($service, $validated['processes'] ?? []);
 
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => 'Servicio creado exitosamente.',
-                'service' => $service->load(['documents', 'requirements']),
+                'service' => $service->load(['documents', 'requirements', 'processes.methods']),
             ], 201);
         }
 
@@ -155,6 +161,11 @@ class ServiceController extends Controller
             'documents.*.description'      => 'nullable|string|max:500',
             'requirements'                 => 'nullable|array|max:30',
             'requirements.*.description'   => 'required_with:requirements|string|max:500',
+            'processes'                    => 'nullable|array|max:5',
+            'processes.*.name'             => 'required_with:processes|string|in:levantamiento,diagnostico,propuesta,implementacion,seguimiento',
+            'processes.*.methods'          => 'nullable|array',
+            'processes.*.methods.*.method' => 'required_with:processes.*.methods|string|in:encuesta,entrevista,observacion,documental',
+            'processes.*.methods.*.standard_hours' => 'required_with:processes.*.methods|numeric|min:0.1|max:999',
         ]);
 
         $service->update([
@@ -168,11 +179,12 @@ class ServiceController extends Controller
 
         $this->syncDocuments($service, $validated['documents'] ?? []);
         $this->syncRequirements($service, $validated['requirements'] ?? []);
+        $this->syncProcesses($service, $validated['processes'] ?? []);
 
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => 'Servicio actualizado exitosamente.',
-                'service' => $service->fresh()->load(['documents', 'requirements']),
+                'service' => $service->fresh()->load(['documents', 'requirements', 'processes.methods']),
             ]);
         }
 
@@ -251,6 +263,30 @@ class ServiceController extends Controller
                 'description' => $req['description'],
                 'order'       => $i,
             ]);
+        }
+    }
+
+    private function syncProcesses(Service $service, array $processes): void
+    {
+        $service->processes()->delete();
+
+        foreach ($processes as $i => $proc) {
+            if (empty($proc['name'])) continue;
+
+            $process = \App\Models\ServiceProcess::create([
+                'service_id' => $service->id,
+                'name'       => $proc['name'],
+                'order'      => $i,
+            ]);
+
+            foreach ($proc['methods'] ?? [] as $m) {
+                if (empty($m['method'])) continue;
+                \App\Models\ProcessMethod::create([
+                    'service_process_id' => $process->id,
+                    'method'             => $m['method'],
+                    'standard_hours'     => (float) ($m['standard_hours'] ?? 1),
+                ]);
+            }
         }
     }
 }

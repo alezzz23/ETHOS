@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ClientProjectSeeder::class,
             ServiceSeeder::class,
             ClientSizeConfigSeeder::class,
+            ServiceProcessSeeder::class,
         ]);
     }
 }

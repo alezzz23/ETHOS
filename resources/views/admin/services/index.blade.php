@@ -151,7 +151,7 @@
                                         class="btn btn-sm btn-icon btn-text-secondary rounded-pill js-edit-service"
                                         data-bs-toggle="modal" data-bs-target="#serviceFormModal"
                                         title="Editar"
-                                        data-service='{{ json_encode(["id"=>$service->id,"short_name"=>$service->short_name,"description"=>$service->description,"functional_areas"=>$service->functional_areas,"client_types"=>$service->client_types,"documents"=>$service->documents->map(fn($d)=>["name"=>$d->name,"type"=>$d->type,"description"=>$d->description])->values(),"requirements"=>$service->requirements->map(fn($r)=>["description"=>$r->description])->values()]) }}'>
+                                        data-service='{{ json_encode(["id"=>$service->id,"short_name"=>$service->short_name,"description"=>$service->description,"functional_areas"=>$service->functional_areas,"client_types"=>$service->client_types,"documents"=>$service->documents->map(fn($d)=>["name"=>$d->name,"type"=>$d->type,"description"=>$d->description])->values(),"requirements"=>$service->requirements->map(fn($r)=>["description"=>$r->description])->values(),"processes"=>$service->processes->map(fn($p)=>["name"=>$p->name,"methods"=>$p->methods->map(fn($m)=>["method"=>$m->method,"standard_hours"=>$m->standard_hours])->values()])->values()]) }}'>
                                         <i class="ti ti-pencil"></i>
                                     </button>
                                     @endif
@@ -341,7 +341,7 @@
                 </div>
 
                 {{-- Requirements --}}
-                <div class="sfm-section sfm-section-last">
+                <div class="sfm-section">
                     <div class="sfm-section-title d-flex justify-content-between align-items-center">
                         <span><i class="ti ti-checklist"></i> Checklist de requisitos del cliente</span>
                         <button type="button" class="btn btn-sm sfm-add-btn"
@@ -365,6 +365,67 @@
                                     @click="form.requirements.splice(i,1)">
                                 <i class="ti ti-x"></i>
                             </button>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Processes & Methods --}}
+                <div class="sfm-section sfm-section-last">
+                    <div class="sfm-section-title d-flex justify-content-between align-items-center">
+                        <span><i class="ti ti-git-branch"></i> Procesos y métodos <small class="sfm-count-badge" x-text="form.processes.length > 0 ? form.processes.length + ' proceso(s)' : ''"></small></span>
+                        <button type="button" class="btn btn-sm sfm-add-btn"
+                                @click="form.processes.push({name:'levantamiento', methods:[{method:'entrevista', standard_hours:1}]})">
+                            <i class="ti ti-plus"></i> Agregar proceso
+                        </button>
+                    </div>
+                    <p class="text-muted small mb-2">Define los procesos que componen este servicio y las horas estándar por persona para calcular propuestas automáticamente.</p>
+                    <template x-if="form.processes.length === 0">
+                        <div class="sfm-empty-state">
+                            <i class="ti ti-git-merge"></i>
+                            <span>Sin procesos. El calculador de horas retornará 0. Agrega al menos uno.</span>
+                        </div>
+                    </template>
+                    <template x-for="(proc, pi) in form.processes" :key="pi">
+                        <div class="sfm-process-card mb-3">
+                            <div class="sfm-process-header">
+                                <div class="sfm-process-icon"><i class="ti ti-git-branch"></i></div>
+                                <select class="form-select form-select-sm sfm-process-select" x-model="proc.name">
+                                    <option value="levantamiento">Levantamiento</option>
+                                    <option value="diagnostico">Diagnóstico</option>
+                                    <option value="propuesta">Propuesta</option>
+                                    <option value="implementacion">Implementación</option>
+                                    <option value="seguimiento">Seguimiento</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-icon btn-text-danger ms-auto"
+                                        @click="form.processes.splice(pi,1)" title="Eliminar proceso">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </div>
+                            <div class="sfm-methods-list">
+                                <template x-for="(m, mi) in proc.methods" :key="mi">
+                                    <div class="sfm-method-row">
+                                        <select class="form-select form-select-sm sfm-method-select" x-model="m.method">
+                                            <option value="encuesta">Encuesta</option>
+                                            <option value="entrevista">Entrevista</option>
+                                            <option value="observacion">Observación</option>
+                                            <option value="documental">Documental</option>
+                                        </select>
+                                        <div class="sfm-hours-input-wrap">
+                                            <input type="number" class="form-control form-control-sm" x-model="m.standard_hours"
+                                                   min="0.1" max="999" step="0.5" style="width:80px">
+                                            <span class="sfm-hours-label">h/persona</span>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-icon btn-text-danger"
+                                                @click="proc.methods.splice(mi,1)" title="Eliminar método">
+                                            <i class="ti ti-x"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                                <button type="button" class="sfm-add-method-btn"
+                                        @click="proc.methods.push({method:'entrevista', standard_hours:1})">
+                                    <i class="ti ti-plus"></i> Método
+                                </button>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -969,6 +1030,78 @@
     background: var(--bs-body-bg);
     border-top: 1px solid var(--bs-border-color) !important;
 }
+
+/* ── Process & methods builder ──────────────────────────────── */
+#serviceFormModal .sfm-process-card {
+    border: 1px solid var(--bs-border-color);
+    border-radius: .5rem;
+    overflow: hidden;
+    margin-bottom: .75rem;
+}
+#serviceFormModal .sfm-process-header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .625rem .875rem;
+    background: rgba(var(--bs-primary-rgb),.05);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+#serviceFormModal .sfm-process-icon {
+    width: 1.75rem; height: 1.75rem;
+    border-radius: .375rem;
+    background: rgba(var(--bs-primary-rgb),.12);
+    color: var(--bs-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; flex-shrink: 0;
+}
+#serviceFormModal .sfm-process-select {
+    flex: 1; max-width: 220px;
+    background: var(--bs-body-bg); color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+#serviceFormModal .sfm-methods-list {
+    padding: .625rem .875rem;
+    display: flex; flex-direction: column; gap: .4rem;
+}
+#serviceFormModal .sfm-method-row {
+    display: flex; align-items: center; gap: .5rem;
+}
+#serviceFormModal .sfm-method-select {
+    flex: 1;
+    background: var(--bs-body-bg); color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+#serviceFormModal .sfm-hours-input-wrap {
+    display: flex; align-items: center; gap: .35rem; flex-shrink: 0;
+}
+#serviceFormModal .sfm-hours-label {
+    font-size: .72rem; color: var(--bs-secondary-color); white-space: nowrap;
+}
+#serviceFormModal .sfm-add-method-btn {
+    display: inline-flex; align-items: center; gap: .3rem;
+    padding: .25rem .65rem; font-size: .75rem; font-weight: 600;
+    border-radius: .375rem;
+    border: 1px dashed rgba(var(--bs-secondary-rgb),.4);
+    background: transparent; color: var(--bs-secondary-color);
+    cursor: pointer; margin-top: .25rem; align-self: flex-start;
+    transition: all .15s;
+}
+#serviceFormModal .sfm-add-method-btn:hover { border-color: var(--bs-primary); color: var(--bs-primary); }
+
+/* dark mode */
+.dark-style #serviceFormModal .sfm-process-card { border-color: rgba(255,255,255,.08); }
+.dark-style #serviceFormModal .sfm-process-header {
+    background: rgba(105,108,255,.08); border-bottom-color: rgba(255,255,255,.08);
+}
+.dark-style #serviceFormModal .sfm-process-select,
+.dark-style #serviceFormModal .sfm-method-select {
+    background: #1e1e2d !important; color: #d0d4e4 !important;
+    border-color: rgba(255,255,255,.12) !important;
+}
+.dark-style #serviceFormModal .sfm-method-row .form-control {
+    background: #1e1e2d !important; color: #d0d4e4 !important;
+    border-color: rgba(255,255,255,.12) !important;
+}
 </style>
 @endpush
 
@@ -986,6 +1119,7 @@ function serviceForm() {
             client_types: [],
             documents: [],
             requirements: [],
+            processes: [],
         },
 
         init() {
@@ -1010,7 +1144,7 @@ function serviceForm() {
         openCreate() {
             this.editingId = null;
             this.errors = {};
-            this.form = { short_name:'', description:'', functional_areas:[], client_types:[], documents:[], requirements:[] };
+            this.form = { short_name:'', description:'', functional_areas:[], client_types:[], documents:[], requirements:[], processes:[] };
         },
 
         openEdit(data) {
@@ -1023,6 +1157,10 @@ function serviceForm() {
                 client_types:     data.client_types || [],
                 documents:        (data.documents || []).map(d => ({name: d.name, type: d.type, description: d.description||''})),
                 requirements:     (data.requirements || []).map(r => ({description: r.description})),
+                processes:        (data.processes || []).map(p => ({
+                    name: p.name,
+                    methods: (p.methods || []).map(m => ({method: m.method, standard_hours: m.standard_hours}))
+                })),
             };
         },
 
