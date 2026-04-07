@@ -246,7 +246,7 @@ function knowledgeBase() {
             this.editingId = null;
             this.form = { title:'', category:'faq', service_id:'', content:'', embedding_summary:'', is_active:true };
             this.formError = '';
-            new bootstrap.Modal(document.getElementById('kbModal')).show();
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('kbModal')).show();
         },
 
         editEntry(entry) {
@@ -260,7 +260,7 @@ function knowledgeBase() {
                 is_active:         entry.is_active,
             };
             this.formError = '';
-            new bootstrap.Modal(document.getElementById('kbModal')).show();
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('kbModal')).show();
         },
 
         async saveEntry() {

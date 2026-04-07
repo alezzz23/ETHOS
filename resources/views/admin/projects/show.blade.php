@@ -242,14 +242,46 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h6 class="card-title"><i class="ti ti-user me-2"></i>Responsables</h6>
-                    <dl class="row mb-0">
+                    <dl class="row mb-2">
                         <dt class="col-6 text-muted small">Capturado por</dt>
                         <dd class="col-6 small">{{ $project->capturedBy?->name ?? '—' }}</dd>
+                    </dl>
+                    @if($canEdit)
+                    {{-- Inline assignment form --}}
+                    <form id="formAssignResponsibles" class="mt-1">
+                        @csrf
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm text-muted mb-1">Consultor/a asignada</label>
+                            <select name="assigned_to" class="form-select form-select-sm">
+                                <option value="">Sin asignar</option>
+                                @foreach($consultors as $c)
+                                <option value="{{ $c->id }}" @selected($project->assigned_to === $c->id)>{{ $c->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label form-label-sm text-muted mb-1">Líder del proyecto</label>
+                            <select name="leader_id" class="form-select form-select-sm">
+                                <option value="">Sin asignar</option>
+                                @foreach($leaders as $l)
+                                <option value="{{ $l->id }}" @selected($project->leader_id === $l->id)>{{ $l->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div id="assignFeedback" class="small d-none mb-1"></div>
+                        <button type="submit" class="btn btn-sm btn-primary w-100" id="btnSaveAssign">
+                            <span id="assignSpinner" class="spinner-border spinner-border-sm d-none me-1"></span>
+                            <i class="ti ti-device-floppy me-1" id="assignIcon"></i>Guardar responsables
+                        </button>
+                    </form>
+                    @else
+                    <dl class="row mb-0">
                         <dt class="col-6 text-muted small">Asignado a</dt>
                         <dd class="col-6 small">{{ $project->assignedTo?->name ?? '—' }}</dd>
                         <dt class="col-6 text-muted small">Líder</dt>
                         <dd class="col-6 small">{{ $project->leader?->name ?? '—' }}</dd>
                     </dl>
+                    @endif
                 </div>
             </div>
             <div class="card">
@@ -1024,6 +1056,56 @@
             if (!res.ok) { showFeedback('error', data.message || 'Error al guardar.'); return; }
             showFeedback('success', data.message || 'Cambios guardados.');
             setTimeout(() => location.reload(), 1200);
+        });
+    }
+
+    // ─── Assign Responsibles ───────────────────────────────────────
+    const formAssign = document.getElementById('formAssignResponsibles');
+    if (formAssign) {
+        formAssign.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn       = document.getElementById('btnSaveAssign');
+            const spinner   = document.getElementById('assignSpinner');
+            const icon      = document.getElementById('assignIcon');
+            const assignFb  = document.getElementById('assignFeedback');
+
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            icon.classList.add('d-none');
+            assignFb.className = 'small d-none';
+
+            const body = new URLSearchParams({
+                _token:      csrfToken,
+                _method:     'PUT',
+                title:       '{{ addslashes($project->title) }}',
+                client_id:   '{{ $project->client_id }}',
+                assigned_to: formAssign.querySelector('[name=assigned_to]').value,
+                leader_id:   formAssign.querySelector('[name=leader_id]').value,
+            });
+
+            try {
+                const res  = await fetch(`/admin/projects/${projectId}`, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    body,
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    assignFb.className = 'small text-danger mb-1';
+                    assignFb.textContent = data.message || 'Error al guardar.';
+                } else {
+                    assignFb.className = 'small text-success mb-1';
+                    assignFb.textContent = '✓ Responsables guardados.';
+                    setTimeout(() => location.reload(), 900);
+                }
+            } catch {
+                assignFb.className = 'small text-danger mb-1';
+                assignFb.textContent = 'Error de conexión.';
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('d-none');
+                icon.classList.remove('d-none');
+            }
         });
     }
 })();

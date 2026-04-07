@@ -73,8 +73,8 @@ class HourCalculatorService
             'total_hours'        => round($totalHours, 2),
             'target_persons'     => $targetPersons,
             'breakdown'          => $breakdown,
-            'suggested_price_min' => $priceMin,
-            'suggested_price_max' => $priceMax,
+            'price_min' => $priceMin,
+            'price_max' => $priceMax,
             'hourly_rate'        => $hourlyRate,
             'margin_pct'         => $marginPct,
         ];

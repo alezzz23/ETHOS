@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ChecklistController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KnowledgeBaseController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PortalTokenController;
 use App\Http\Controllers\Admin\ProposalController;
 use App\Http\Controllers\Admin\SearchController;
@@ -39,6 +40,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('permission:admin.access')->group(function () {
         Route::get('/admin/search', SearchController::class)->name('admin.search');
+
+        // Notifications bell
+        Route::get ('/admin/notifications',                       [NotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('/admin/notifications/{id}/read',            [NotificationController::class, 'markRead'])->name('notifications.markRead');
+        Route::patch('/admin/notifications/mark-all-read',        [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+        Route::get  ('/admin/notifications/stream',               [NotificationController::class, 'stream'])->name('notifications.stream');
 
         // Admin AI Chatbot
         Route::post('/admin/chat',         [App\Http\Controllers\Admin\DashboardChatController::class, 'chat'])->name('admin.chat')->middleware('throttle:40,1');

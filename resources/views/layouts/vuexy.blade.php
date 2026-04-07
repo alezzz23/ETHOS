@@ -13,6 +13,61 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.css">
     <link rel="stylesheet" href="{{ asset('css/vuexy.css') }}">
+    <style>
+    /* ─── Notification Bell ───────────────────────────────────────── */
+    .ethos-notif-badge {
+        position: absolute;
+        top: 4px; right: 4px;
+        min-width: 17px; height: 17px;
+        padding: 0 4px;
+        border-radius: 999px;
+        background: #e11d48;
+        color: #fff;
+        font-size: .7rem;
+        font-weight: 700;
+        line-height: 17px;
+        text-align: center;
+        pointer-events: none;
+    }
+    .ethos-notif-panel {
+        width: 360px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,.14);
+        border: 1px solid var(--vz-border-color, #e9ecef);
+        background: var(--vz-body-bg, #fff);
+    }
+    .ethos-notif-header {
+        border-bottom: 1px solid var(--vz-border-color, #e9ecef);
+        background: var(--vz-secondary-bg, #f8f9fa);
+        border-radius: 12px 12px 0 0;
+    }
+    .ethos-notif-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .75rem;
+        padding: .75rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid var(--vz-border-color, #f1f1f1);
+        transition: background .15s;
+        text-decoration: none;
+        color: inherit;
+    }
+    .ethos-notif-item:hover { background: var(--vz-secondary-bg, #f8faff); }
+    .ethos-notif-item.unread { background: rgba(99,102,241,.05); }
+    .ethos-notif-item.unread:hover { background: rgba(99,102,241,.1); }
+    .ethos-notif-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #6366f1;
+        flex-shrink: 0;
+        margin-top: 6px;
+    }
+    .ethos-notif-dot.read { background: transparent; border: 1px solid var(--vz-border-color,#dee2e6); }
+    .ethos-notif-title { font-size: .85rem; font-weight: 600; color: var(--vz-heading-color, #333); margin-bottom: 2px; }
+    .ethos-notif-msg   { font-size: .78rem; color: var(--vz-secondary-color, #6c757d); line-height: 1.4; }
+    .ethos-notif-time  { font-size: .7rem; color: var(--vz-secondary-color, #adb5bd); white-space: nowrap; flex-shrink: 0; }
+    .ethos-notif-footer { background: var(--vz-secondary-bg, #f8f9fa); border-radius: 0 0 12px 12px; }
+    </style>
     @stack('styles')
     <script>
         (function() {
@@ -131,6 +186,30 @@
             <input type="text" placeholder="Search (Ctrl+/)" readonly>
         </div>
         <div class="navbar-end">
+            {{-- ─── Notification Bell ──────────────────────────────── --}}
+            @auth
+            <div class="dropdown ethos-notif-dropdown" id="notifDropdown">
+                <button class="navbar-icon-btn position-relative" id="notifBell"
+                        data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                        aria-expanded="false" aria-label="Notificaciones">
+                    <i class="ti ti-bell"></i>
+                    <span class="ethos-notif-badge d-none" id="notifBadge">0</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end ethos-notif-panel p-0" id="notifPanel">
+                    <div class="ethos-notif-header d-flex justify-content-between align-items-center px-3 py-2">
+                        <span class="fw-semibold">Notificaciones</span>
+                        <button class="btn btn-sm btn-link p-0 text-muted" id="notifMarkAll" style="font-size:.8rem">Marcar todo como leído</button>
+                    </div>
+                    <div id="notifList" style="max-height:360px;overflow-y:auto;">
+                        <div class="text-center text-muted py-4 small" id="notifEmpty">Cargando...</div>
+                    </div>
+                    <div class="ethos-notif-footer text-center py-2 border-top">
+                        <a href="/admin/notifications" class="small text-primary text-decoration-none">Ver todas</a>
+                    </div>
+                </div>
+            </div>
+            @endauth
+
             <button class="navbar-icon-btn" id="themeSwitcher" title="Dark/Light Mode" aria-label="Alternar modo oscuro"><i class="ti ti-moon" id="themeIcon"></i></button>
                 <div class="navbar-user dropdown">
                 @php
@@ -490,6 +569,125 @@
         $$('[title]').forEach(el=>{ if(el.classList.contains('navbar-icon-btn')) new bootstrap.Tooltip(el,{placement:'bottom',trigger:'hover'}); });
     })();
     </script>
+
+    {{-- ─── Notification Bell JS ────────────────────────────────────── --}}
+    @auth
+    <script>
+    (function () {
+        const bell    = document.getElementById('notifBell');
+        const badge   = document.getElementById('notifBadge');
+        const list    = document.getElementById('notifList');
+        const markAll = document.getElementById('notifMarkAll');
+        if (!bell) return;
+
+        const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+        let loaded = false;
+
+        function updateBadge(count) {
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
+        }
+
+        function levelIcon(level) {
+            const map = { warning: 'ti-alert-triangle text-warning', info: 'ti-info-circle text-info', success: 'ti-circle-check text-success', error: 'ti-circle-x text-danger' };
+            return map[level] || 'ti-bell text-secondary';
+        }
+
+        function renderItems(items) {
+            if (!items.length) {
+                list.innerHTML = '<div class="text-center text-muted py-4 small">No tienes notificaciones.</div>';
+                return;
+            }
+            list.innerHTML = items.map(n => `
+                <a class="ethos-notif-item ${n.read ? '' : 'unread'}" href="${n.action_url || '#'}"
+                   data-notif-id="${n.id}" data-read="${n.read ? '1' : '0'}">
+                    <span class="ethos-notif-dot ${n.read ? 'read' : ''}"></span>
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="ethos-notif-title">${escHtml(n.title)}</div>
+                        <div class="ethos-notif-msg">${escHtml(n.message)}</div>
+                    </div>
+                    <span class="ethos-notif-time">${escHtml(n.created_at)}</span>
+                </a>
+            `).join('');
+
+            // Mark as read on click
+            list.querySelectorAll('.ethos-notif-item').forEach(el => {
+                el.addEventListener('click', async function (e) {
+                    const id   = this.dataset.notifId;
+                    const read = this.dataset.read === '1';
+                    if (!read) {
+                        await fetch(`/admin/notifications/${id}/read`, {
+                            method: 'PATCH',
+                            headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+                        }).catch(() => {});
+                        this.classList.remove('unread');
+                        this.dataset.read = '1';
+                        this.querySelector('.ethos-notif-dot')?.classList.add('read');
+                        const current = parseInt(badge.textContent) || 0;
+                        updateBadge(Math.max(0, current - 1));
+                    }
+                });
+            });
+        }
+
+        function escHtml(str) {
+            return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        async function loadNotifications() {
+            try {
+                const res  = await fetch('/admin/notifications', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
+                const data = await res.json();
+                updateBadge(data.unread_count ?? 0);
+                renderItems(data.items ?? []);
+                loaded = true;
+            } catch (e) {
+                list.innerHTML = '<div class="text-center text-muted py-3 small">Error al cargar notificaciones.</div>';
+            }
+        }
+
+        // Load on first open
+        document.getElementById('notifDropdown')?.addEventListener('show.bs.dropdown', () => {
+            if (!loaded) loadNotifications();
+        });
+
+        // Mark all read
+        markAll?.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await fetch('/admin/notifications/mark-all-read', {
+                method: 'PATCH',
+                headers: { 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+            }).catch(() => {});
+            updateBadge(0);
+            list.querySelectorAll('.ethos-notif-item.unread').forEach(el => {
+                el.classList.remove('unread');
+                el.dataset.read = '1';
+                el.querySelector('.ethos-notif-dot')?.classList.add('read');
+            });
+        });
+
+        // Poll unread count every 60 s
+        async function pollCount() {
+            try {
+                const res  = await fetch('/admin/notifications?filter=unread&limit=1', { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf } });
+                const data = await res.json();
+                updateBadge(data.unread_count ?? 0);
+                if (data.unread_count > 0 && loaded) {
+                    loaded = false; // force reload on next open
+                }
+            } catch {}
+        }
+        pollCount();
+        setInterval(pollCount, 60000);
+    })();
+    </script>
+    @endauth
+
+    @vite(['resources/js/app.js'])
     @stack('scripts')
     @auth
         @if(auth()->user()?->can('admin.access'))

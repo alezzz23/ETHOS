@@ -41,29 +41,28 @@
                 <div class="row g-3">
                     <template x-for="topic in topics" :key="topic.id">
                         <div class="col-md-6 col-xl-4">
-                            <div class="card h-100 shadow-sm" :class="topic.is_active ? '' : 'opacity-50'">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6 class="card-title mb-0" x-text="topic.topic"></h6>
-                                        <span class="badge"
-                                              :class="topic.is_active ? 'bg-success' : 'bg-secondary'"
-                                              x-text="topic.is_active ? 'Activo' : 'Inactivo'">
-                                        </span>
-                                    </div>
-                                    <div class="d-flex flex-wrap gap-1 mb-2">
-                                        <template x-for="kw in topic.keywords" :key="kw">
-                                            <span class="badge bg-label-danger" x-text="kw"></span>
-                                        </template>
-                                    </div>
-                                    <p class="text-muted small mb-0" x-text="topic.response_message"></p>
+                            <div class="rtm-card" :class="topic.is_active ? '' : 'rtm-card--inactive'">
+                                <div class="rtm-card-header">
+                                    <div class="rtm-card-icon"><i class="ti ti-shield-lock"></i></div>
+                                    <div class="rtm-card-title" x-text="topic.topic"></div>
+                                    <span class="rtm-status-badge"
+                                          :class="topic.is_active ? 'rtm-status-active' : 'rtm-status-inactive'"
+                                          x-text="topic.is_active ? 'Activo' : 'Inactivo'">
+                                    </span>
                                 </div>
-                                <div class="card-footer bg-transparent d-flex gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary flex-fill"
+                                <div class="rtm-keywords">
+                                    <template x-for="kw in topic.keywords" :key="kw">
+                                        <span class="rtm-keyword-pill" x-text="kw"></span>
+                                    </template>
+                                </div>
+                                <p class="rtm-response" x-text="topic.response_message"></p>
+                                <div class="rtm-card-footer">
+                                    <button type="button" class="rtm-btn-edit"
                                             data-bs-toggle="modal" data-bs-target="#topicFormModal"
                                             @click="openEdit(topic)">
                                         <i class="ti ti-pencil"></i> Editar
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                    <button type="button" class="rtm-btn-delete"
                                             @click="deleteTopic(topic.id)">
                                         <i class="ti ti-trash"></i>
                                     </button>
@@ -80,48 +79,59 @@
 {{-- ─── Create / Edit Modal ────────────────────────────────────────── --}}
 <div class="modal fade" id="topicFormModal" tabindex="-1" aria-hidden="true" x-data>
     <div class="modal-dialog modal-lg">
-        <div class="modal-content" x-data="restrictedTopics()" x-init="initModal()">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="ti ti-shield-lock me-2"></i>
-                    <span id="topicModalTitle">Nuevo Tópico Restringido</span>
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content rtm-modal-content">
+
+            <div class="rtm-modal-header">
+                <div class="rtm-modal-icon"><i class="ti ti-shield-lock"></i></div>
+                <div>
+                    <h5 class="rtm-modal-title mb-0" id="topicModalTitle">Nuevo Tópico Restringido</h5>
+                    <p class="rtm-modal-subtitle mb-0">Configura palabras clave y la respuesta automática del chatbot</p>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+
+            <div class="modal-body rtm-modal-body">
                 <div id="topicFormFeedback" class="alert d-none" role="alert"></div>
 
-                <div class="mb-3">
-                    <label class="form-label">Nombre del tópico <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="topicName"
+                <div class="rtm-form-section">
+                    <div class="rtm-form-section-title"><i class="ti ti-tag"></i> Identificación</div>
+                    <label class="rtm-label">Nombre del tópico <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control rtm-input" id="topicName"
                            placeholder="Ej: Precios exactos" maxlength="255">
-                    <div class="form-text">Descripción interna del tipo de pregunta a bloquear.</div>
+                    <div class="form-text rtm-hint">Descripción interna del tipo de pregunta a bloquear.</div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Palabras clave <span class="text-danger">*</span></label>
-                    <div id="keywordsContainer"></div>
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addKeywordBtn">
+                <div class="rtm-form-section">
+                    <div class="rtm-form-section-title"><i class="ti ti-key"></i> Palabras clave <span class="text-danger">*</span></div>
+                    <div id="keywordsContainer" class="mb-2"></div>
+                    <button type="button" class="rtm-add-keyword-btn" id="addKeywordBtn">
                         <i class="ti ti-plus"></i> Agregar palabra clave
                     </button>
-                    <div class="form-text">Si el mensaje del usuario contiene alguna de estas palabras, se activará el bloqueo.</div>
+                    <div class="form-text rtm-hint mt-1">Si el mensaje del usuario contiene alguna de estas palabras, se activará el bloqueo.</div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Mensaje de respuesta <span class="text-danger">*</span></label>
-                    <textarea class="form-control" id="topicResponse" rows="3" maxlength="1000"
+                <div class="rtm-form-section">
+                    <div class="rtm-form-section-title"><i class="ti ti-message-reply"></i> Respuesta automática</div>
+                    <label class="rtm-label">Mensaje de respuesta <span class="text-danger">*</span></label>
+                    <textarea class="form-control rtm-input" id="topicResponse" rows="4" maxlength="1000"
                               placeholder="Lo sentimos, no podemos proporcionar esa información por política de confidencialidad. Tu ejecutivo de cuenta te contactará."></textarea>
-                    <div class="form-text">El chatbot responderá exactamente esto cuando detecte el tópico.</div>
+                    <div class="form-text rtm-hint">El chatbot responderá exactamente esto cuando detecte el tópico.</div>
                 </div>
 
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="topicIsActive" checked>
-                    <label class="form-check-label" for="topicIsActive">Activo</label>
+                <div class="rtm-form-section rtm-form-section-last">
+                    <label class="rtm-toggle-label">
+                        <input class="form-check-input" type="checkbox" id="topicIsActive" checked>
+                        <div>
+                            <div class="rtm-label mb-0">Estado activo</div>
+                            <div class="form-text rtm-hint mb-0">El tópico se aplica en tiempo real al chatbot.</div>
+                        </div>
+                    </label>
                 </div>
+
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer rtm-modal-footer">
                 <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="saveTopicBtn">
+                <button type="button" class="btn btn-primary px-4" id="saveTopicBtn">
                     <i class="ti ti-device-floppy me-1"></i> Guardar
                 </button>
             </div>
@@ -129,6 +139,297 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+/* ═══════════════════════════════════════════════════
+   Restricted Topics Module (rtm)
+   ═══════════════════════════════════════════════════ */
+
+/* ── Topic cards ─────────────────────────────────── */
+.rtm-card {
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: .75rem;
+    padding: 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    height: 100%;
+    transition: box-shadow .18s, border-color .18s;
+}
+.rtm-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.1); border-color: rgba(var(--bs-primary-rgb),.35); }
+.rtm-card--inactive { opacity: .55; }
+
+.rtm-card-header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+.rtm-card-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: .5rem;
+    background: rgba(var(--bs-danger-rgb),.12);
+    color: var(--bs-danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.rtm-card-title {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--bs-body-color);
+    flex: 1;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.rtm-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .2rem;
+    font-size: .68rem;
+    font-weight: 700;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+.rtm-status-active   { background: rgba(113,221,55,.15); color: #71dd37; }
+.rtm-status-inactive { background: rgba(168,177,204,.15); color: #a8b1cc; }
+
+.rtm-keywords { display: flex; flex-wrap: wrap; gap: .35rem; }
+.rtm-keyword-pill {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    background: rgba(var(--bs-danger-rgb),.1);
+    color: var(--bs-danger);
+    border: 1.5px solid rgba(var(--bs-danger-rgb),.3);
+    text-transform: lowercase;
+}
+
+.rtm-response {
+    font-size: .79rem;
+    color: var(--bs-secondary-color);
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.rtm-card-footer {
+    display: flex;
+    gap: .5rem;
+    padding-top: .75rem;
+    border-top: 1px solid var(--bs-border-color);
+    margin-top: auto;
+}
+.rtm-btn-edit {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    padding: .4rem .75rem;
+    font-size: .8rem;
+    font-weight: 600;
+    border-radius: .5rem;
+    border: 1.5px solid var(--bs-border-color);
+    background: transparent;
+    color: var(--bs-body-color);
+    cursor: pointer;
+    transition: all .15s;
+}
+.rtm-btn-edit:hover {
+    background: rgba(var(--bs-primary-rgb),.08);
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+}
+.rtm-btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: .5rem;
+    border: 1.5px solid rgba(var(--bs-danger-rgb),.3);
+    background: rgba(var(--bs-danger-rgb),.06);
+    color: var(--bs-danger);
+    cursor: pointer;
+    transition: all .15s;
+    font-size: .9rem;
+}
+.rtm-btn-delete:hover { background: rgba(var(--bs-danger-rgb),.15); border-color: var(--bs-danger); }
+
+/* ── Form modal ──────────────────────────────────── */
+#topicFormModal .rtm-modal-content {
+    border-radius: .75rem;
+    overflow: hidden;
+    border: 1px solid var(--bs-border-color);
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    background: var(--bs-body-bg);
+}
+
+#topicFormModal .rtm-modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem 1.125rem;
+    background: linear-gradient(135deg, rgba(var(--bs-danger-rgb),.1) 0%, rgba(var(--bs-danger-rgb),.03) 100%);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+#topicFormModal .rtm-modal-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: .625rem;
+    background: rgba(var(--bs-danger-rgb),.15);
+    color: var(--bs-danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+#topicFormModal .rtm-modal-title { font-size: 1rem; font-weight: 700; color: var(--bs-body-color); }
+#topicFormModal .rtm-modal-subtitle { font-size: .78rem; color: var(--bs-secondary-color); margin-top: .2rem; }
+
+#topicFormModal .rtm-modal-body { padding: 0; }
+
+#topicFormModal .rtm-form-section {
+    padding: 1.125rem 1.5rem;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+#topicFormModal .rtm-form-section-last { border-bottom: none; }
+
+#topicFormModal .rtm-form-section-title {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--bs-secondary-color);
+    margin-bottom: .75rem;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+}
+#topicFormModal .rtm-form-section-title i { color: var(--bs-danger); font-size: .85rem; }
+
+#topicFormModal .rtm-label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--bs-body-color);
+    margin-bottom: .375rem;
+}
+#topicFormModal .rtm-hint { font-size: .74rem; color: var(--bs-secondary-color); }
+
+#topicFormModal .rtm-input {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+#topicFormModal .rtm-input:focus {
+    border-color: var(--bs-danger);
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb),.15);
+}
+
+#topicFormModal .rtm-add-keyword-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .35rem .85rem;
+    font-size: .8rem;
+    font-weight: 600;
+    border-radius: .5rem;
+    border: 1.5px dashed rgba(var(--bs-primary-rgb),.4);
+    background: rgba(var(--bs-primary-rgb),.06);
+    color: var(--bs-primary);
+    cursor: pointer;
+    transition: all .15s;
+}
+#topicFormModal .rtm-add-keyword-btn:hover {
+    background: rgba(var(--bs-primary-rgb),.12);
+    border-style: solid;
+}
+
+#topicFormModal .rtm-toggle-label {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    cursor: pointer;
+}
+#topicFormModal .rtm-toggle-label .form-check-input { margin-top: .2rem; flex-shrink: 0; }
+
+#topicFormModal .rtm-modal-footer {
+    background: var(--bs-body-bg);
+    border-top: 1px solid var(--bs-border-color);
+    padding: 1rem 1.5rem;
+}
+
+/* Keyword input groups inside modal */
+#topicFormModal .input-group .form-control {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+/* ── Dark mode ───────────────────────────────────── */
+.dark-style .rtm-card {
+    background: #2b2c40;
+    border-color: rgba(255,255,255,.08);
+}
+.dark-style .rtm-card:hover { border-color: rgba(105,108,255,.4); box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+.dark-style .rtm-card-title { color: #d0d4e4; }
+.dark-style .rtm-card-footer { border-top-color: rgba(255,255,255,.08); }
+.dark-style .rtm-btn-edit {
+    border-color: rgba(255,255,255,.12);
+    color: #c8cee4;
+}
+.dark-style .rtm-btn-edit:hover { border-color: #696cff; color: #696cff; }
+.dark-style .rtm-response { color: #8e98b8; }
+
+.dark-style #topicFormModal .rtm-modal-content,
+.dark-style #topicFormModal .rtm-modal-body,
+.dark-style #topicFormModal .rtm-modal-footer { background: #2b2c40 !important; }
+.dark-style #topicFormModal .rtm-modal-header {
+    background: linear-gradient(135deg, rgba(255,62,29,.12) 0%, rgba(255,62,29,.03) 100%);
+    border-bottom-color: rgba(255,255,255,.08);
+}
+.dark-style #topicFormModal .rtm-modal-title { color: #d0d4e4; }
+.dark-style #topicFormModal .rtm-modal-subtitle { color: #8e98b8; }
+.dark-style #topicFormModal .rtm-form-section { border-bottom-color: rgba(255,255,255,.08); }
+.dark-style #topicFormModal .rtm-modal-footer { border-top-color: rgba(255,255,255,.08); }
+.dark-style #topicFormModal .rtm-label { color: #c8cee4; }
+.dark-style #topicFormModal .rtm-hint { color: #8e98b8; }
+.dark-style #topicFormModal .rtm-input,
+.dark-style #topicFormModal .input-group .form-control {
+    background: #1e1e2d !important;
+    color: #d0d4e4 !important;
+    border-color: rgba(255,255,255,.12) !important;
+}
+.dark-style #topicFormModal .rtm-input::placeholder,
+.dark-style #topicFormModal .input-group .form-control::placeholder { color: rgba(208,212,228,.35) !important; }
+.dark-style #topicFormModal .input-group .btn-outline-danger {
+    border-color: rgba(255,62,29,.3);
+    color: #ff6b78;
+    background: transparent;
+}
+.dark-style #topicFormModal .input-group .btn-outline-danger:hover { background: rgba(255,62,29,.12); }
+.dark-style #topicFormModal .rtm-add-keyword-btn {
+    border-color: rgba(105,108,255,.3);
+    background: rgba(105,108,255,.08);
+    color: #a8b1ff;
+}
+</style>
+@endpush
 
 @push('scripts')
 <script>
@@ -240,26 +541,31 @@ document.getElementById('saveTopicBtn')?.addEventListener('click', async () => {
     const url    = editingId ? `/admin/restricted-topics/${editingId}` : '/admin/restricted-topics';
     const method = editingId ? 'PUT' : 'POST';
 
-    const res  = await fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-        },
-        body: JSON.stringify(payload),
-    });
+    try {
+        const res  = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify(payload),
+        });
 
-    btn.disabled = false;
-    btn.innerHTML = '<i class="ti ti-device-floppy me-1"></i> Guardar';
-
-    if (res.ok) {
-        bootstrap.Modal.getInstance(document.getElementById('topicFormModal'))?.hide();
-        window.location.reload();
-    } else {
-        const data = await res.json();
+        if (res.ok) {
+            bootstrap.Modal.getInstance(document.getElementById('topicFormModal'))?.hide();
+            window.location.reload();
+        } else {
+            const data = await res.json().catch(() => ({}));
+            feedback.className = 'alert alert-danger';
+            feedback.textContent = data.message || 'Error al guardar.';
+        }
+    } catch (e) {
         feedback.className = 'alert alert-danger';
-        feedback.textContent = data.message || 'Error al guardar.';
+        feedback.textContent = 'Error de conexión. Intenta nuevamente.';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-device-floppy me-1"></i> Guardar';
     }
 });
 </script>

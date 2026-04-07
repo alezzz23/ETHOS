@@ -162,7 +162,13 @@ class ProjectObserver
                 'status'      => 'pending',
             ]);
 
-            $consultant->notify(new NewProjectAssignmentNotification($project));
+            try {
+                $consultant->notify(new NewProjectAssignmentNotification($project));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning(
+                    "Could not send project assignment notification to consultant {$consultant->id}: " . $e->getMessage()
+                );
+            }
         }
     }
 

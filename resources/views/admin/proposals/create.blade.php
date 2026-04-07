@@ -271,27 +271,38 @@ function proposalWizard() {
         async runCalculation() {
             if (!this.form.service_id || !this.form.client_size) return;
             this.calcLoading = true;
-            const token = document.querySelector('meta[name="csrf-token"]').content;
-            const payload = {
-                client_size: this.form.client_size,
-                hourly_rate: this.form.hourly_rate,
-                margin_percent: this.form.margin_percent,
-            };
-            if (this.form.target_persons) payload.persons = this.form.target_persons;
+            this.calcResult = null;
+            try {
+                const token = document.querySelector('meta[name="csrf-token"]').content;
+                const payload = {
+                    client_size: this.form.client_size,
+                    hourly_rate: this.form.hourly_rate,
+                    margin_percent: this.form.margin_percent,
+                };
+                if (this.form.target_persons) payload.persons = this.form.target_persons;
 
-            const resp = await fetch(`/admin/services/${this.form.service_id}/calculate`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            const data = await resp.json();
-            this.calcResult = data;
-            this.form.adjusted_hours = data.total_hours;
-            this.calcLoading = false;
+                const resp = await fetch(`/admin/services/${this.form.service_id}/calculate`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    alert(err.message || 'Error al calcular. Intente nuevamente.');
+                    return;
+                }
+                const data = await resp.json();
+                this.calcResult = data;
+                this.form.adjusted_hours = data.total_hours;
+            } catch (e) {
+                alert('Error de conexión al calcular las horas.');
+            } finally {
+                this.calcLoading = false;
+            }
         },
 
         nextStep() {
@@ -314,22 +325,27 @@ function proposalWizard() {
             if (!payload.adjusted_hours) delete payload.adjusted_hours;
             if (!payload.adjustment_reason) delete payload.adjustment_reason;
 
-            const resp = await fetch('/admin/proposals', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            const data = await resp.json();
-            if (!resp.ok) {
-                this.saveError = data.message || 'Error al guardar la propuesta.';
+            try {
+                const resp = await fetch('/admin/proposals', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await resp.json().catch(() => ({}));
+                if (!resp.ok) {
+                    this.saveError = data.message || 'Error al guardar la propuesta.';
+                    return;
+                }
+                window.location.href = '/admin/proposals';
+            } catch (e) {
+                this.saveError = 'Error de conexión. Intenta nuevamente.';
+            } finally {
                 this.loading = false;
-                return;
             }
-            window.location.href = '/admin/proposals';
         }
     };
 }

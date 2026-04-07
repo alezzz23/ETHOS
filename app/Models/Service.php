@@ -52,6 +52,11 @@ class Service extends Model
         return $this->hasMany(Proposal::class);
     }
 
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

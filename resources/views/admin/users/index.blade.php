@@ -187,36 +187,57 @@
         spinner.classList.toggle('d-none', !loading);
     }
 
-    // Open create mode
+    // Pending edit data (null = create mode)
+    let pendingEdit = null;
+
+    // "New User" button: mark create mode (Bootstrap opens modal via data-bs-toggle)
     document.getElementById('btnNewUser').addEventListener('click', () => {
-        form.reset();
-        userIdInput.value = '';
-        document.getElementById('userModalLabel').textContent   = 'Nuevo Usuario';
-        document.getElementById('userModalSubtitle').textContent = 'Completa los datos del nuevo usuario.';
-        document.getElementById('userModalIcon').className      = 'ti ti-user-plus';
-        btnText.textContent = 'Crear Usuario';
-        passwordHint.textContent = '(requerida)';
-        document.getElementById('userPassword').required = true;
-        feedback.className = 'alert d-none';
+        pendingEdit = null;
     });
 
-    // Open edit mode
+    // Edit button: store data, then show modal programmatically
     document.getElementById('usersTableBody').addEventListener('click', function(e) {
         const editBtn = e.target.closest('.js-edit-user');
         if (!editBtn) return;
-        form.reset();
-        userIdInput.value = editBtn.dataset.userId;
-        document.getElementById('userName').value  = editBtn.dataset.userName;
-        document.getElementById('userEmail').value = editBtn.dataset.userEmail;
-        document.getElementById('userRole').value  = editBtn.dataset.userRole;
-        document.getElementById('userModalLabel').textContent   = 'Editar Usuario';
-        document.getElementById('userModalSubtitle').textContent = 'Modifica los datos del usuario.';
-        document.getElementById('userModalIcon').className      = 'ti ti-user-edit';
-        btnText.textContent = 'Guardar Cambios';
-        passwordHint.textContent = '(dejar en blanco para no cambiar)';
-        document.getElementById('userPassword').required = false;
-        feedback.className = 'alert d-none';
+        pendingEdit = {
+            id:    editBtn.dataset.userId,
+            name:  editBtn.dataset.userName,
+            email: editBtn.dataset.userEmail,
+            role:  editBtn.dataset.userRole,
+        };
         modal.show();
+    });
+
+    // Populate form fields when modal is about to open (correct Bootstrap 5 pattern)
+    document.getElementById('userModal').addEventListener('show.bs.modal', () => {
+        form.reset();
+        feedback.className = 'alert d-none';
+        if (pendingEdit) {
+            userIdInput.value = pendingEdit.id;
+            document.getElementById('userName').value  = pendingEdit.name;
+            document.getElementById('userEmail').value = pendingEdit.email;
+            document.getElementById('userRole').value  = pendingEdit.role;
+            document.getElementById('userModalLabel').textContent    = 'Editar Usuario';
+            document.getElementById('userModalSubtitle').textContent = 'Modifica los datos del usuario.';
+            document.getElementById('userModalIcon').className       = 'ti ti-user-edit';
+            btnText.textContent = 'Guardar Cambios';
+            passwordHint.textContent = '(dejar en blanco para no cambiar)';
+            document.getElementById('userPassword').required = false;
+        } else {
+            userIdInput.value = '';
+            document.getElementById('userModalLabel').textContent    = 'Nuevo Usuario';
+            document.getElementById('userModalSubtitle').textContent = 'Completa los datos del nuevo usuario.';
+            document.getElementById('userModalIcon').className       = 'ti ti-user-plus';
+            btnText.textContent = 'Crear Usuario';
+            passwordHint.textContent = '(requerida)';
+            document.getElementById('userPassword').required = true;
+        }
+    });
+
+    // Reset state after modal fully closes
+    document.getElementById('userModal').addEventListener('hidden.bs.modal', () => {
+        pendingEdit = null;
+        form.reset();
     });
 
     // Submit

@@ -142,6 +142,7 @@ class ProjectController extends Controller
             'ends_at'       => 'nullable|date',
             'finished_at'   => 'nullable|date',
             'assigned_to'   => 'nullable|exists:users,id',
+            'leader_id'     => 'nullable|exists:users,id',
             'validated_by'  => 'nullable|exists:users,id',
             'progress'      => 'nullable|integer|min:0|max:100',
             'priority_score' => 'nullable|numeric|min:1|max:10',
