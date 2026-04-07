@@ -75,7 +75,7 @@
                                     </span>
                                 </td>
                                 <td data-label="Fase">
-                                    <span class="badge bg-label-secondary fw-semibold">Fase {{ $phase }}</span>
+                                    <span class="ethos-phase-badge"><i class="ti ti-layers-subtract"></i> Fase {{ $phase }}</span>
                                 </td>
                                 <td data-label="Inicio">
                                     <span class="ethos-muted-cell">
@@ -320,7 +320,7 @@
                 <span class="ethos-status-badge ${cls}"><i class="${icon}"></i><span>${label}</span></span>
             </td>
             <td data-label="Fase">
-                <span class="badge bg-label-secondary fw-semibold">Fase ${phase}</span>
+                <span class="ethos-phase-badge"><i class="ti ti-layers-subtract"></i> Fase ${phase}</span>
             </td>
             <td data-label="Inicio">
                 <span class="ethos-muted-cell"><i class="ti ti-calendar-event"></i><span>${escapeHtml(p.starts_at_label || 'Sin fecha')}</span></span>
@@ -429,9 +429,47 @@
 
 @push('styles')
 <style>
-.ethos-status-en-analisis   { --status-color: #ff9f43; }
-.ethos-status-aprobado      { --status-color: #28c76f; }
-.ethos-status-en-ejecucion  { --status-color: #7367f0; }
-.ethos-status-cerrado       { --status-color: #82868b; }
+/* ── Status badges ─────────────────────────────────────────── */
+.ethos-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .3rem .75rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(var(--status-rgb), .35);
+    background: rgba(var(--status-rgb), .12);
+    color: rgb(var(--status-rgb));
+    white-space: nowrap;
+}
+.ethos-status-badge i { font-size: .8rem; }
+
+.ethos-status-capturado    { --status-rgb: 30, 136, 229; }   /* azul */
+.ethos-status-en-analisis  { --status-rgb: 255, 159, 67; }   /* naranja */
+.ethos-status-aprobado     { --status-rgb: 40, 199, 111; }   /* verde */
+.ethos-status-en-ejecucion { --status-rgb: 115, 103, 240; }  /* morado */
+.ethos-status-cerrado      { --status-rgb: 130, 134, 139; }  /* gris */
+.ethos-status-default      { --status-rgb: 130, 134, 139; }
+
+/* ── Phase badge ───────────────────────────────────────────── */
+.ethos-phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .25rem .6rem;
+    border-radius: .375rem;
+    background: rgba(var(--bs-secondary-rgb), .1);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    white-space: nowrap;
+}
+.dark-style .ethos-phase-badge {
+    background: rgba(255,255,255,.08);
+    color: #c8cee4;
+    border-color: rgba(255,255,255,.12);
+}
 </style>
 @endpush

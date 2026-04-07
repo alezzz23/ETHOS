@@ -63,8 +63,8 @@
             {{-- Table --}}
             <div class="card-body p-0 mt-3">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle mb-0 ethos-data-table">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Proyecto / Cliente</th>
@@ -138,9 +138,9 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-5">
-                                    <i class="ti ti-file-off fs-3 d-block mb-2"></i>
-                                    No hay propuestas que coincidan con los filtros.
+                                <td colspan="9" class="text-center py-5">
+                                    <i class="ti ti-file-off fs-3 d-block mb-2 text-muted"></i>
+                                    <span class="text-muted">No hay propuestas que coincidan con los filtros.</span>
                                 </td>
                             </tr>
                             @endforelse

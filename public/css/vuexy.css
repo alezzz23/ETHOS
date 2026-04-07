@@ -2378,3 +2378,29 @@ a {
     border-color: rgba(var(--vz-primary-rgb), 0.5);
     color: #fff;
 }
+/* ── Dashboard: Top Servicios card – dark mode fix ── */
+.dark-style .ethos-stat-card .card-title {
+    color: var(--vz-heading-color);
+}
+.dark-style .ethos-stat-card .fw-semibold {
+    color: var(--vz-heading-color);
+}
+.dark-style .ethos-stat-card .text-muted {
+    color: rgba(210, 226, 255, 0.55) !important;
+}
+.dark-style .ethos-stat-card .bg-label-primary {
+    background: rgba(var(--vz-primary-rgb), 0.22) !important;
+    color: var(--vz-primary-light) !important;
+}
+.dark-style .ethos-stat-card .bg-label-primary i {
+    color: var(--vz-primary-light) !important;
+}
+
+.dark-style .ethos-stat-card {
+    background: var(--vz-card-bg) !important;
+    border-color: rgba(var(--vz-primary-rgb), 0.18) !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+}
+.dark-style .ethos-stat-card .card-header {
+    border-bottom-color: rgba(var(--vz-primary-rgb), 0.12);
+}

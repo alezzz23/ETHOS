@@ -122,6 +122,28 @@
         border-bottom: 1px solid var(--vz-border-color) !important;
         font-family: inherit !important;
     }
+
+    /* Dark mode: stat cards */
+    .dark-style .ethos-stat-card {
+        border-color: rgba(var(--vz-primary-rgb), 0.20);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.40);
+    }
+    .dark-style .ethos-stat-card .fw-semibold {
+        color: var(--vz-heading-color);
+    }
+    .dark-style .ethos-stat-card .bg-label-primary {
+        background: rgba(var(--vz-primary-rgb), 0.24) !important;
+        color: #7eb8ff !important;
+    }
+    .dark-style .ethos-stat-card .bg-label-primary i {
+        color: #7eb8ff !important;
+    }
+    .dark-style .ethos-glass-table td {
+        border-bottom-color: rgba(150, 186, 255, 0.12);
+    }
+    .dark-style .ethos-glass-table tbody tr:hover {
+        background-color: rgba(var(--vz-primary-rgb), 0.12) !important;
+    }
 </style>
 @endpush
 
@@ -291,7 +313,7 @@
 {{-- ─── Top Servicios + Gráficas ────────────────────────────────────── --}}
 <div class="row g-4 mb-4">
     <div class="col-xl-4">
-        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+        <div class="card h-100 ethos-stat-card">
             <div class="card-header pb-1">
                 <h5 class="card-title mb-0 fw-bold"><i class="ti ti-star me-2 text-warning"></i>Servicios más usados</h5>
             </div>
@@ -313,7 +335,7 @@
         </div>
     </div>
     <div class="col-xl-8">
-        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+        <div class="card h-100 ethos-stat-card">
             <div class="card-header pb-1">
                 <h5 class="card-title mb-0 fw-bold">Proyectos creados por mes</h5>
             </div>
@@ -326,7 +348,7 @@
 
 <div class="row g-4 mb-4">
     <div class="col-xl-4">
-        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+        <div class="card h-100 ethos-stat-card">
             <div class="card-header pb-1">
                 <h5 class="card-title mb-0 fw-bold">Distribución por estado</h5>
             </div>
@@ -336,7 +358,7 @@
         </div>
     </div>
     <div class="col-xl-8">
-        <div class="card h-100 ethos-stat-card" style="border-color: rgba(255,255,255,0.02);">
+        <div class="card h-100 ethos-stat-card">
             <div class="card-header d-flex justify-content-between align-items-center border-bottom border-light border-opacity-10 pb-3">
                 <h5 class="card-title mb-0 fw-bold"><i class="ti ti-list-details me-2 text-primary"></i>Proyectos Recientes</h5>
                 <a href="{{ route('projects.index') }}" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm">

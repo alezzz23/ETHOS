@@ -69,6 +69,98 @@ Para garantizar la rentabilidad y el control de costos, el sistema sigue una jer
   * Los métodos (Observación, Encuesta, Documental) tienen ponderaciones distintas. El sistema debe permitir escalar el costo si una encuesta se aplica a 2 personas vs. 200 personas (ejemplo Multimax).
 * Gestión Presupuestaria: Diferenciación obligatoria entre "Presupuesto Estimado" (proyección inicial) y "Presupuesto Final" (ejecución real post-análisis).
 
+5.1 Motor de Cálculo de Horas y Precios (HourCalculatorService)
+
+El sistema implementa una calculadora paramétrica que genera una estimación de horas-hombre y rango de precio sugerido para cualquier servicio, dado el tamaño del cliente.
+
+Jerarquía de datos del cálculo
+
+```
+Servicio
+ └── Proceso (ej: Levantamiento, Diagnóstico, Implementación…)
+      └── Método (ej: Entrevista, Encuesta, Observación, Documental)
+           └── standard_hours  ← horas estándar por persona para este método
+```
+
+Parámetros de entrada
+
+| Parámetro | Tipo | Descripción |
+|---|---|---|
+| `service` | Servicio | Servicio seleccionado (con sus procesos y métodos cargados) |
+| `client_size` | string | `micro`, `pequeña`, `mediana`, `gran_empresa` |
+| `hourly_rate` | float | Tarifa por hora-hombre (default: $25) |
+| `margin_pct` | float | Margen deseado en % sobre el costo base (default: 20%) |
+| `override_persons` | int\|null | Permite sobreescribir el número de personas (ej: Multimax con 200 empleados) |
+
+Tabla de personas por defecto según tamaño de empresa
+
+| Tamaño | `size_key` | Personas target (default) |
+|---|---|---|
+| Microempresa | `micro` | 5 |
+| Pequeña empresa | `pequeña` | 15 |
+| Mediana empresa | `mediana` | 40 |
+| Gran empresa | `gran_empresa` | 80 |
+
+Estos valores son configurables en la tabla `client_size_configs` de la base de datos.
+
+Fórmula de cálculo paso a paso
+
+**Paso 1 — Horas por método:**
+```
+horas_método = standard_hours × target_persons
+```
+
+**Paso 2 — Horas por proceso:**
+```
+horas_proceso = Σ horas_método (todos los métodos del proceso)
+```
+
+**Paso 3 — Horas totales del servicio:**
+```
+total_hours = Σ horas_proceso (todos los procesos del servicio)
+```
+
+**Paso 4 — Precio base:**
+```
+precio_base = total_hours × hourly_rate
+```
+
+**Paso 5 — Rango de precio sugerido (con banda de ±5% sobre el margen):**
+```
+precio_min = precio_base × (1 + (margin_pct - 5) / 100)
+precio_max = precio_base × (1 + (margin_pct + 5) / 100)
+```
+
+Ejemplo concreto: Auditoría Fiscal / Mediana empresa
+
+Parámetros: `hourly_rate = $25`, `margin_pct = 20%`, `target_persons = 40`
+
+| Proceso | Método | standard_hours | Personas | Subtotal horas |
+|---|---|---|---|---|
+| Levantamiento | Documental | 1.5h | 40 | 60h |
+| Levantamiento | Encuesta | 0.5h | 40 | 20h |
+| Diagnóstico | Documental | 2.0h | 40 | 80h |
+| Diagnóstico | Entrevista | 1.0h | 40 | 40h |
+| Implementación | Entrevista | 1.5h | 40 | 60h |
+| Seguimiento | Entrevista | 0.5h | 40 | 20h |
+| **TOTAL** | | | | **280h** |
+
+```
+precio_base = 280h × $25 = $7,000
+precio_min  = $7,000 × (1 + 15/100) = $8,050
+precio_max  = $7,000 × (1 + 25/100) = $8,750
+```
+
+El consultor recibe este rango en la pantalla de propuesta y puede ajustar horas o tarifa manualmente antes de generar la propuesta formal.
+
+Caso de escala dinámica (Override de personas)
+
+Para empresas grandes como Multimax donde la encuesta se aplica a 200 personas, el consultor puede ingresar `override_persons = 200` desde el formulario de análisis. Esto escala proporcionalmente todas las horas sin cambiar los `standard_hours` del catálogo de servicios.
+
+Configuración del catálogo
+
+Los `standard_hours` de cada método son editables directamente desde el modal de **Editar Servicio** en la sección "Procesos y Métodos", permitiendo que el equipo ajuste el catálogo sin intervención técnica.
+
 6. Integración de Inteligencia Artificial y Ecosistema Tecnológico
 
 La arquitectura técnica emplea APIs de Nvidia, optimizando el rendimiento mediante la separación de entornos para la Landing Page y el Dashboard administrativo.
