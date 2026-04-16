@@ -84,12 +84,12 @@
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link {{ $currentPhase < 2 ? 'disabled' : '' }}" id="tab-f2" data-bs-toggle="tab" data-bs-target="#fase2" type="button" role="tab">
+        <button class="nav-link" id="tab-f2" data-bs-toggle="tab" data-bs-target="#fase2" type="button" role="tab">
             <i class="ti ti-stethoscope me-1"></i> Fase 2 · Análisis
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link {{ $currentPhase < 3 ? 'disabled' : '' }}" id="tab-f3" data-bs-toggle="tab" data-bs-target="#fase3" type="button" role="tab">
+        <button class="nav-link {{ $currentPhase < 2 ? 'disabled' : '' }}" id="tab-f3" data-bs-toggle="tab" data-bs-target="#fase3" type="button" role="tab">
             <i class="ti ti-circle-check me-1"></i> Fase 3 · Aprobación
         </button>
     </li>

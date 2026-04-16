@@ -9,6 +9,8 @@ use App\Jobs\SendSatisfactionSurveyJob;
 use App\Notifications\NewProjectAssignmentNotification;
 use App\Notifications\ProjectApprovedNotification;
 use Carbon\Carbon;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class ProjectObserver
 {
@@ -73,7 +75,13 @@ class ProjectObserver
         // Notify leader
         if ($project->leader_id) {
             $leader = User::find($project->leader_id);
-            $leader?->notify(new ProjectApprovedNotification($project));
+            if ($leader) {
+                $this->notifySafely(
+                    $leader,
+                    new ProjectApprovedNotification($project),
+                    "project approval notification to leader {$leader->id}"
+                );
+            }
         }
 
         // Generate base tasks if checklist doesn't exist yet
@@ -129,7 +137,11 @@ class ProjectObserver
         );
 
         foreach ($notifiable->filter() as $user) {
-            $user->notify($notification);
+            $this->notifySafely(
+                $user,
+                $notification,
+                "project deviation notification to user {$user->id}"
+            );
         }
     }
 
@@ -162,13 +174,20 @@ class ProjectObserver
                 'status'      => 'pending',
             ]);
 
-            try {
-                $consultant->notify(new NewProjectAssignmentNotification($project));
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning(
-                    "Could not send project assignment notification to consultant {$consultant->id}: " . $e->getMessage()
-                );
-            }
+            $this->notifySafely(
+                $consultant,
+                new NewProjectAssignmentNotification($project),
+                "project assignment notification to consultant {$consultant->id}"
+            );
+        }
+    }
+
+    private function notifySafely(User $user, Notification $notification, string $context): void
+    {
+        try {
+            $user->notify($notification);
+        } catch (\Throwable $e) {
+            Log::warning("Could not send {$context}: " . $e->getMessage());
         }
     }
 

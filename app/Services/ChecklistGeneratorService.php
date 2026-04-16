@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\ChecklistItem;
 use App\Models\Proposal;
 use App\Models\ProjectChecklist;
+use App\Models\Service;
 use App\Models\ServiceProcess;
 
 class ChecklistGeneratorService
@@ -15,18 +16,46 @@ class ChecklistGeneratorService
      */
     public function generateFromProposal(Proposal $proposal): ProjectChecklist
     {
+        $proposal->loadMissing(['service.processes.methods', 'service.requirements', 'project']);
+
         $service = $proposal->service;
         $project = $proposal->project;
 
-        $checklist = ProjectChecklist::create([
-            'project_id'  => $project->id,
-            'proposal_id' => $proposal->id,
-            'service_id'  => $service->id,
-            'created_by'  => $proposal->created_by,
-            'title'       => "Lista de levantamiento — {$service->short_name}",
-            'status'      => 'active',
+        $checklist = ProjectChecklist::firstOrCreate(
+            [
+                'project_id'  => $project->id,
+                'proposal_id' => $proposal->id,
+            ],
+            [
+                'service_id'  => $service->id,
+                'created_by'  => $proposal->created_by,
+                'title'       => "Lista de levantamiento — {$service->short_name}",
+                'status'      => 'active',
+            ]
+        );
+
+        $checklist->fill([
+            'service_id' => $service->id,
+            'created_by' => $proposal->created_by,
+            'title'      => "Lista de levantamiento — {$service->short_name}",
+            'status'     => 'active',
         ]);
 
+        if ($checklist->isDirty()) {
+            $checklist->save();
+        }
+
+        if ($checklist->items()->exists()) {
+            return $checklist->load('items');
+        }
+
+        $this->buildChecklistItems($checklist, $service);
+
+        return $checklist->fresh('items');
+    }
+
+    private function buildChecklistItems(ProjectChecklist $checklist, Service $service): void
+    {
         // Build items from service processes+methods
         $processes = $service->processes()->with('methods')->orderBy('order')->get();
         $order     = 1;
@@ -57,6 +86,5 @@ class ChecklistGeneratorService
             }
         }
 
-        return $checklist;
     }
 }
