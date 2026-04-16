@@ -3,226 +3,344 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Chat\ChatRequest;
+use App\Http\Requests\Admin\Chat\FeedbackRequest;
 use App\Models\AdminChatLog;
-use App\Models\Client;
-use App\Models\KnowledgeBaseEntry;
-use App\Models\Project;
-use App\Models\RestrictedTopic;
-use App\Models\User;
+use App\Models\ChatConversation;
+use App\Models\ChatFeedback;
+use App\Services\Chat\AdminChatService;
+use App\Services\Chat\LlmClient;
+use App\Services\Chat\Tools\ToolRegistry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardChatController extends Controller
 {
-    // ── Render stats context for the system prompt ──────────────────
-    private function buildSystemPrompt(?string $userQuery = null): string
+    public function __construct(
+        private AdminChatService $chat,
+        private LlmClient $llm,
+        private ToolRegistry $tools,
+    ) {}
+
+    /**
+     * Endpoint JSON no-streaming (fallback).
+     *
+     * @OA\Post(
+     *     path="/admin/chat",
+     *     tags={"AdminChat"},
+     *     summary="Envía un mensaje al asistente IA (respuesta completa, no-streaming)",
+     *     security={{"sessionAuth":{}, "csrfHeader":{}}},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *         required={"message"},
+     *         @OA\Property(property="message", type="string", maxLength=2000),
+     *         @OA\Property(property="conversation_id", type="string", format="uuid", nullable=true),
+     *         @OA\Property(property="history", type="array", @OA\Items(type="object",
+     *             @OA\Property(property="role", type="string", enum={"user","assistant"}),
+     *             @OA\Property(property="content", type="string")))
+     *     )),
+     *     @OA\Response(response=200, description="Respuesta generada", @OA\JsonContent(
+     *         @OA\Property(property="reply", type="string"),
+     *         @OA\Property(property="tokens_used", type="integer"),
+     *         @OA\Property(property="response_ms", type="integer"),
+     *         @OA\Property(property="model", type="string"),
+     *         @OA\Property(property="conversation_id", type="string", format="uuid"),
+     *         @OA\Property(property="admin_chat_log_id", type="integer")
+     *     )),
+     *     @OA\Response(response=422, description="Validación"),
+     *     @OA\Response(response=429, description="Cuota excedida (budget o throttle)"),
+     *     @OA\Response(response=503, description="Proveedor IA no disponible")
+     * )
+     */
+    public function chat(ChatRequest $request): JsonResponse
     {
-        $now = now()->timezone(config('app.timezone', 'America/Caracas'));
+        $validated = $request->validated();
+        $user      = $request->user();
 
-        $stats = [
-            'total_usuarios'  => User::count(),
-            'total_clientes'  => class_exists(Client::class) ? Client::count() : 0,
-            'total_proyectos' => class_exists(Project::class) ? Project::count() : 0,
-        ];
+        if ($blocked = $this->chat->checkRestricted($validated['message'])) {
+            return response()->json(['reply' => $blocked->response_message, 'blocked' => true]);
+        }
 
-        // ── RAG: inject relevant knowledge base entries ────────────
-        $kbContext = '';
-        if ($userQuery) {
-            $entries = KnowledgeBaseEntry::search($userQuery, 3);
-            if ($entries->isNotEmpty()) {
-                $kbContext = "\n\nBASE DE CONOCIMIENTO RELEVANTE:\n";
-                foreach ($entries as $entry) {
-                    $kbContext .= "--- {$entry->title} ({$entry->category}) ---\n";
-                    $kbContext .= ($entry->embedding_summary ?? substr($entry->content, 0, 400)) . "\n\n";
-                }
+        $conversation = $this->chat->ensureConversation($user, $validated['conversation_id'] ?? null, $validated['message']);
+        $messages     = $this->chat->buildMessages($validated['message'], $validated['history'] ?? []);
+
+        $toolSchemas = (bool) config('chatbot.tools.enabled', true) ? $this->tools->schemas() : [];
+        $maxHops     = (int)  config('chatbot.tools.max_hops', 3);
+        $totalTokens = 0;
+        $totalMs     = 0;
+        $lastModel   = (string) config('chatbot.llm.models.primary');
+        $result      = null;
+
+        for ($hop = 0; $hop <= $maxHops; $hop++) {
+            $result = $this->llm->complete($messages, null, $toolSchemas);
+            if (! $result['ok']) {
+                return response()->json(['message' => 'No se pudo obtener respuesta del asistente.'], $result['status'] ?? 503);
+            }
+            $totalTokens += (int) ($result['tokens'] ?? 0);
+            $totalMs     += (int) ($result['ms']     ?? 0);
+            $lastModel    = $result['model'] ?? $lastModel;
+
+            $toolCalls = (array) ($result['tool_calls'] ?? []);
+            if (empty($toolCalls) || $hop === $maxHops) {
+                break;
+            }
+
+            // Añadir assistant tool_calls + resultados al array de mensajes.
+            $messages[] = [
+                'role'       => 'assistant',
+                'content'    => $result['reply'] ?: null,
+                'tool_calls' => $toolCalls,
+            ];
+
+            foreach ($toolCalls as $tc) {
+                $name   = (string) data_get($tc, 'function.name', '');
+                $argsJs = (string) data_get($tc, 'function.arguments', '{}');
+                $args   = json_decode($argsJs, true) ?: [];
+                $out    = $this->tools->dispatch($name, $args, $user);
+
+                $messages[] = [
+                    'role'         => 'tool',
+                    'tool_call_id' => (string) ($tc['id'] ?? ''),
+                    'name'         => $name,
+                    'content'      => json_encode($out, JSON_UNESCAPED_UNICODE),
+                ];
             }
         }
-        return <<<PROMPT
-Eres ETHOS AI, el asistente inteligente exclusivo del panel de administración de ETHOS.
 
-CONTEXTO ACTUAL DEL SISTEMA ({$now->format('d/m/Y H:i')}):
-- Usuarios registrados: {$stats['total_usuarios']}
-- Clientes registrados: {$stats['total_clientes']}
-- Proyectos registrados: {$stats['total_proyectos']}
-
-ROL Y CAPACIDADES:
-- Ayudas a los administradores con análisis de datos, gestión de usuarios, proyectos y clientes.
-- Interpretas y explicas estadísticas y métricas del sistema.
-- Orientas sobre configuración y operaciones del panel.
-- Redactas borradores de comunicaciones o reportes.
-- Sugieres acciones concretas y pasos de solución a problemas operativos.
-- Puedes responder en español o inglés según el idioma del usuario.
-
-LIMITACIONES HONESTAS:
-- No tienes acceso directo a leer o modificar la base de datos en tiempo real, solo estadísticas generales.
-- Si necesitas hacer algo que requiere acceso real, indica claramente el camino a seguir.
-
-ESTILO:
-- Respuestas claras, estructuradas y profesionales.
-- Usa listas y formato Markdown para mayor claridad cuando sea apropiado.
-- Sé conciso pero completo.
-{$kbContext}
-PROMPT;
-    }
-
-    // ── Chat endpoint ────────────────────────────────────────────────
-    public function chat(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            'message' => ['required', 'string', 'max:2000'],
-            'history' => ['nullable', 'array', 'max:30'],
-            'history.*.role'    => ['required_with:history', 'in:user,assistant'],
-            'history.*.content' => ['required_with:history', 'string', 'max:2000'],
-        ]);
-
-        // ── Restricted topics check ────────────────────────────────
-        $userMessage = trim($validated['message']);
-        $blocked     = RestrictedTopic::active()->get()
-            ->first(fn (RestrictedTopic $t): bool => $t->matches($userMessage));
-
-        if ($blocked) {
-            return response()->json(['reply' => $blocked->response_message]);
-        }
-
-        /** @var \App\Models\User $user */
-        $user    = $request->user();
-        $apiKey  = (string) config('services.ai_dashboard.api_key', '');
-        $baseUrl = rtrim((string) config('services.ai_dashboard.base_url', 'https://openrouter.ai/api/v1'), '/');
-        $model   = (string) config('services.ai_dashboard.model', 'minimax/minimax-m2.5:free');
-        $timeout = (int) config('services.ai_dashboard.timeout', 30);
-
-        if ($apiKey === '') {
-            return response()->json(['message' => 'Asistente no disponible temporalmente.'], 503);
-        }
-
-        $history = collect($validated['history'] ?? [])
-            ->map(fn (array $m): array => [
-                'role'    => $m['role'],
-                'content' => trim($m['content']),
-            ])
-            ->filter(fn (array $m): bool => $m['content'] !== '')
-            ->take(-20)
-            ->values()
-            ->all();
-
-        $messages = array_merge(
-            [['role' => 'system', 'content' => $this->buildSystemPrompt($userMessage)]],
-            $history,
-            [['role' => 'user', 'content' => $userMessage]]
-        );
-
-        $startMs = (int) round(microtime(true) * 1000);
-
-        $response = Http::timeout($timeout)
-            ->withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type'  => 'application/json',
-                'HTTP-Referer'  => config('app.url'),
-                'X-Title'       => config('app.name', 'ETHOS Admin'),
-            ])
-            ->post($baseUrl . '/chat/completions', [
-                'model'       => $model,
-                'messages'    => $messages,
-                'temperature' => 0.55,
-                'max_tokens'  => 1200,
-            ]);
-
-        $responseMs = (int) round(microtime(true) * 1000) - $startMs;
-
-        if (!$response->successful()) {
-            Log::warning('admin_chatbot_api_error', [
-                'user_id' => $user->id,
-                'status'  => $response->status(),
-                'body'    => substr($response->body(), 0, 500),
-            ]);
-            return response()->json(['message' => 'No se pudo obtener respuesta del asistente.'], 503);
-        }
-
-        $reply  = trim((string) data_get($response->json(), 'choices.0.message.content', ''));
-        $tokens = (int) data_get($response->json(), 'usage.total_tokens', 0);
-
-        if ($reply === '') {
+        if (trim((string) $result['reply']) === '') {
             return response()->json(['message' => 'Respuesta vacía del proveedor IA.'], 502);
         }
 
-        // ── Audit log ─────────────────────────────────────────────
-        $sessionId  = $request->session()->getId();
-        $ip         = $request->ip();
-        $ua         = substr((string) $request->userAgent(), 0, 300);
-
-        AdminChatLog::create([
-            'user_id'     => $user->id,
-            'session_id'  => $sessionId,
-            'role'        => 'user',
-            'content'     => $userMessage,
-            'model'       => $model,
-            'ip_address'  => $ip,
-            'user_agent'  => $ua,
-        ]);
-        AdminChatLog::create([
-            'user_id'     => $user->id,
-            'session_id'  => $sessionId,
-            'role'        => 'assistant',
-            'content'     => $reply,
-            'model'       => $model,
-            'tokens_used' => $tokens,
-            'response_ms' => $responseMs,
-            'ip_address'  => $ip,
-            'user_agent'  => $ua,
-        ]);
-
-        Log::info('admin_chatbot_interaction', [
-            'user_id'     => $user->id,
-            'model'       => $model,
-            'tokens'      => $tokens,
-            'response_ms' => $responseMs,
-        ]);
-
-        // ── Update session history ────────────────────────────────
-        $sessionHistory = array_slice(array_merge(
-            $history,
-            [['role' => 'user',      'content' => $userMessage]],
-            [['role' => 'assistant', 'content' => $reply]]
-        ), -30);
-
-        $request->session()->put('admin_chat_history', $sessionHistory);
+        $persisted = $this->chat->persistInteraction(
+            $user,
+            $conversation,
+            $validated['message'],
+            $result['reply'],
+            $lastModel,
+            $totalTokens,
+            $totalMs,
+            $request->session()->getId(),
+            $request->ip(),
+            $request->userAgent(),
+        );
 
         return response()->json([
-            'reply'       => $reply,
-            'tokens_used' => $tokens,
-            'response_ms' => $responseMs,
-            'model'       => $model,
+            'reply'             => $result['reply'],
+            'tokens_used'       => $totalTokens,
+            'response_ms'       => $totalMs,
+            'model'             => $lastModel,
+            'conversation_id'   => $conversation->id,
+            'admin_chat_log_id' => $persisted['assistant']->id,
         ]);
     }
 
-    // ── Chat feedback (thumbs up/down) ───────────────────────────────
-    public function feedback(Request $request): JsonResponse
+    /**
+     * SSE streaming.
+     *
+     * @OA\Post(
+     *     path="/admin/chat/stream",
+     *     tags={"AdminChat"},
+     *     summary="Envía mensaje y recibe respuesta vía Server-Sent Events",
+     *     description="Content-Type de respuesta: text/event-stream. Eventos: meta, delta, tool_call, tool_result, done, error.",
+     *     security={{"sessionAuth":{}, "csrfHeader":{}}},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *         required={"message"},
+     *         @OA\Property(property="message", type="string"),
+     *         @OA\Property(property="conversation_id", type="string", nullable=true),
+     *         @OA\Property(property="history", type="array", @OA\Items(type="object"))
+     *     )),
+     *     @OA\Response(response=200, description="Flujo SSE"),
+     *     @OA\Response(response=429, description="Cuota excedida")
+     * )
+     */
+    public function stream(ChatRequest $request): StreamedResponse|JsonResponse
     {
-        $validated = $request->validate([
-            'rating'           => ['required', 'in:helpful,not_helpful'],
-            'user_message'     => ['nullable', 'string', 'max:2000'],
-            'assistant_message'=> ['nullable', 'string', 'max:2000'],
-            'improvement_note' => ['nullable', 'string', 'max:500'],
-        ]);
+        $validated = $request->validated();
+        $user      = $request->user();
 
-        \App\Models\ChatFeedback::create([
-            'context'           => 'dashboard',
-            'rating'            => $validated['rating'],
-            'user_message'      => $validated['user_message']      ?? null,
-            'assistant_message' => $validated['assistant_message'] ?? null,
-            'improvement_note'  => $validated['improvement_note']  ?? null,
+        if ($blocked = $this->chat->checkRestricted($validated['message'])) {
+            // Aun así devolvemos JSON: el front lo maneja igual.
+            return response()->json(['reply' => $blocked->response_message, 'blocked' => true]);
+        }
+
+        $conversation = $this->chat->ensureConversation($user, $validated['conversation_id'] ?? null, $validated['message']);
+        $messages     = $this->chat->buildMessages($validated['message'], $validated['history'] ?? []);
+        $model        = (string) config('chatbot.llm.models.primary');
+
+        $sessionId = $request->session()->getId();
+        $ip        = $request->ip();
+        $ua        = $request->userAgent();
+
+        $userMessage = $validated['message'];
+
+        $response = new StreamedResponse(function () use (
+            $messages, $model, $conversation, $user, $userMessage, $sessionId, $ip, $ua
+        ) {
+            @ini_set('output_buffering', '0');
+            @ini_set('zlib.output_compression', '0');
+            while (ob_get_level() > 0) { ob_end_flush(); }
+
+            $emit = function (array $data): void {
+                echo 'data: ' . json_encode($data, JSON_UNESCAPED_UNICODE) . "\n\n";
+                if (function_exists('ob_flush')) { @ob_flush(); }
+                flush();
+            };
+
+            $emit([
+                'type'            => 'meta',
+                'conversation_id' => $conversation->id,
+                'model'           => $model,
+            ]);
+
+            $toolSchemas = (bool) config('chatbot.tools.enabled', true) ? $this->tools->schemas() : [];
+            $maxHops     = (int)  config('chatbot.tools.max_hops', 3);
+            $totalTokens = 0;
+            $totalMs     = 0;
+            $finalReply  = '';
+            $result      = null;
+
+            for ($hop = 0; $hop <= $maxHops; $hop++) {
+                $result = $this->llm->stream(
+                    $messages,
+                    onDelta: function (string $delta) use ($emit) {
+                        $emit(['type' => 'delta', 'content' => $delta]);
+                    },
+                    onUsage: null,
+                    onError: function (string $msg) use ($emit) {
+                        $emit(['type' => 'error', 'message' => $msg]);
+                    },
+                    shouldAbort: fn () => connection_aborted() === 1,
+                    model: $model,
+                    tools: $toolSchemas,
+                );
+
+                if (! $result['ok']) { return; }
+
+                $totalTokens += (int) ($result['tokens'] ?? 0);
+                $totalMs     += (int) ($result['ms']     ?? 0);
+                $finalReply   = $result['reply'] ?: $finalReply;
+
+                $toolCalls = (array) ($result['tool_calls'] ?? []);
+                if (empty($toolCalls) || $hop === $maxHops) { break; }
+
+                // Notificar al cliente de tool_calls ejecutándose.
+                foreach ($toolCalls as $tc) {
+                    $emit([
+                        'type' => 'tool_call',
+                        'name' => (string) data_get($tc, 'function.name', ''),
+                    ]);
+                }
+
+                $messages[] = [
+                    'role'       => 'assistant',
+                    'content'    => $result['reply'] ?: null,
+                    'tool_calls' => $toolCalls,
+                ];
+
+                foreach ($toolCalls as $tc) {
+                    $name   = (string) data_get($tc, 'function.name', '');
+                    $argsJs = (string) data_get($tc, 'function.arguments', '{}');
+                    $args   = json_decode($argsJs, true) ?: [];
+                    $out    = $this->tools->dispatch($name, $args, $user);
+
+                    $messages[] = [
+                        'role'         => 'tool',
+                        'tool_call_id' => (string) ($tc['id'] ?? ''),
+                        'name'         => $name,
+                        'content'      => json_encode($out, JSON_UNESCAPED_UNICODE),
+                    ];
+
+                    $emit([
+                        'type' => 'tool_result',
+                        'name' => $name,
+                    ]);
+                }
+            }
+
+            if (trim($finalReply) === '') {
+                $emit(['type' => 'error', 'message' => 'Respuesta vacía del proveedor IA.']);
+                return;
+            }
+
+            $persisted = $this->chat->persistInteraction(
+                $user,
+                $conversation,
+                $userMessage,
+                $finalReply,
+                $result['model'] ?? $model,
+                $totalTokens,
+                $totalMs,
+                $sessionId,
+                $ip,
+                $ua,
+            );
+
+            $emit([
+                'type'              => 'done',
+                'admin_chat_log_id' => $persisted['assistant']->id,
+                'conversation_id'   => $conversation->id,
+                'tokens_used'       => $totalTokens,
+                'response_ms'       => $totalMs,
+            ]);
+        });
+
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->headers->set('X-Accel-Buffering', 'no');
+        $response->headers->set('Connection', 'keep-alive');
+
+        return $response;
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/admin/chat/feedback",
+     *     tags={"AdminChat"},
+     *     summary="Registra 👍/👎 de una respuesta",
+     *     security={{"sessionAuth":{}, "csrfHeader":{}}},
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
+     *         required={"rating"},
+     *         @OA\Property(property="rating", type="string", enum={"helpful","not_helpful"}),
+     *         @OA\Property(property="admin_chat_log_id", type="integer", nullable=true),
+     *         @OA\Property(property="context", type="string"),
+     *         @OA\Property(property="user_message", type="string"),
+     *         @OA\Property(property="assistant_message", type="string"),
+     *         @OA\Property(property="improvement_note", type="string")
+     *     )),
+     *     @OA\Response(response=200, description="Feedback registrado"),
+     *     @OA\Response(response=422, description="Validación")
+     * )
+     */
+    public function feedback(FeedbackRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        ChatFeedback::create([
+            'admin_chat_log_id' => $data['admin_chat_log_id'] ?? null,
+            'context'           => $data['context'] ?? 'dashboard',
+            'rating'            => $data['rating'],
+            'user_message'      => $data['user_message']      ?? null,
+            'assistant_message' => $data['assistant_message'] ?? null,
+            'improvement_note'  => $data['improvement_note']  ?? null,
             'session_id'        => $request->session()->getId(),
         ]);
 
         return response()->json(['message' => 'Feedback registrado.']);
     }
 
-    // ── Clear history ────────────────────────────────────────────────
+    /**
+     * @OA\Post(
+     *     path="/admin/chat/clear",
+     *     tags={"AdminChat"},
+     *     summary="Limpia historial de chat de la sesión actual",
+     *     security={{"sessionAuth":{}, "csrfHeader":{}}},
+     *     @OA\Response(response=200, description="Historial limpiado")
+     * )
+     */
     public function clearHistory(Request $request): JsonResponse
     {
-        $request->session()->forget('admin_chat_history');
+        $request->session()->forget(['admin_chat_history', 'admin_chat_conversation_id']);
 
         Log::info('admin_chatbot_history_cleared', [
             'user_id'    => $request->user()?->id,
@@ -233,13 +351,21 @@ PROMPT;
         return response()->json(['cleared' => true]);
     }
 
-    // ── Fetch audit logs (admin only) ────────────────────────────────
+    /**
+     * @OA\Get(
+     *     path="/admin/chat/audit",
+     *     tags={"AdminChat"},
+     *     summary="Últimos 200 eventos del chat con auditoría (admin)",
+     *     security={{"sessionAuth":{}}},
+     *     @OA\Response(response=200, description="Listado de logs")
+     * )
+     */
     public function auditLog(Request $request): JsonResponse
     {
         $logs = AdminChatLog::with('user:id,name,email')
             ->orderByDesc('created_at')
             ->limit(200)
-            ->get(['id', 'user_id', 'session_id', 'role', 'content', 'model', 'tokens_used', 'response_ms', 'ip_address', 'created_at']);
+            ->get(['id', 'user_id', 'session_id', 'conversation_id', 'role', 'content', 'model', 'tokens_used', 'response_ms', 'ip_address', 'created_at']);
 
         return response()->json(['logs' => $logs]);
     }

@@ -38,6 +38,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('admin.dashboard')
         ->middleware('permission:admin.access');
 
+    Route::get('/admin/design-system', fn () => view('admin.design-system'))
+        ->name('admin.design-system')
+        ->middleware('permission:admin.access');
+
     Route::middleware('permission:admin.access')->group(function () {
         Route::get('/admin/search', SearchController::class)->name('admin.search');
 
@@ -48,9 +52,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get  ('/admin/notifications/stream',               [NotificationController::class, 'stream'])->name('notifications.stream');
 
         // Admin AI Chatbot
-        Route::post('/admin/chat',         [App\Http\Controllers\Admin\DashboardChatController::class, 'chat'])->name('admin.chat')->middleware('throttle:40,1');
+        Route::post('/admin/chat',         [App\Http\Controllers\Admin\DashboardChatController::class, 'chat'])->name('admin.chat')->middleware(['throttle:40,1', 'ai.budget']);
+        Route::post('/admin/chat/stream',  [App\Http\Controllers\Admin\DashboardChatController::class, 'stream'])->name('admin.chat.stream')->middleware(['throttle:40,1', 'ai.budget']);
         Route::post('/admin/chat/clear',   [App\Http\Controllers\Admin\DashboardChatController::class, 'clearHistory'])->name('admin.chat.clear');
         Route::get ('/admin/chat/audit',   [App\Http\Controllers\Admin\DashboardChatController::class, 'auditLog'])->name('admin.chat.audit');
+        Route::post('/admin/chat/feedback',[App\Http\Controllers\Admin\DashboardChatController::class, 'feedback'])->name('admin.chat.feedback')->middleware('throttle:20,1');
+
+        // Admin AI Chatbot — conversaciones persistentes (Fase 2)
+        Route::get   ('/admin/chat/conversations',             [App\Http\Controllers\Admin\ChatConversationController::class, 'index'])->name('admin.chat.conversations.index');
+        Route::get   ('/admin/chat/conversations/{id}',        [App\Http\Controllers\Admin\ChatConversationController::class, 'show'])->name('admin.chat.conversations.show');
+        Route::delete('/admin/chat/conversations/{id}',        [App\Http\Controllers\Admin\ChatConversationController::class, 'destroy'])->name('admin.chat.conversations.destroy');
+        Route::patch ('/admin/chat/conversations/{id}',        [App\Http\Controllers\Admin\ChatConversationController::class, 'rename'])->name('admin.chat.conversations.rename');
+        Route::get   ('/admin/chat/conversations/{id}/export', [App\Http\Controllers\Admin\ChatConversationController::class, 'export'])->name('admin.chat.conversations.export');
+
+        // Admin AI Usage dashboard (Fase 3.16) — requiere super_admin
+        Route::middleware('role:super_admin')->group(function () {
+            Route::get('/admin/ai-usage',      [App\Http\Controllers\Admin\AiUsageController::class, 'index'])->name('admin.ai-usage');
+            Route::get('/admin/ai-usage/data', [App\Http\Controllers\Admin\AiUsageController::class, 'data'])->name('admin.ai-usage.data');
+        });
     });
     
     // Rutas para clientes y proyectos
@@ -143,9 +162,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('knowledge-base.destroy');
 
     // ─── Chat Feedback (Module 10) ─────────────────────────────────
-    Route::post('/admin/chat/feedback', [App\Http\Controllers\Admin\DashboardChatController::class, 'feedback'])
-        ->name('admin.chat.feedback')
-        ->middleware('throttle:20,1');
+    // Ruta movida al grupo permission:admin.access arriba (Fase 1.2).
 });
 
 // ─── Client Portal (public, token-gated) ──────────────────────────

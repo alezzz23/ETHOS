@@ -48,26 +48,55 @@ class KnowledgeBaseEntry extends Model
     // ─── Helpers ──────────────────────────────────────────────────
 
     /**
-     * Simple keyword relevance scoring for RAG retrieval.
-     * Returns entries sorted by how many query terms they match.
+     * Búsqueda RAG con MySQL FULLTEXT (MATCH...AGAINST) con fallback a LIKE
+     * si FULLTEXT no está disponible o la query es demasiado corta.
+     *
+     * @return \Illuminate\Support\Collection<int, self>
      */
     public static function search(string $query, int $limit = 5): \Illuminate\Support\Collection
     {
-        $terms = array_filter(array_map('trim', explode(' ', strtolower($query))));
+        $query = trim($query);
+        if ($query === '') return collect();
+
+        // FULLTEXT requiere tokens ≥ 3-4 chars (innodb_ft_min_token_size) y
+        // rinde mal con queries muy cortas. Para queries largas usamos MATCH.
+        if (mb_strlen($query) >= 4) {
+            try {
+                $raw = static::active()
+                    ->selectRaw(
+                        '*, MATCH(title, content, embedding_summary) AGAINST (? IN NATURAL LANGUAGE MODE) AS score',
+                        [$query]
+                    )
+                    ->whereRaw(
+                        'MATCH(title, content, embedding_summary) AGAINST (? IN NATURAL LANGUAGE MODE)',
+                        [$query]
+                    )
+                    ->orderByDesc('score')
+                    ->limit($limit)
+                    ->get();
+
+                if ($raw->isNotEmpty()) return $raw;
+            } catch (\Throwable $e) {
+                // FULLTEXT index no presente (dev/sqlite): fall through al LIKE.
+                \Illuminate\Support\Facades\Log::debug('kb_fulltext_fallback', ['error' => $e->getMessage()]);
+            }
+        }
+
+        // Fallback LIKE por términos (score = nº de términos que matchean).
+        $terms = array_filter(array_map('trim', preg_split('/\s+/u', mb_strtolower($query)) ?: []));
+        if (! $terms) return collect();
 
         return static::active()
             ->get()
             ->map(function (self $entry) use ($terms) {
-                $haystack = strtolower($entry->title . ' ' . ($entry->embedding_summary ?? $entry->content));
-                $score    = 0;
-                foreach ($terms as $term) {
-                    if (strlen($term) > 3 && str_contains($haystack, $term)) {
-                        $score++;
-                    }
+                $hay = mb_strtolower($entry->title . ' ' . ($entry->embedding_summary ?? $entry->content));
+                $score = 0;
+                foreach ($terms as $t) {
+                    if (mb_strlen($t) > 3 && str_contains($hay, $t)) $score++;
                 }
                 return ['entry' => $entry, 'score' => $score];
             })
-            ->filter(fn ($item) => $item['score'] > 0)
+            ->filter(fn ($i) => $i['score'] > 0)
             ->sortByDesc('score')
             ->take($limit)
             ->pluck('entry');

@@ -92,9 +92,13 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center ethos-empty-state">
-                                    <i class="ti ti-users-off"></i>
-                                    <span>No hay clientes registrados.</span>
+                                <td colspan="5">
+                                    <x-ethos.empty-state
+                                        icon="ti-users-off"
+                                        title="No hay clientes registrados"
+                                        description="Agregá tu primer cliente para comenzar a capturar proyectos."
+                                        inline
+                                    />
                                 </td>
                             </tr>
                             @endforelse
@@ -484,7 +488,7 @@
     };
 
     const removeEmptyState = () => {
-        const emptyRow = tableBody.querySelector('.ethos-empty-state');
+        const emptyRow = tableBody.querySelector('.ethos-empty, .ethos-empty-state');
         if (emptyRow) {
             emptyRow.closest('tr')?.remove();
         }

@@ -7,6 +7,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/css/admin/chat.css',
+                'resources/js/admin/chat.js',
             ],
             refresh: true,
         }),

@@ -88,9 +88,13 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center ethos-empty-state">
-                                    <i class="ti ti-users-off"></i>
-                                    <span>No hay usuarios registrados.</span>
+                                <td colspan="5">
+                                    <x-ethos.empty-state
+                                        icon="ti-users-off"
+                                        title="No hay usuarios registrados"
+                                        description="Creá el primer usuario para asignarle un rol y permisos."
+                                        inline
+                                    />
                                 </td>
                             </tr>
                             @endforelse

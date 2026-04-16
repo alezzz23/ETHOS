@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreProjectRequest;
 use App\Models\ChecklistItem;
 use App\Models\Client;
 use App\Models\ClientSizeConfig;
@@ -54,23 +55,9 @@ class ProjectController extends Controller
      * Fase 1 – store: solo los campos mínimos, siempre capturado.
      * Observer se encarga de bloquear campos y notificar consultores.
      */
-    public function store(Request $request): JsonResponse|RedirectResponse
+    public function store(StoreProjectRequest $request): JsonResponse|RedirectResponse
     {
-        $validated = $request->validate([
-            'client_id'        => 'required|exists:clients,id',
-            'title'            => 'required|string|max:255',
-            'description'      => 'nullable|string',
-            'type'             => 'nullable|string|max:100',
-            'subtype'          => 'nullable|string|max:100',
-            'urgency'          => 'nullable|in:baja,media,alta',
-            'complexity'       => 'nullable|in:baja,media,alta',
-            'starts_at'        => 'nullable|date',
-            'estimated_budget' => 'nullable|numeric|min:0',
-            'currency'         => 'nullable|string|size:3',
-        ]);
-
-        $validated['status']      = Project::STATUS_CAPTURADO;
-        $validated['captured_by'] = auth()->id();
+        $validated = $request->validated();
 
         $project = Project::create($validated);
 

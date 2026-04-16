@@ -1,0 +1,333 @@
+/* ==========================================================================
+   ETHOS — Typography system
+   Pareja tipográfica formal: Fraunces (display serif) + Inter Tight (UI) +
+   JetBrains Mono (numérico/tabular). Se carga DESPUÉS de vuexy.css y
+   ethos-components.css para redefinir variables y aplicar jerarquía.
+   ========================================================================== */
+
+:root {
+    /* Familias base — sobrescriben las definidas por Vuexy/Bootstrap */
+    --vz-font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --vz-font-sans-serif: var(--vz-font-family);
+    --bs-body-font-family: var(--vz-font-family);
+    --bs-font-sans-serif:  var(--vz-font-family);
+
+    /* Display editorial (h1–h2, títulos grandes, valores destacados) */
+    --ethos-display-font: 'Fraunces', 'Inter Tight', Georgia, serif;
+
+    /* Numérico / tabular / código */
+    --ethos-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Brand mark (solo logo / wordmark de login) */
+    --ethos-brand-font: 'Cinzel', 'Fraunces', Georgia, serif;
+
+    /* Escala tipográfica (basada en 1rem = 16px, razón 1.25 "major third") */
+    --ethos-fs-xs:   .75rem;    /* 12 */
+    --ethos-fs-sm:   .875rem;   /* 14 */
+    --ethos-fs-base: 1rem;      /* 16 */
+    --ethos-fs-lg:   1.125rem;  /* 18 */
+    --ethos-fs-xl:   1.375rem;  /* 22 */
+    --ethos-fs-2xl:  1.75rem;   /* 28 */
+    --ethos-fs-3xl:  2.25rem;   /* 36 */
+    --ethos-fs-4xl:  3rem;      /* 48 */
+
+    /* Alturas de línea */
+    --ethos-lh-tight:  1.15;
+    --ethos-lh-snug:   1.30;
+    --ethos-lh-normal: 1.55;
+    --ethos-lh-relaxed: 1.7;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────── */
+html, body {
+    font-family: var(--vz-font-family);
+    font-feature-settings: "ss01", "cv11", "calt";  /* Inter Tight: cleaner forms */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* ── Jerarquía de títulos ─────────────────────────────────────────── */
+h1, .h1,
+h2, .h2 {
+    font-family: var(--ethos-display-font);
+    font-weight: 600;
+    letter-spacing: -.015em;
+    line-height: var(--ethos-lh-tight);
+    /* opsz: Fraunces ajusta contraste a tamaño; SOFT 50 suaviza trazos */
+    font-variation-settings: "opsz" 96, "SOFT" 50;
+    color: var(--vz-heading-color, #1b2a4a);
+}
+
+h1, .h1 { font-size: clamp(1.75rem, 1.1rem + 1.6vw, var(--ethos-fs-3xl)); }
+h2, .h2 { font-size: clamp(1.375rem, 1rem + 1vw, var(--ethos-fs-2xl)); }
+
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+    font-family: var(--vz-font-family);
+    font-weight: 600;
+    letter-spacing: -.005em;
+    line-height: var(--ethos-lh-snug);
+    color: var(--vz-heading-color, #1b2a4a);
+}
+
+h3, .h3 { font-size: var(--ethos-fs-xl); }
+h4, .h4 { font-size: var(--ethos-fs-lg); }
+h5, .h5 { font-size: var(--ethos-fs-base); }
+h6, .h6 {
+    font-size: var(--ethos-fs-sm);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: color-mix(in srgb, var(--vz-body-color, #566a7f) 78%, transparent);
+}
+
+/* ── Body ─────────────────────────────────────────────────────────── */
+body,
+p, li, dd, dt {
+    line-height: var(--ethos-lh-normal);
+}
+
+p { margin-bottom: .9em; }
+
+small, .small { font-size: var(--ethos-fs-sm); }
+
+/* Enlaces con mejor contraste tipográfico */
+a { text-underline-offset: 0.2em; }
+
+/* ── Utilidades de jerarquía ──────────────────────────────────────── */
+
+/* Display grande (hero / portadas internas) */
+.ethos-display {
+    font-family: var(--ethos-display-font);
+    font-weight: 700;
+    font-size: clamp(2rem, 1.25rem + 2.5vw, var(--ethos-fs-4xl));
+    line-height: var(--ethos-lh-tight);
+    letter-spacing: -.02em;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+    color: var(--vz-heading-color);
+}
+
+/* Eyebrow — pequeño rótulo que antecede al título */
+.ethos-eyebrow {
+    font-family: var(--vz-font-family);
+    font-size: var(--ethos-fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: color-mix(in srgb, var(--vz-primary, #696cff) 82%, var(--vz-body-color));
+    margin-bottom: .45rem;
+}
+
+/* Lead — párrafo introductorio (más grande y ligero) */
+.ethos-lead {
+    font-size: var(--ethos-fs-lg);
+    line-height: var(--ethos-lh-relaxed);
+    font-weight: 400;
+    color: color-mix(in srgb, var(--vz-body-color) 85%, transparent);
+    max-width: 68ch;
+}
+
+/* Caption / legal */
+.ethos-caption {
+    font-size: var(--ethos-fs-xs);
+    color: color-mix(in srgb, var(--vz-body-color) 60%, transparent);
+    letter-spacing: .01em;
+}
+
+/* Números — tabular, con font-feature-settings correcto */
+.ethos-numeric,
+.ethos-num {
+    font-family: var(--ethos-font-mono);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum", "lnum", "zero";
+    font-weight: 600;
+    letter-spacing: -.01em;
+}
+
+/* Brand mark (para logo / wordmark exclusivamente) */
+.ethos-brand {
+    font-family: var(--ethos-brand-font);
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+/* ── Contenedores tipográficos ────────────────────────────────────── */
+
+/* Mejor legibilidad en bloques de texto largos (propuestas, descripciones) */
+.ethos-prose {
+    font-size: var(--ethos-fs-base);
+    line-height: var(--ethos-lh-relaxed);
+    max-width: 72ch;
+}
+.ethos-prose h2 { margin-top: 2em; margin-bottom: .5em; }
+.ethos-prose h3 { margin-top: 1.6em; margin-bottom: .4em; }
+.ethos-prose p  { margin-bottom: 1.1em; }
+.ethos-prose ul,
+.ethos-prose ol { padding-left: 1.25rem; margin-bottom: 1.1em; }
+.ethos-prose li { margin-bottom: .35em; }
+.ethos-prose strong { font-weight: 600; color: var(--vz-heading-color); }
+.ethos-prose code {
+    font-family: var(--ethos-font-mono);
+    font-size: .92em;
+    padding: .12em .35em;
+    background: color-mix(in srgb, var(--vz-primary, #696cff) 10%, transparent);
+    border-radius: 4px;
+}
+
+/* ── Integración con componentes existentes ───────────────────────── */
+
+/* Page header — eyebrow, título display, descripción lead */
+.ethos-page-header__eyebrow {
+    font-size: var(--ethos-fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: color-mix(in srgb, var(--vz-primary, #696cff) 82%, var(--vz-body-color));
+    margin-bottom: .45rem;
+}
+.ethos-page-header__title {
+    font-family: var(--ethos-display-font);
+    font-weight: 600;
+    font-size: clamp(1.625rem, 1.1rem + 1.4vw, 2.125rem);
+    letter-spacing: -.015em;
+    line-height: var(--ethos-lh-tight);
+    font-variation-settings: "opsz" 96, "SOFT" 50;
+    margin: 0 0 .5rem 0;
+    color: var(--vz-heading-color);
+}
+.ethos-page-header__desc {
+    font-size: var(--ethos-fs-lg);
+    line-height: var(--ethos-lh-relaxed);
+    color: color-mix(in srgb, var(--vz-body-color) 80%, transparent);
+    max-width: 68ch;
+    margin: 0;
+}
+
+/* Stat card — valor numérico en mono tabular, título en caps espaciadas */
+.ethos-stat-card .ethos-stat-title {
+    font-family: var(--vz-font-family);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--vz-body-color) 68%, transparent);
+}
+.ethos-stat-card .ethos-stat-value {
+    font-family: var(--ethos-font-mono);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum", "lnum";
+    font-weight: 700;
+    font-size: clamp(1.625rem, 1.2rem + 1vw, 2.125rem);
+    letter-spacing: -.02em;
+    line-height: 1.1;
+}
+.ethos-stat-card .ethos-stat-delta {
+    font-family: var(--ethos-font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    font-weight: 600;
+    letter-spacing: -.005em;
+}
+.ethos-stat-card .ethos-stat-sub {
+    font-family: var(--vz-font-family);
+    font-size: var(--ethos-fs-xs);
+    letter-spacing: .01em;
+}
+
+/* Empty state */
+.ethos-empty__title {
+    font-family: var(--ethos-display-font);
+    font-weight: 600;
+    font-variation-settings: "opsz" 48, "SOFT" 40;
+    letter-spacing: -.005em;
+}
+.ethos-empty__desc {
+    font-size: var(--ethos-fs-sm);
+    line-height: var(--ethos-lh-normal);
+    max-width: 48ch;
+}
+
+/* Tablas — numéricos alineados a la derecha con mono tabular */
+.table .ethos-cell-num,
+.table td.text-end,
+.table th.text-end {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum", "lnum";
+}
+.table .ethos-cell-num {
+    font-family: var(--ethos-font-mono);
+    font-weight: 500;
+    letter-spacing: -.01em;
+}
+
+/* Botones — el bold es demasiado pesado para Inter Tight; 600 se lee mejor */
+.btn {
+    font-weight: 600;
+    letter-spacing: .005em;
+}
+
+/* Badges — ligeramente más densos */
+.badge {
+    font-weight: 600;
+    letter-spacing: .02em;
+}
+
+/* Formularios — labels con peso medium (no bold) + mejor jerarquía */
+.form-label {
+    font-weight: 500;
+    font-size: var(--ethos-fs-sm);
+    letter-spacing: .005em;
+    color: color-mix(in srgb, var(--vz-heading-color) 88%, transparent);
+}
+.form-text {
+    font-size: var(--ethos-fs-xs);
+    color: color-mix(in srgb, var(--vz-body-color) 65%, transparent);
+}
+
+/* Navbar / menú — un pelín más cerrado */
+.menu-inner .menu-link,
+.menu-link {
+    letter-spacing: .005em;
+}
+
+/* Breadcrumb del page-header */
+.ethos-breadcrumb {
+    font-size: var(--ethos-fs-xs);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--vz-body-color) 55%, transparent);
+}
+
+/* Alert titles con family correcto */
+.ethos-alert__title {
+    font-family: var(--vz-font-family);
+    font-weight: 600;
+    letter-spacing: -.005em;
+}
+
+/* ── Code blocks en showcase / docs ───────────────────────────────── */
+pre, code, kbd, samp {
+    font-family: var(--ethos-font-mono);
+}
+pre code { font-size: .88em; line-height: 1.55; }
+
+/* ── Dark mode: refinar color de heading ──────────────────────────── */
+.dark-style h1, .dark-style h2, .dark-style h3,
+.dark-style h4, .dark-style h5, .dark-style h6,
+.dark-style .ethos-display,
+.dark-style .ethos-page-header__title {
+    color: #e7ebf3;
+}
+.dark-style .ethos-eyebrow,
+.dark-style .ethos-page-header__eyebrow {
+    color: color-mix(in srgb, var(--vz-primary, #7B7DFF) 90%, #fff);
+}
+
+/* ── Accesibilidad: respetar user preference ─────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+}

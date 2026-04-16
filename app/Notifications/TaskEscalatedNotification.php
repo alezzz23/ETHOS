@@ -28,8 +28,8 @@ class TaskEscalatedNotification extends Notification implements ShouldQueue
             ->greeting("Hola {$notifiable->name},")
             ->line("La siguiente tarea lleva más de **48 horas** sin actividad y ha sido escalada.")
             ->line("**Tarea:** {$this->task->title}")
-            ->line("**Proyecto:** {$this->task->project?->title}")
-            ->line("**Asignado a:** {$this->task->assignedTo?->name ?? 'Sin asignar'}")
+            ->line("**Proyecto:** " . ($this->task->project?->title ?? '—'))
+            ->line("**Asignado a:** " . ($this->task->assignedTo?->name ?? 'Sin asignar'))
             ->action('Ver proyecto', $url)
             ->line('Por favor toma acción inmediata.');
     }

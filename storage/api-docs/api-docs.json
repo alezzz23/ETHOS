@@ -12,6 +12,258 @@
         }
     ],
     "paths": {
+        "/admin/chat": {
+            "post": {
+                "tags": [
+                    "AdminChat"
+                ],
+                "summary": "Envía un mensaje al asistente IA (respuesta completa, no-streaming)",
+                "description": "Endpoint JSON no-streaming (fallback).",
+                "operationId": "a8c5756229ae72bab1f22be0ec0d2315",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                    },
+                                    "conversation_id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "nullable": true
+                                    },
+                                    "history": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "role": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "user",
+                                                        "assistant"
+                                                    ]
+                                                },
+                                                "content": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta generada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "reply": {
+                                            "type": "string"
+                                        },
+                                        "tokens_used": {
+                                            "type": "integer"
+                                        },
+                                        "response_ms": {
+                                            "type": "integer"
+                                        },
+                                        "model": {
+                                            "type": "string"
+                                        },
+                                        "conversation_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "admin_chat_log_id": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validación"
+                    },
+                    "429": {
+                        "description": "Cuota excedida (budget o throttle)"
+                    },
+                    "503": {
+                        "description": "Proveedor IA no disponible"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": [],
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/chat/stream": {
+            "post": {
+                "tags": [
+                    "AdminChat"
+                ],
+                "summary": "Envía mensaje y recibe respuesta vía Server-Sent Events",
+                "description": "Content-Type de respuesta: text/event-stream. Eventos: meta, delta, tool_call, tool_result, done, error.",
+                "operationId": "9bde0bdadf947b34f7991434ce1c5f48",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "message"
+                                ],
+                                "properties": {
+                                    "message": {
+                                        "type": "string"
+                                    },
+                                    "conversation_id": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "history": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Flujo SSE"
+                    },
+                    "429": {
+                        "description": "Cuota excedida"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": [],
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/chat/feedback": {
+            "post": {
+                "tags": [
+                    "AdminChat"
+                ],
+                "summary": "Registra 👍/👎 de una respuesta",
+                "operationId": "db3711d5ebfd37139cb247b52986b90b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "rating": {
+                                        "type": "string",
+                                        "enum": [
+                                            "helpful",
+                                            "not_helpful"
+                                        ]
+                                    },
+                                    "admin_chat_log_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "context": {
+                                        "type": "string"
+                                    },
+                                    "user_message": {
+                                        "type": "string"
+                                    },
+                                    "assistant_message": {
+                                        "type": "string"
+                                    },
+                                    "improvement_note": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Feedback registrado"
+                    },
+                    "422": {
+                        "description": "Validación"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": [],
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/chat/clear": {
+            "post": {
+                "tags": [
+                    "AdminChat"
+                ],
+                "summary": "Limpia historial de chat de la sesión actual",
+                "operationId": "8db4acea5c9a1df8dc31a9fed843abb7",
+                "responses": {
+                    "200": {
+                        "description": "Historial limpiado"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": [],
+                        "csrfHeader": []
+                    }
+                ]
+            }
+        },
+        "/admin/chat/audit": {
+            "get": {
+                "tags": [
+                    "AdminChat"
+                ],
+                "summary": "Últimos 200 eventos del chat con auditoría (admin)",
+                "operationId": "ddfd30b31fa840e9cf530bbc746fc90d",
+                "responses": {
+                    "200": {
+                        "description": "Listado de logs"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
         "/": {
             "get": {
                 "tags": [
@@ -1673,7 +1925,7 @@
                     },
                     "status": {
                         "type": "string",
-                        "example": "en_diseno"
+                        "example": "en_ejecucion"
                     },
                     "type": {
                         "type": "string",
@@ -1776,13 +2028,9 @@
                         "type": "string",
                         "enum": [
                             "capturado",
-                            "clasificacion_pendiente",
-                            "priorizado",
-                            "asignacion_lider_pendiente",
-                            "en_diagnostico",
-                            "en_diseno",
-                            "en_implementacion",
-                            "en_seguimiento",
+                            "en_analisis",
+                            "aprobado",
+                            "en_ejecucion",
                             "cerrado"
                         ]
                     },
@@ -1948,6 +2196,10 @@
         }
     },
     "tags": [
+        {
+            "name": "AdminChat",
+            "description": "AdminChat"
+        },
         {
             "name": "General",
             "description": "General"

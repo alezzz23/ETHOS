@@ -7,12 +7,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    {{-- ETHOS typographic pair: Fraunces (display serif) · Inter Tight (UI) · JetBrains Mono (numeric/tabular) --}}
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    {{-- Brand mark only (logo, login wordmark) — no longer used as generic display font. --}}
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.css">
     <link rel="stylesheet" href="{{ asset('css/vuexy.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ethos-components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ethos-typography.css') }}">
+    {{-- ETHOS AI Chatbot: marked + DOMPurify se bundelean ahora vía Vite en resources/js/admin/chat.js (Fase 2). --}}
     <style>
     /* ─── Notification Bell ───────────────────────────────────────── */
     .ethos-notif-badge {
