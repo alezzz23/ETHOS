@@ -282,23 +282,37 @@
     });
 
     // Delete
-    document.getElementById('usersTableBody').addEventListener('click', function(e) {
+    document.getElementById('usersTableBody').addEventListener('click', async function(e) {
         const btn = e.target.closest('.js-delete-user');
         if (!btn) return;
         const userId   = btn.dataset.userId;
         const userName = btn.dataset.userName;
-        if (!confirm(`¿Eliminar al usuario "${userName}"? Esta acción no se puede deshacer.`)) return;
+        const isConfirmed = await window.EthosAlerts.confirm({
+            title: 'Eliminar usuario',
+            text: `Se eliminará a "${userName}" y esta acción no se puede deshacer.`,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            danger: true,
+        });
+        if (!isConfirmed) return;
 
-        fetch(`${deleteBase}/${userId}`, {
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-        })
-        .then(r => r.json())
-        .then(data => {
-            btn.closest('tr').remove();
-            showFeedback(tableFb, 'success', data.message);
-        })
-        .catch(() => alert('Error al eliminar el usuario.'));
+        try {
+            const response = await fetch(`${deleteBase}/${userId}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                window.EthosAlerts.error(data.message || 'Error al eliminar el usuario.');
+                return;
+            }
+
+            btn.closest('tr')?.remove();
+            window.EthosAlerts.success(data.message || 'Usuario eliminado.');
+        } catch {
+            window.EthosAlerts.error('Error al eliminar el usuario.');
+        }
     });
 })();
 </script>

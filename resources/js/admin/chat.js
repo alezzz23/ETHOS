@@ -5,6 +5,7 @@
 
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import { confirm as confirmAlert, error, info, promptText, success } from './sweet-alerts';
 
 // ── Config inyectado por Blade en window.__ETHOS_CHAT__ ─────────
 const cfg = window.__ETHOS_CHAT__ ?? {};
@@ -196,35 +197,68 @@ function findPrecedingUser(messages, assistantMsg) {
 }
 
 async function renameConversation(c) {
-    const newTitle = prompt('Nuevo título:', c.title ?? '');
-    if (!newTitle || newTitle === c.title) return;
-    const res = await fetch(CONV_SHOW(c.id), {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
-        body: JSON.stringify({ title: newTitle }),
+    const newTitle = await promptText({
+        title: 'Renombrar conversación',
+        inputLabel: 'Nuevo título',
+        inputValue: c.title ?? '',
+        inputPlaceholder: 'Escribe un título breve',
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
     });
-    if (res.ok) loadConversations();
+    if (!newTitle || newTitle === c.title) return;
+    try {
+        const res = await fetch(CONV_SHOW(c.id), {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+            body: JSON.stringify({ title: newTitle }),
+        });
+        if (res.ok) {
+            loadConversations();
+            success('Conversación renombrada.');
+            return;
+        }
+
+        error('No se pudo renombrar la conversación.');
+    } catch {
+        error('Error de conexión al renombrar la conversación.');
+    }
 }
 
 async function deleteConversation(c) {
-    if (!confirm(`¿Eliminar la conversación "${c.title ?? 'sin título'}"?`)) return;
-    const res = await fetch(CONV_SHOW(c.id), {
-        method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+    const isConfirmed = await confirmAlert({
+        title: 'Eliminar conversación',
+        text: `Se eliminará la conversación "${c.title ?? 'sin título'}".`,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        danger: true,
     });
-    if (res.ok) {
-        if (c.id === state.conversationId) {
-            state.conversationId = null;
-            state.history = [];
-            showWelcome();
+    if (!isConfirmed) return;
+
+    try {
+        const res = await fetch(CONV_SHOW(c.id), {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': csrf, Accept: 'application/json' },
+        });
+        if (res.ok) {
+            if (c.id === state.conversationId) {
+                state.conversationId = null;
+                state.history = [];
+                showWelcome();
+            }
+            loadConversations();
+            success('Conversación eliminada.');
+            return;
         }
-        loadConversations();
+
+        error('No se pudo eliminar la conversación.');
+    } catch {
+        error('Error de conexión al eliminar la conversación.');
     }
 }
 
 function exportCurrent() {
     if (!state.conversationId) {
-        alert('Abre o inicia una conversación para exportar.');
+        info('Abre o inicia una conversación para exportar.');
         return;
     }
     window.location.href = CONV_EXPORT(state.conversationId);
@@ -607,15 +641,27 @@ async function sendMessage() {
 
 // ── Clear history ───────────────────────────────────────────────
 async function clearCurrent() {
-    if (!confirm('¿Borrar toda la conversación actual?')) return;
+    const isConfirmed = await confirmAlert({
+        title: 'Borrar conversación actual',
+        text: 'Se eliminará el historial visible del chat actual.',
+        confirmButtonText: 'Sí, borrar',
+        cancelButtonText: 'Cancelar',
+        danger: true,
+    });
+    if (!isConfirmed) return;
+
     state.history = [];
     state.conversationId = null;
     state.abortCtrl?.abort();
     showWelcome();
-    await fetch(CLEAR_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
-    }).catch(() => {});
+    try {
+        await fetch(CLEAR_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+        });
+    } catch {
+        info('La conversación se limpió visualmente, pero no se pudo sincronizar el borrado.');
+    }
 }
 
 // ── Bind ────────────────────────────────────────────────────────

@@ -8,6 +8,7 @@
     $canEdit = auth()->user()?->can('projects.edit');
     $isLocked = $project->is_locked;
     $canEditLocked = $project->userCanEditLockedFields(auth()->user());
+    $latestProposal = $project->proposals->sortByDesc('created_at')->first();
 
     $phases = [
         'capturado'    => 1,
@@ -27,6 +28,125 @@
     ];
     $statusColor = $statusColors[$project->status] ?? 'secondary';
     $statusLabel = $project->status_label;
+
+    $workflowHint = match ($project->status) {
+        'capturado' => [
+            'eyebrow' => 'Fase 1 completada',
+            'title' => 'Siguiente: completa el análisis técnico del proyecto.',
+            'message' => 'El proyecto ya está capturado. Ahora un consultor debe definir servicio, horas, tarifa y liderazgo para convertirlo en una oportunidad accionable.',
+            'icon' => 'ti-stethoscope',
+            'steps' => [
+                'Selecciona el servicio correcto y calcula las horas estimadas.',
+                'Asigna líder y, si aplica, consultor de apoyo.',
+                'Cuando el análisis quede listo, pasa a crear la propuesta formal.',
+            ],
+            'ctaLabel' => 'Ir a Fase 2',
+            'ctaHref' => '#fase2',
+            'storageKey' => "project-{$project->id}-capturado",
+        ],
+        'en_analisis' => match ($latestProposal?->status) {
+            'draft' => [
+                'eyebrow' => 'Siguiente movimiento',
+                'title' => 'Ya existe una propuesta en borrador: toca revisarla y enviarla.',
+                'message' => 'El análisis técnico ya está hecho. Para avanzar el flujo, la propuesta debe pasar de borrador a enviada.',
+                'icon' => 'ti-send',
+                'steps' => [
+                    'Revisa horas, márgenes y plan de pagos.',
+                    'Marca la propuesta como enviada desde el módulo de propuestas.',
+                    'Luego quedará lista para aprobación o rechazo.',
+                ],
+                'ctaLabel' => 'Abrir propuesta en borrador',
+                'ctaHref' => route('proposals.index', ['project_id' => $project->id, 'status' => 'draft']),
+                'storageKey' => "project-{$project->id}-draft-proposal",
+            ],
+            'sent' => [
+                'eyebrow' => 'Esperando decisión',
+                'title' => 'La propuesta ya fue enviada: el siguiente paso es la aprobación.',
+                'message' => 'El proyecto está listo comercialmente. Solo falta que alguien con permiso valide la propuesta para mover el proyecto a aprobado.',
+                'icon' => 'ti-gavel',
+                'steps' => [
+                    'Haz seguimiento al cliente o al aprobador interno.',
+                    'Si se aprueba, el sistema generará el checklist automáticamente.',
+                    'Si se rechaza, vuelve a preparar una nueva versión.',
+                ],
+                'ctaLabel' => 'Ver propuestas enviadas',
+                'ctaHref' => route('proposals.index', ['project_id' => $project->id, 'status' => 'sent']),
+                'storageKey' => "project-{$project->id}-sent-proposal",
+            ],
+            'rejected' => [
+                'eyebrow' => 'Reformular propuesta',
+                'title' => 'La última propuesta fue rechazada: toca ajustar la oferta.',
+                'message' => 'El proyecto sigue en análisis hasta que exista una propuesta viable y vuelva a enviarse.',
+                'icon' => 'ti-refresh-alert',
+                'steps' => [
+                    'Revisa el motivo del rechazo y ajusta alcance, horas o hitos.',
+                    'Crea una nueva propuesta o vuelve a emitir una versión corregida.',
+                    'Vuelve a enviarla para retomar el flujo.',
+                ],
+                'ctaLabel' => 'Crear nueva propuesta',
+                'ctaHref' => route('proposals.create', ['project_id' => $project->id, 'service_id' => $project->service_id]),
+                'storageKey' => "project-{$project->id}-rejected-proposal",
+            ],
+            default => [
+                'eyebrow' => 'Fase 2 activa',
+                'title' => 'El análisis ya está listo: ahora crea la propuesta formal.',
+                'message' => 'Con servicio, horas y líder definidos, el siguiente paso correcto es convertir el análisis en una propuesta presentable.',
+                'icon' => 'ti-file-plus',
+                'steps' => [
+                    'Genera la propuesta desde este proyecto para no perder contexto.',
+                    'Revísala y envíala al cliente desde el módulo de propuestas.',
+                    'Una vez aprobada, el proyecto pasará a Fase 3.',
+                ],
+                'ctaLabel' => 'Crear propuesta',
+                'ctaHref' => route('proposals.create', ['project_id' => $project->id, 'service_id' => $project->service_id]),
+                'storageKey' => "project-{$project->id}-analysis",
+            ],
+        },
+        'aprobado' => [
+            'eyebrow' => 'Fase 3 completada',
+            'title' => 'El proyecto ya está aprobado: el siguiente paso es iniciar ejecución.',
+            'message' => 'En este punto conviene revisar el checklist generado y abrir la ejecución cuando el equipo esté listo para registrar avances.',
+            'icon' => 'ti-player-play',
+            'steps' => [
+                'Verifica responsables, fechas y checklist de levantamiento.',
+                'Inicia la ejecución desde esta misma ficha.',
+                'Luego registra el primer avance en Fase 4.',
+            ],
+            'ctaLabel' => 'Ir a Fase 3',
+            'ctaHref' => '#fase3',
+            'storageKey' => "project-{$project->id}-approved",
+        ],
+        'en_ejecucion' => [
+            'eyebrow' => 'Fase 4 activa',
+            'title' => 'Mantén el flujo vivo registrando avances y checklist.',
+            'message' => 'La operación ya arrancó. El valor de esta fase está en documentar método, horas reales y progreso para no perder trazabilidad.',
+            'icon' => 'ti-activity-heartbeat',
+            'steps' => [
+                'Registra cada avance con método, fase y horas reales.',
+                'Vincula avances al checklist para cerrarlo automáticamente.',
+                'Monitorea el desvío para intervenir si supera el 20%.',
+            ],
+            'ctaLabel' => 'Ir a Fase 4',
+            'ctaHref' => '#fase4',
+            'storageKey' => "project-{$project->id}-execution",
+        ],
+        'cerrado' => [
+            'eyebrow' => 'Flujo operativo cerrado',
+            'title' => 'El proyecto terminó: ahora toca seguimiento y aprendizaje.',
+            'message' => 'Con el cierre registrado, el sistema programa la encuesta de satisfacción. El siguiente paso útil es revisar el reporte y el resultado final.',
+            'icon' => 'ti-rosette-discount-check',
+            'steps' => [
+                'Consulta el reporte final del proyecto.',
+                'Da seguimiento a la encuesta de satisfacción cuando llegue al cliente.',
+                'Usa esta información para afinar futuras propuestas o ejecuciones.',
+            ],
+            'ctaLabel' => 'Ver reporte final',
+            'ctaHref' => route('projects.report', $project),
+            'ctaTarget' => '_blank',
+            'storageKey' => "project-{$project->id}-closed",
+        ],
+        default => null,
+    };
 @endphp
 
 {{-- Page Header --}}
@@ -70,6 +190,24 @@
         </div>
     </div>
 </div>
+
+@if($workflowHint)
+<div class="row mb-4">
+    <div class="col-12">
+        <x-ethos.workflow-hint
+            :eyebrow="$workflowHint['eyebrow']"
+            :title="$workflowHint['title']"
+            :message="$workflowHint['message']"
+            :icon="$workflowHint['icon']"
+            :steps="$workflowHint['steps']"
+            :cta-label="$workflowHint['ctaLabel'] ?? null"
+            :cta-href="$workflowHint['ctaHref'] ?? null"
+            :cta-target="$workflowHint['ctaTarget'] ?? null"
+            :storage-key="$workflowHint['storageKey'] ?? null"
+        />
+    </div>
+</div>
+@endif
 
 {{-- Global feedback --}}
 <div id="projectShowFeedback" class="alert d-none" role="alert" aria-live="polite"></div>
@@ -818,8 +956,7 @@
                             <i class="ti ti-report me-1"></i>Ver reporte
                         </a>
                         @if($project->status === 'en_ejecucion' && $canEdit)
-                        <form method="POST" action="{{ route('projects.close', $project) }}" id="formClose"
-                              onsubmit="return confirm('¿Cerrar el proyecto? Esta acción notificará al cliente.')">
+                        <form method="POST" action="{{ route('projects.close', $project) }}" id="formClose">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="btn btn-sm btn-dark">
@@ -886,6 +1023,10 @@
     const projectId    = {{ $project->id }};
     const progressRoute = `/admin/projects/${projectId}/progress`;
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const reloadWithHint = (payload) => {
+        window.EthosWorkflow.remember(payload);
+        window.location.reload();
+    };
 
     const feedback = document.getElementById('projectShowFeedback');
     const showFeedback = (type, msg) => {
@@ -980,7 +1121,21 @@
                 const data = await res.json().catch(() => ({}));
                 if (!res.ok) { showFeedback('error', data.message || 'Error al guardar el análisis.'); btn.disabled = false; return; }
                 showFeedback('success', data.message || 'Análisis guardado.');
-                setTimeout(() => location.reload(), 1200);
+                const serviceId = new FormData(formAnalyze).get('service_id');
+                setTimeout(() => reloadWithHint({
+                    title: 'Análisis completado',
+                    description: 'El proyecto ya quedó listo para propuesta. El siguiente paso recomendado es convertir este análisis en una propuesta formal.',
+                    steps: [
+                        'Genera la propuesta desde este proyecto para mantener el contexto.',
+                        'Revísala y márcala como enviada al cliente.',
+                        'Después quedará lista para aprobación.',
+                    ],
+                    icon: 'success',
+                    focusTab: '#fase2',
+                    confirmButtonText: 'Crear propuesta',
+                    cancelButtonText: 'Quedarme en la ficha',
+                    confirmUrl: `/admin/proposals/create?project_id=${projectId}&service_id=${serviceId}`,
+                }), 260);
             } catch { showFeedback('error', 'Error de conexión.'); btn.disabled = false; }
         });
     }
@@ -994,7 +1149,17 @@
             const data = await res.json().catch(() => ({}));
             if (!res.ok) { showFeedback('error', data.message || 'Error al aprobar.'); return; }
             showFeedback('success', data.message || 'Proyecto aprobado.');
-            setTimeout(() => location.reload(), 1200);
+            setTimeout(() => reloadWithHint({
+                title: 'Proyecto aprobado',
+                description: 'La fase comercial ya terminó. Ahora conviene revisar el checklist y preparar el arranque de la ejecución.',
+                steps: [
+                    'Verifica que el líder y responsables estén correctos.',
+                    'Revisa la lista de verificación generada.',
+                    'Cuando todo esté listo, inicia la ejecución desde Fase 3.',
+                ],
+                icon: 'success',
+                focusTab: '#fase3',
+            }), 260);
         });
     }
 
@@ -1007,7 +1172,17 @@
             const data = await res.json().catch(() => ({}));
             if (!res.ok) { showFeedback('error', data.message || 'Error.'); return; }
             showFeedback('success', data.message || 'Ejecución iniciada.');
-            setTimeout(() => location.reload(), 1200);
+            setTimeout(() => reloadWithHint({
+                title: 'Ejecución iniciada',
+                description: 'El proyecto ya está corriendo. El siguiente paso útil es registrar el primer avance para activar la trazabilidad operativa.',
+                steps: [
+                    'Registra método, fase y horas reales trabajadas.',
+                    'Si corresponde, vincula el avance a un ítem del checklist.',
+                    'Monitorea el desvío contra las horas estimadas.',
+                ],
+                icon: 'success',
+                focusTab: '#fase4',
+            }), 260);
         });
     }
 
@@ -1042,6 +1217,56 @@
                 setTimeout(() => location.reload(), 1500);
             } catch { showFeedback('error', 'Error de conexión.'); }
             finally { btn.disabled = false; spinner.classList.add('d-none'); }
+        });
+    }
+
+    const formClose = document.getElementById('formClose');
+    if (formClose) {
+        formClose.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const isConfirmed = await window.EthosAlerts.confirm({
+                title: '¿Cerrar el proyecto?',
+                text: 'Esta acción notificará al cliente y dejará el proyecto en estado cerrado.',
+                confirmButtonText: 'Sí, cerrar',
+                cancelButtonText: 'Cancelar',
+                danger: true,
+            });
+
+            if (!isConfirmed) {
+                return;
+            }
+
+            try {
+                const res = await fetch(formClose.action, {
+                    method: 'POST',
+                    body: new FormData(formClose),
+                    headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok) {
+                    showFeedback('error', data.message || 'No se pudo cerrar el proyecto.');
+                    return;
+                }
+
+                showFeedback('success', data.message || 'Proyecto cerrado.');
+                setTimeout(() => reloadWithHint({
+                    title: 'Proyecto cerrado',
+                    description: 'El flujo operativo del proyecto terminó. Ahora toca revisar el resultado final y dar seguimiento a la encuesta de satisfacción.',
+                    steps: [
+                        'Consulta el reporte final del proyecto.',
+                        'Verifica el presupuesto final calculado por horas reales.',
+                        'Haz seguimiento a la encuesta de satisfacción programada para el cliente.',
+                    ],
+                    icon: 'success',
+                    confirmButtonText: 'Ver reporte final',
+                    cancelButtonText: 'Quedarme en la ficha',
+                    confirmUrl: '{{ route('projects.report', $project) }}',
+                }), 260);
+            } catch {
+                showFeedback('error', 'Error de conexión al cerrar el proyecto.');
+            }
         });
     }
 

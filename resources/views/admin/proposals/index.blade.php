@@ -7,6 +7,65 @@
     $canCreate  = auth()->user()?->can('proposals.create');
     $canEdit    = auth()->user()?->can('proposals.edit');
     $canApprove = auth()->user()?->can('proposals.approve');
+    $canViewProjects = auth()->user()?->can('projects.view');
+    $projectFilter = request('project_id');
+    $proposalGuide = match (request('status')) {
+        'draft' => [
+            'eyebrow' => 'Borradores activos',
+            'title' => 'Estas propuestas todavia no mueven el flujo: falta enviarlas.',
+            'message' => 'Mientras una propuesta siga en borrador, el proyecto no puede avanzar comercialmente. El siguiente paso correcto es enviarla al cliente o al aprobador interno.',
+            'icon' => 'ti-send',
+            'steps' => [
+                'Revisa horas, rango de precios y plan de pagos.',
+                'Marca la propuesta como enviada desde esta misma tabla.',
+                'Despues quedara lista para aprobacion o rechazo.',
+            ],
+        ],
+        'sent' => [
+            'eyebrow' => 'Pendiente de decision',
+            'title' => 'Las propuestas enviadas ya estan en el punto de aprobacion.',
+            'message' => 'Aqui el flujo depende de una decision: aprobar para mover el proyecto a aprobado o rechazar para reformular la oferta.',
+            'icon' => 'ti-gavel',
+            'steps' => [
+                'Revisa la propuesta enviada y su contexto.',
+                'Apruebala si ya es viable o rechazala con motivo.',
+                'Al aprobar, el proyecto quedara listo para iniciar ejecucion.',
+            ],
+        ],
+        'approved' => [
+            'eyebrow' => 'Ciclo comercial completado',
+            'title' => 'Las propuestas aprobadas ya empujaron el proyecto a la siguiente fase.',
+            'message' => 'Desde aqui el siguiente trabajo relevante ocurre en la ficha del proyecto: revisar checklist, responsables e inicio de ejecucion.',
+            'icon' => 'ti-circle-check',
+            'steps' => [
+                'Abre la ficha del proyecto asociado.',
+                'Confirma que el proyecto este en aprobado y revisa su checklist.',
+                'Cuando corresponda, inicia la ejecucion.',
+            ],
+        ],
+        'rejected' => [
+            'eyebrow' => 'Reformulacion pendiente',
+            'title' => 'Las propuestas rechazadas requieren una nueva version o un ajuste.',
+            'message' => 'El rechazo no cierra el proyecto: solo devuelve el flujo a una etapa de ajuste para preparar una mejor oferta.',
+            'icon' => 'ti-refresh-alert',
+            'steps' => [
+                'Revisa el motivo del rechazo.',
+                'Prepara una nueva propuesta o reajusta el alcance.',
+                'Vuelve a enviarla para retomar el circuito comercial.',
+            ],
+        ],
+        default => [
+            'eyebrow' => 'Ciclo de propuestas',
+            'title' => 'Este modulo controla el tramo comercial entre analisis y aprobacion.',
+            'message' => 'Usalo para seguir el estado real de cada propuesta y no perder el siguiente paso del flujo del proyecto.',
+            'icon' => 'ti-git-merge',
+            'steps' => [
+                'Crea la propuesta desde un proyecto en analisis.',
+                'Enviala cuando el borrador quede listo.',
+                'Apruebala o rechazala para que el proyecto avance correctamente.',
+            ],
+        ],
+    };
 @endphp
 
 <div class="row g-4" x-data="proposalManager()">
@@ -29,6 +88,20 @@
 
             {{-- Filters --}}
             <div class="card-body pb-0">
+                <x-ethos.workflow-hint
+                    class="mb-4"
+                    :eyebrow="$proposalGuide['eyebrow']"
+                    :title="$proposalGuide['title']"
+                    :message="$proposalGuide['message']"
+                    :icon="$proposalGuide['icon']"
+                    :steps="$proposalGuide['steps']"
+                    :cta-label="$canCreate ? 'Nueva propuesta' : null"
+                    :cta-href="$canCreate ? route('proposals.create', $projectFilter ? ['project_id' => $projectFilter] : []) : null"
+                    :secondary-label="$canViewProjects && $projectFilter ? 'Abrir ficha del proyecto' : null"
+                    :secondary-href="$canViewProjects && $projectFilter ? route('projects.show', $projectFilter) . '#fase3' : null"
+                    storage-key="proposals-index-flow-{{ request('status') ?: 'all' }}"
+                />
+
                 <form method="GET" action="{{ route('proposals.index') }}"
                       class="d-flex flex-wrap gap-2 align-items-end">
                     <div>
@@ -82,8 +155,8 @@
                             <tr>
                                 <td class="text-muted small">{{ str_pad($proposal->id, 5, '0', STR_PAD_LEFT) }}</td>
                                 <td>
-                                    <div class="fw-semibold small">{{ $proposal->project->title }}</div>
-                                    <div class="text-muted" style="font-size:.78rem">{{ $proposal->project->client?->name }}</div>
+                                    <div class="fw-semibold small">{{ $proposal->project?->title ?? 'Proyecto eliminado' }}</div>
+                                    <div class="text-muted" style="font-size:.78rem">{{ $proposal->project?->client?->name ?? '—' }}</div>
                                 </td>
                                 <td class="small">{{ $proposal->service?->short_name ?? '—' }}</td>
                                 <td class="small">
@@ -100,7 +173,7 @@
                                 <td>
                                     <span class="badge bg-{{ $proposal->status_color }}">{{ $proposal->status_label }}</span>
                                 </td>
-                                <td class="small">{{ $proposal->createdBy->name }}</td>
+                                <td class="small">{{ $proposal->createdBy?->name ?? '—' }}</td>
                                 <td class="small text-muted">{{ $proposal->created_at->format('d/m/Y') }}</td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-1">
@@ -280,40 +353,95 @@ function proposalManager() {
             });
         },
 
-        sendProposal(id) {
-            if (!confirm('¿Marcar esta propuesta como enviada al cliente?')) return;
+        async sendProposal(id) {
+            const isConfirmed = await window.EthosAlerts.confirm({
+                title: 'Enviar propuesta',
+                text: 'La propuesta quedará marcada como enviada al cliente.',
+                confirmButtonText: 'Sí, enviar',
+                cancelButtonText: 'Cancelar',
+            });
+            if (!isConfirmed) return;
+
             this.loading = true;
-            fetch(`/admin/proposals/${id}/send`, {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
+
+            try {
+                const response = await fetch(`/admin/proposals/${id}/send`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    window.EthosAlerts.error(data.message || 'No se pudo enviar la propuesta.');
+                    return;
                 }
-            })
-            .then(r => r.json())
-            .then(data => {
-                alert(data.message);
+
+                window.EthosWorkflow.remember({
+                    title: 'Propuesta enviada',
+                    description: 'La propuesta ya salio de borrador. El siguiente paso correcto es esperar o gestionar su aprobacion.',
+                    steps: [
+                        'Haz seguimiento al cliente o al aprobador interno.',
+                        'Apruebala si ya esta validada.',
+                        'Si se rechaza, prepara una nueva version.',
+                    ],
+                    icon: 'success',
+                });
                 window.location.reload();
-            })
-            .finally(() => this.loading = false);
+            } catch {
+                window.EthosAlerts.error('Error de conexión al enviar la propuesta.');
+            } finally {
+                this.loading = false;
+            }
         },
 
-        approveProposal(id) {
-            if (!confirm('¿Aprobar esta propuesta? Se generará la lista de levantamiento automáticamente.')) return;
+        async approveProposal(id) {
+            const isConfirmed = await window.EthosAlerts.confirm({
+                title: 'Aprobar propuesta',
+                text: 'Se generará automáticamente la lista de levantamiento del proyecto.',
+                confirmButtonText: 'Sí, aprobar',
+                cancelButtonText: 'Cancelar',
+            });
+            if (!isConfirmed) return;
+
             this.loading = true;
-            fetch(`/admin/proposals/${id}/approve`, {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
+
+            try {
+                const response = await fetch(`/admin/proposals/${id}/approve`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    window.EthosAlerts.error(data.message || 'No se pudo aprobar la propuesta.');
+                    return;
                 }
-            })
-            .then(r => r.json())
-            .then(data => {
-                alert(data.message);
+
+                window.EthosWorkflow.remember({
+                    title: 'Propuesta aprobada',
+                    description: 'La propuesta ya empujo el proyecto a aprobado. El siguiente paso practico ocurre en la ficha del proyecto.',
+                    steps: [
+                        'Abre la ficha del proyecto asociado.',
+                        'Revisa checklist y responsables.',
+                        'Inicia la ejecucion cuando el equipo este listo.',
+                    ],
+                    icon: 'success',
+                    confirmButtonText: 'Abrir ficha del proyecto',
+                    cancelButtonText: 'Quedarme en propuestas',
+                    confirmUrl: `/admin/projects/${data.proposal.project_id}#fase3`,
+                });
                 window.location.reload();
-            })
-            .finally(() => this.loading = false);
+            } catch {
+                window.EthosAlerts.error('Error de conexión al aprobar la propuesta.');
+            } finally {
+                this.loading = false;
+            }
         },
 
         openReject(id) {
@@ -324,27 +452,51 @@ function proposalManager() {
             modal.show();
         },
 
-        confirmReject() {
+        async confirmReject() {
             if (!this.rejectReason.trim()) {
                 this.rejectError = 'El motivo es obligatorio.';
                 return;
             }
+
             this.loading = true;
-            fetch(`/admin/proposals/${this.rejectId}/reject`, {
-                method: 'PATCH',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({ rejection_reason: this.rejectReason }),
-            })
-            .then(r => r.json())
-            .then(data => {
-                alert(data.message);
+
+            try {
+                const response = await fetch(`/admin/proposals/${this.rejectId}/reject`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ rejection_reason: this.rejectReason }),
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    this.rejectError = data.message || 'No se pudo rechazar la propuesta.';
+                    return;
+                }
+
+                bootstrap.Modal.getInstance(document.getElementById('rejectModal'))?.hide();
+                window.EthosWorkflow.remember({
+                    title: 'Propuesta rechazada',
+                    description: 'El rechazo ya quedo documentado. El siguiente paso es preparar una nueva version o ajustar la oferta antes de volver a enviarla.',
+                    steps: [
+                        'Revisa el motivo del rechazo.',
+                        'Genera una nueva propuesta con el proyecto como contexto.',
+                        'Vuelve a enviarla para retomar el flujo comercial.',
+                    ],
+                    icon: 'warning',
+                    confirmButtonText: 'Crear nueva propuesta',
+                    cancelButtonText: 'Quedarme en propuestas',
+                    confirmUrl: `/admin/proposals/create?project_id=${data.proposal.project_id}`,
+                });
                 window.location.reload();
-            })
-            .finally(() => this.loading = false);
+            } catch {
+                this.rejectError = 'Error de conexión al rechazar la propuesta.';
+            } finally {
+                this.loading = false;
+            }
         }
     };
 }

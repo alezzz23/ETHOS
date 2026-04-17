@@ -291,14 +291,34 @@ function knowledgeBase() {
             window.location.reload();
         },
 
-        deleteEntry(id) {
-            if (!confirm('¿Eliminar esta entrada de la base de conocimiento?')) return;
+        async deleteEntry(id) {
+            const isConfirmed = await window.EthosAlerts.confirm({
+                title: 'Eliminar entrada',
+                text: 'La entrada se eliminará de la base de conocimiento.',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                danger: true,
+            });
+            if (!isConfirmed) return;
+
             const token = document.querySelector('meta[name="csrf-token"]').content;
-            fetch(`/admin/knowledge-base/${id}`, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-            })
-            .then(() => window.location.reload());
+            try {
+                const response = await fetch(`/admin/knowledge-base/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    window.EthosAlerts.error(data.message || 'No se pudo eliminar la entrada.');
+                    return;
+                }
+
+                await window.EthosAlerts.success(data.message || 'Entrada eliminada.', { timer: 1000 });
+                window.location.reload();
+            } catch {
+                window.EthosAlerts.error('Error de conexión al eliminar la entrada.');
+            }
         }
     };
 }

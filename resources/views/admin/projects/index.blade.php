@@ -6,6 +6,7 @@
 @php
     $canUpdateProjects = auth()->user()?->can('projects.edit');
     $canDeleteProjects = auth()->user()?->can('projects.delete');
+    $pendingProject = collect($projects->items())->first(fn ($item) => in_array($item->status, ['capturado', 'en_analisis'], true));
 @endphp
 <div class="row">
     <div class="col-12">
@@ -23,6 +24,22 @@
                 @endcan
             </div>
             <div class="card-body">
+                <x-ethos.workflow-hint
+                    class="mb-4"
+                    storage-key="projects-index-flow"
+                    eyebrow="Flujo del proyecto"
+                    icon="ti-compass"
+                    title="La captura es solo el inicio: el siguiente movimiento ocurre en la ficha del proyecto."
+                    message="Usa este módulo para registrar la oportunidad con datos mínimos. Luego abre la ficha y continúa el flujo operativo sin perder el contexto."
+                    :steps="[
+                        'Captura el proyecto con cliente, título y contexto básico.',
+                        'En la ficha completa el análisis: servicio, horas, tarifa y líder.',
+                        'Desde la misma ficha crea la propuesta formal y sigue su aprobación.',
+                    ]"
+                    :cta-label="$pendingProject ? 'Abrir siguiente pendiente' : null"
+                    :cta-href="$pendingProject ? route('projects.show', $pendingProject) . '#fase2' : null"
+                />
+
                 @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
@@ -396,6 +413,24 @@
             upsertRow(data.project || {});
             showFeedback(globalFeedback, 'success', escapeHtml(data.message || 'Proyecto capturado.'));
             modal.hide();
+
+            if (data.project?.id) {
+                setTimeout(() => {
+                    window.EthosWorkflow.show({
+                        title: 'Proyecto capturado',
+                        description: 'El proyecto ya quedó registrado en Fase 1. El siguiente paso recomendado es abrir la ficha y completar el análisis técnico.',
+                        steps: [
+                            'Asigna el servicio y calcula las horas estimadas.',
+                            'Define el líder del proyecto y la tarifa por hora.',
+                            'Genera la propuesta formal cuando el análisis quede listo.',
+                        ],
+                        icon: 'success',
+                        confirmButtonText: 'Abrir ficha del proyecto',
+                        cancelButtonText: 'Quedarme aquí',
+                        confirmUrl: `/admin/projects/${data.project.id}#fase2`,
+                    });
+                }, 220);
+            }
         } catch {
             showFeedback(feedback, 'error', 'Error de conexión. Intenta nuevamente.');
         } finally {
@@ -404,24 +439,39 @@
     });
 
     // Delete project
-    tableBody?.addEventListener('click', function(e) {
+    tableBody?.addEventListener('click', async function(e) {
         const btn = e.target.closest('.js-delete-project');
         if (!btn) return;
         const id    = btn.dataset.projectId;
         const title = btn.dataset.projectTitle;
-        if (!confirm(`¿Eliminar el proyecto "${title}"? Esta acción no se puede deshacer.`)) return;
+        const isConfirmed = await window.EthosAlerts.confirm({
+            title: 'Eliminar proyecto',
+            text: `Se eliminará el proyecto "${title}" y esta acción no se puede deshacer.`,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            danger: true,
+        });
+        if (!isConfirmed) return;
 
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
-        fetch(`/admin/projects/${id}`, {
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-        })
-        .then(r => r.json())
-        .then(data => {
-            btn.closest('tr').remove();
-            showFeedback(globalFeedback, 'success', escapeHtml(data.message || 'Proyecto eliminado.'));
-        })
-        .catch(() => alert('Error al eliminar el proyecto.'));
+
+        try {
+            const response = await fetch(`/admin/projects/${id}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                window.EthosAlerts.error(data.message || 'Error al eliminar el proyecto.');
+                return;
+            }
+
+            btn.closest('tr')?.remove();
+            window.EthosAlerts.success(data.message || 'Proyecto eliminado.');
+        } catch {
+            window.EthosAlerts.error('Error al eliminar el proyecto.');
+        }
     });
 })();
 </script>

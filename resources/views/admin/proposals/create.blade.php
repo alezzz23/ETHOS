@@ -3,10 +3,31 @@
 @section('title', 'Nueva Propuesta')
 
 @section('content')
+@php
+    $projectContextUrl = $selectedProject ? route('projects.show', $selectedProject) . '#fase2' : null;
+@endphp
 
 <div class="row justify-content-center" x-data="proposalWizard()">
 
     <div class="col-xl-9 col-lg-10">
+        <x-ethos.workflow-hint
+            class="mb-4"
+            storage-key="proposal-create-flow"
+            eyebrow="Fase comercial"
+            icon="ti-file-plus"
+            title="Esta pantalla convierte el análisis del proyecto en una propuesta formal."
+            message="Cuando guardes, la propuesta quedará en borrador. El siguiente paso no termina aquí: tendrás que enviarla desde la lista de propuestas para que pueda aprobarse o rechazarse."
+            :steps="[
+                'Selecciona el proyecto y el servicio asociado al análisis.',
+                'Calcula horas, ajusta si hace falta y define el plan de pagos.',
+                'Después de guardar, ve a la lista y marca la propuesta como enviada.',
+            ]"
+            :cta-label="$projectContextUrl ? 'Volver a la ficha del proyecto' : null"
+            :cta-href="$projectContextUrl"
+        >
+            El ciclo correcto es: borrador, enviada, aprobada o rechazada.
+        </x-ethos.workflow-hint>
+
         <div class="card ethos-crm-card">
             <div class="card-header d-flex align-items-center gap-2">
                 <i class="ti ti-file-description fs-5"></i>
@@ -292,26 +313,26 @@ function proposalWizard() {
                 });
                 if (!resp.ok) {
                     const err = await resp.json().catch(() => ({}));
-                    alert(err.message || 'Error al calcular. Intente nuevamente.');
+                    window.EthosAlerts.error(err.message || 'Error al calcular. Intenta nuevamente.');
                     return;
                 }
                 const data = await resp.json();
                 this.calcResult = data;
                 this.form.adjusted_hours = data.total_hours;
             } catch (e) {
-                alert('Error de conexión al calcular las horas.');
+                window.EthosAlerts.error('Error de conexión al calcular las horas.');
             } finally {
                 this.calcLoading = false;
             }
         },
 
-        nextStep() {
+        async nextStep() {
             if (this.step === 1 && (!this.form.project_id || !this.form.service_id)) {
-                alert('Selecciona un proyecto y un servicio para continuar.');
+                await window.EthosAlerts.warning('Selecciona un proyecto y un servicio para continuar.');
                 return;
             }
             if (this.step === 2 && !this.calcResult) {
-                alert('Calcula las horas antes de continuar.');
+                await window.EthosAlerts.warning('Calcula las horas antes de continuar.');
                 return;
             }
             this.step++;
@@ -340,7 +361,17 @@ function proposalWizard() {
                     this.saveError = data.message || 'Error al guardar la propuesta.';
                     return;
                 }
-                window.location.href = '/admin/proposals';
+                window.EthosWorkflow.remember({
+                    title: 'Propuesta creada',
+                    description: 'La propuesta quedó en borrador. El siguiente paso recomendado es revisarla en la lista y marcarla como enviada al cliente.',
+                    steps: [
+                        'Verifica que horas, rango de precio y plan de pagos estén correctos.',
+                        'Desde la lista de propuestas, márcala como enviada.',
+                        'Una vez enviada, podrá aprobarse o rechazarse.',
+                    ],
+                    icon: 'success',
+                });
+                window.location.href = `/admin/proposals?status=draft&project_id=${this.form.project_id}`;
             } catch (e) {
                 this.saveError = 'Error de conexión. Intenta nuevamente.';
             } finally {

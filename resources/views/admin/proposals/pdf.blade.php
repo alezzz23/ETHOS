@@ -65,11 +65,11 @@
         <div class="info-grid">
             <div class="info-row">
                 <div class="info-label">Empresa:</div>
-                <div class="info-value">{{ $proposal->project->client?->name ?? '—' }}</div>
+                <div class="info-value">{{ $proposal->project?->client?->name ?? '—' }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Proyecto:</div>
-                <div class="info-value">{{ $proposal->project->title }}</div>
+                <div class="info-value">{{ $proposal->project?->title ?? 'Proyecto eliminado' }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Servicio:</div>
@@ -81,7 +81,7 @@
             </div>
             <div class="info-row">
                 <div class="info-label">Consultor:</div>
-                <div class="info-value">{{ $proposal->createdBy->name }}</div>
+                <div class="info-value">{{ $proposal->createdBy?->name ?? '—' }}</div>
             </div>
         </div>
     </div>

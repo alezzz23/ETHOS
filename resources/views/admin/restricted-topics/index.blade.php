@@ -466,18 +466,34 @@ function restrictedTopics() {
         },
 
         async deleteTopic(id) {
-            if (!confirm('¿Eliminar este tópico?')) return;
-            const res = await fetch(`/admin/restricted-topics/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
+            const isConfirmed = await window.EthosAlerts.confirm({
+                title: 'Eliminar tópico restringido',
+                text: 'Esta acción eliminará el tópico y su respuesta asociada.',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                danger: true,
             });
-            if (res.ok) {
-                this.topics = this.topics.filter(t => t.id !== id);
-            } else {
-                alert('No se pudo eliminar el tópico.');
+
+            if (!isConfirmed) return;
+
+            try {
+                const res = await fetch(`/admin/restricted-topics/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok) {
+                    this.topics = this.topics.filter(t => t.id !== id);
+                    window.EthosAlerts.success(data.message || 'Tópico eliminado.');
+                } else {
+                    window.EthosAlerts.error(data.message || 'No se pudo eliminar el tópico.');
+                }
+            } catch {
+                window.EthosAlerts.error('Error de conexión al eliminar el tópico.');
             }
         },
     };

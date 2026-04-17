@@ -6,6 +6,7 @@
 @php
     $canUpdateClients = auth()->user()?->can('clients.edit');
     $canDeleteClients = auth()->user()?->can('clients.delete');
+    $projectsModuleUrl = auth()->user()?->can('projects.view') ? route('projects.index') : null;
 @endphp
 <div class="row">
     <div class="col-12">
@@ -23,6 +24,22 @@
                 @endcan
             </div>
             <div class="card-body">
+                <x-ethos.workflow-hint
+                    class="mb-4"
+                    storage-key="clients-index-flow"
+                    eyebrow="Inicio del flujo"
+                    icon="ti-building-skyscraper"
+                    title="Este módulo prepara el contexto: después de crear el cliente, el siguiente paso es capturar el proyecto."
+                    message="Registrar bien al cliente evita perder tiempo más adelante. Una vez listo, el flujo operativo real continúa en proyectos."
+                    :steps="[
+                        'Crea o actualiza el cliente con sus datos clave.',
+                        'Ve al módulo de proyectos y captura la oportunidad con la información mínima.',
+                        'Desde la ficha del proyecto continúa análisis, propuesta y ejecución.',
+                    ]"
+                    :cta-label="$projectsModuleUrl ? 'Ir a proyectos' : null"
+                    :cta-href="$projectsModuleUrl"
+                />
+
                 @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
@@ -789,6 +806,24 @@
             bindEditButtons();
             showFeedback(globalFeedback, 'success', escapeHtml(data.message || 'Operación completada.'));
             modal.hide();
+
+            if (mode === 'create') {
+                setTimeout(() => {
+                    window.EthosWorkflow.show({
+                        title: 'Cliente registrado',
+                        description: 'El cliente ya está listo en el sistema. El siguiente paso recomendado es capturar el proyecto u oportunidad asociada.',
+                        steps: [
+                            'Abre el módulo de proyectos.',
+                            'Captura la oportunidad con título, cliente y contexto básico.',
+                            'Desde la ficha del proyecto continúa el análisis y la propuesta.',
+                        ],
+                        icon: 'success',
+                        confirmButtonText: {{ $projectsModuleUrl ? "'Ir a proyectos'" : "'Entendido'" }},
+                        cancelButtonText: {{ $projectsModuleUrl ? "'Quedarme en clientes'" : 'null' }},
+                        confirmUrl: {{ $projectsModuleUrl ? "'{$projectsModuleUrl}'" : 'null' }},
+                    });
+                }, 220);
+            }
         } catch (error) {
             showFeedback(feedback, 'error', 'Ocurrió un error de conexión. Intenta nuevamente.');
         } finally {
@@ -1060,25 +1095,39 @@
 })();
 
     // ── Delete client ─────────────────────────────────────────────
-    document.getElementById('clientsTableBody')?.addEventListener('click', function(e) {
+    document.getElementById('clientsTableBody')?.addEventListener('click', async function(e) {
         const btn = e.target.closest('.js-delete-client');
         if (!btn) return;
         const clientId   = btn.dataset.clientId;
         const clientName = btn.dataset.clientName;
-        if (!confirm(`¿Estás seguro de que deseas eliminar al cliente "${clientName}"?\nEsta acción también eliminará todos sus proyectos.`)) return;
+        const isConfirmed = await window.EthosAlerts.confirm({
+            title: 'Eliminar cliente',
+            text: `Se eliminará al cliente "${clientName}" junto con todos sus proyectos.`,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            danger: true,
+        });
+        if (!isConfirmed) return;
 
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
-        fetch(`/admin/clients/${clientId}`, {
-            method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
-        })
-        .then(r => r.json())
-        .then(data => {
-            btn.closest('tr').remove();
-            const fb = document.getElementById('clientsGlobalFeedback');
-            if (fb) { fb.textContent = data.message; fb.className = 'alert alert-success'; }
-        })
-        .catch(() => alert('Error al eliminar el cliente.'));
+
+        try {
+            const response = await fetch(`/admin/clients/${clientId}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': token, 'Accept': 'application/json' },
+            });
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                window.EthosAlerts.error(data.message || 'Error al eliminar el cliente.');
+                return;
+            }
+
+            btn.closest('tr')?.remove();
+            window.EthosAlerts.success(data.message || 'Cliente eliminado.');
+        } catch {
+            window.EthosAlerts.error('Error al eliminar el cliente.');
+        }
     });
 </script>
 @endpush

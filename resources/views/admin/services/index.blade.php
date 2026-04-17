@@ -1302,16 +1302,38 @@ function serviceForm() {
         },
 
         async toggleStatus(serviceId, currentStatus, btn) {
-            if (!confirm(currentStatus === 'active' ? '¿Desactivar este servicio?' : '¿Activar este servicio?')) return;
-            const res  = await fetch(`/admin/services/${serviceId}/toggle-status`, {
-                method: 'PATCH',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
+            const isActive = currentStatus === 'active';
+            const isConfirmed = await window.EthosAlerts.confirm({
+                title: isActive ? 'Desactivar servicio' : 'Activar servicio',
+                text: isActive
+                    ? 'El servicio dejará de estar disponible para nuevas propuestas.'
+                    : 'El servicio volverá a estar disponible para nuevas propuestas.',
+                confirmButtonText: isActive ? 'Sí, desactivar' : 'Sí, activar',
+                cancelButtonText: 'Cancelar',
+                danger: isActive,
             });
-            if (res.ok) { window.location.reload(); }
-            else        { alert('No se pudo cambiar el estado.'); }
+            if (!isConfirmed) return;
+
+            try {
+                const res = await fetch(`/admin/services/${serviceId}/toggle-status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok) {
+                    window.EthosAlerts.error(data.message || 'No se pudo cambiar el estado.');
+                    return;
+                }
+
+                await window.EthosAlerts.success(data.message || 'Estado actualizado.', { timer: 900 });
+                window.location.reload();
+            } catch {
+                window.EthosAlerts.error('No se pudo cambiar el estado.');
+            }
         },
 
         showFeedback(msg, type) {

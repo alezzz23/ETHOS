@@ -48,7 +48,7 @@ class Handler extends ExceptionHandler
 
     protected function renderJsonException(Throwable $e): JsonResponse
     {
-        [$status, $code] = $this->mapException($e);
+        [$status, $code] = $this->mapExceptionToStatusCode($e);
 
         $payload = [
             'error' => [
@@ -75,7 +75,7 @@ class Handler extends ExceptionHandler
     /**
      * @return array{0:int,1:string}
      */
-    protected function mapException(Throwable $e): array
+    protected function mapExceptionToStatusCode(Throwable $e): array
     {
         return match (true) {
             $e instanceof ValidationException         => [422, 'validation_failed'],

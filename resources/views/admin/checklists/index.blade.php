@@ -49,8 +49,8 @@
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <div class="text-muted small">
-                                {{ $checklist->project->title }}
-                                @if($checklist->project->client)
+                                {{ $checklist->project?->title ?? 'Proyecto eliminado' }}
+                                @if($checklist->project?->client)
                                 — {{ $checklist->project->client->name }}
                                 @endif
                             </div>
