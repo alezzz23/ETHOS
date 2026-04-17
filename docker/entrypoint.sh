@@ -8,6 +8,12 @@ export APACHE_LISTEN_PORT="${PORT}"
 # Rewrite Apache global Listen directive to match the injected port.
 sed -ri "s!^Listen .*!Listen ${PORT}!g" /etc/apache2/ports.conf
 
+# Force a single MPM (prefork is required by mod_php). apt-get steps in the
+# base image sometimes leave mpm_event enabled, which conflicts with prefork.
+find /etc/apache2/mods-enabled -maxdepth 1 -name 'mpm_event*' -delete 2>/dev/null || true
+find /etc/apache2/mods-enabled -maxdepth 1 -name 'mpm_worker*' -delete 2>/dev/null || true
+a2enmod mpm_prefork rewrite headers >/dev/null 2>&1 || true
+
 cd /var/www/html
 
 # Ensure writable runtime dirs exist (Railway ephemeral FS).
