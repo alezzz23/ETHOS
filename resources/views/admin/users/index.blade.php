@@ -138,9 +138,9 @@
             </div>
             <div class="mb-3">
                 <label for="userPassword" class="form-label fw-semibold">Contraseña <span id="passwordHint" class="text-muted fw-normal">(dejar en blanco para no cambiar)</span></label>
-                <input type="password" id="userPassword" name="password" class="form-control" autocomplete="new-password" placeholder="Mínimo 10 caracteres">
+                <input type="password" id="userPassword" name="password" class="form-control" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
                 <small class="form-text text-muted d-block mt-1">
-                    Debe tener <strong>al menos 10 caracteres</strong>, combinar <strong>mayúsculas y minúsculas</strong>, incluir <strong>números</strong> y <strong>símbolos</strong>, y no haber aparecido en filtraciones públicas (se valida contra haveibeenpwned).
+                    Mínimo <strong>8 caracteres</strong>.
                 </small>
             </div>
             <div class="mb-3">

@@ -38,16 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Project::observe(ProjectObserver::class);
 
         // Baseline password policy for every Password::defaults() usage.
-        Password::defaults(function () {
-            $rule = Password::min(10)
-                ->mixedCase()
-                ->numbers()
-                ->symbols();
-
-            return $this->app->isProduction()
-                ? $rule->uncompromised()
-                : $rule;
-        });
+        Password::defaults(fn () => Password::min(8));
 
         // Only force HTTPS when the deployment is actually configured for it.
         if ($this->app->isProduction() && parse_url((string) config('app.url'), PHP_URL_SCHEME) === 'https') {
