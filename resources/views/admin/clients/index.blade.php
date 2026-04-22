@@ -96,7 +96,7 @@
                                         <i class="ti ti-eye"></i>
                                     </button>
                                     @can('clients.edit')
-                                    <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-client" title="Editar cliente" data-client='@json($clientPayload)'>
+                                    <button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-client" title="Editar cliente" data-client='@json($clientPayload, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)'>
                                         <i class="ti ti-edit"></i>
                                     </button>
                                     @endcan
@@ -320,6 +320,7 @@
 <script>
 (() => {
     const canUpdate = @json($canUpdateClients);
+    const canDelete = @json($canDeleteClients);
     const modalElement = document.getElementById('createClientModal');
     const modal = new bootstrap.Modal(modalElement);
     const form = document.getElementById('clientUnifiedForm');
@@ -465,7 +466,10 @@
         const editBtn = canUpdate
             ? `<button type="button" class="btn btn-sm btn-icon btn-text-secondary rounded-pill ethos-action-btn js-edit-client" title="Editar cliente" data-client="${payload}"><i class="ti ti-edit"></i></button>`
             : '';
-        const actionCell = viewBtn + editBtn;
+        const deleteBtn = canDelete
+            ? `<button type="button" class="btn btn-sm btn-icon btn-text-danger rounded-pill ethos-action-btn js-delete-client" title="Eliminar cliente" data-client-id="${client.id}" data-client-name="${escapeHtml(client.name)}"><i class="ti ti-trash"></i></button>`
+            : '';
+        const actionCell = viewBtn + editBtn + deleteBtn;
 
         return `<tr data-client-id="${client.id}">
             <td data-label="Nombre">
@@ -818,9 +822,9 @@
                             'Desde la ficha del proyecto continúa el análisis y la propuesta.',
                         ],
                         icon: 'success',
-                        confirmButtonText: {{ $projectsModuleUrl ? "'Ir a proyectos'" : "'Entendido'" }},
-                        cancelButtonText: {{ $projectsModuleUrl ? "'Quedarme en clientes'" : 'null' }},
-                        confirmUrl: {{ $projectsModuleUrl ? "'{$projectsModuleUrl}'" : 'null' }},
+                        confirmButtonText: @json($projectsModuleUrl ? 'Ir a proyectos' : 'Entendido'),
+                        cancelButtonText: @json($projectsModuleUrl ? 'Quedarme en clientes' : null),
+                        confirmUrl: @json($projectsModuleUrl),
                     });
                 }, 220);
             }
