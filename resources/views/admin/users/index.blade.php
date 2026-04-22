@@ -138,7 +138,10 @@
             </div>
             <div class="mb-3">
                 <label for="userPassword" class="form-label fw-semibold">Contraseña <span id="passwordHint" class="text-muted fw-normal">(dejar en blanco para no cambiar)</span></label>
-                <input type="password" id="userPassword" name="password" class="form-control" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+                <input type="password" id="userPassword" name="password" class="form-control" autocomplete="new-password" placeholder="Mínimo 10 caracteres">
+                <small class="form-text text-muted d-block mt-1">
+                    Debe tener <strong>al menos 10 caracteres</strong>, combinar <strong>mayúsculas y minúsculas</strong>, incluir <strong>números</strong> y <strong>símbolos</strong>, y no haber aparecido en filtraciones públicas (se valida contra haveibeenpwned).
+                </small>
             </div>
             <div class="mb-3">
                 <label for="userPasswordConfirmation" class="form-label fw-semibold">Confirmar contraseña <span id="passwordConfirmationHint" class="text-muted fw-normal">(debe coincidir con la contraseña)</span></label>
@@ -288,8 +291,16 @@
             const res  = await fetch(url, { method, headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }, body });
             const data = await res.json();
             if (!res.ok) {
-                const errors = data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || 'Error inesperado');
-                showFeedback(feedback, 'danger', errors);
+                if (data.errors) {
+                    const items = Object.values(data.errors)
+                        .flat()
+                        .map(msg => `<li>${String(msg).replace(/</g, '&lt;')}</li>`)
+                        .join('');
+                    feedback.className = 'alert alert-danger';
+                    feedback.innerHTML = `<strong>No se pudo guardar el usuario:</strong><ul class="mb-0 mt-2">${items}</ul>`;
+                } else {
+                    showFeedback(feedback, 'danger', data.message || 'Error inesperado');
+                }
             } else {
                 modal.hide();
                 showFeedback(tableFb, 'success', data.message);
