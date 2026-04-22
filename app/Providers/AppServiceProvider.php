@@ -49,8 +49,8 @@ class AppServiceProvider extends ServiceProvider
                 : $rule;
         });
 
-        // Force HTTPS in production to avoid mixed content and token leakage.
-        if ($this->app->isProduction()) {
+        // Only force HTTPS when the deployment is actually configured for it.
+        if ($this->app->isProduction() && parse_url((string) config('app.url'), PHP_URL_SCHEME) === 'https') {
             URL::forceScheme('https');
         }
     }
