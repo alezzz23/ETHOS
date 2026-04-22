@@ -912,12 +912,13 @@
             <div class="flex items-center justify-between h-24">
                 <!-- Logo -->
                 <a href="#" class="flex items-center gap-4 group">
-                    <div class="relative w-14 h-14 flex items-center justify-center overflow-hidden rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 group-hover:border-white/30 transition-colors duration-500">
-                        <img src="{{ asset('assets/image/logo.png') }}" alt="ETHOS Logo" class="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-500">
+                    <div class="relative h-14 w-[9.5rem] flex items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-white/95 px-3 shadow-[0_10px_30px_rgba(7,31,51,0.18)] ring-1 ring-white/10 transition-all duration-500 group-hover:-translate-y-0.5 group-hover:border-white/35 group-hover:shadow-[0_16px_40px_rgba(7,31,51,0.28)]">
+                        <img src="{{ asset('assets/image/logo.png') }}" alt="ETHOS" class="h-8 w-auto max-w-none scale-[1.85] object-contain transition-transform duration-500 group-hover:scale-[1.95]">
+                        <div class="absolute inset-x-3 bottom-1 h-px bg-gradient-to-r from-transparent via-ethos-500/45 to-transparent"></div>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="font-display text-2xl font-semibold text-white tracking-[0.15em] group-hover:tracking-[0.2em] transition-all duration-500">ETHOS</span>
-                        <span class="text-[10px] text-white/50 tracking-[0.4em] uppercase">Consultoría Estratégica</span>
+                    <div class="hidden sm:flex flex-col">
+                        <span class="font-display text-xl font-semibold text-white tracking-[0.18em] group-hover:tracking-[0.22em] transition-all duration-500">ETHOS</span>
+                        <span class="text-[10px] text-white/55 tracking-[0.4em] uppercase">Consultoría Estratégica</span>
                     </div>
                 </a>
  
