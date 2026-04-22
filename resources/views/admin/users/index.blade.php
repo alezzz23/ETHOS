@@ -141,6 +141,10 @@
                 <input type="password" id="userPassword" name="password" class="form-control" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
             </div>
             <div class="mb-3">
+                <label for="userPasswordConfirmation" class="form-label fw-semibold">Confirmar contraseña <span id="passwordConfirmationHint" class="text-muted fw-normal">(debe coincidir con la contraseña)</span></label>
+                <input type="password" id="userPasswordConfirmation" name="password_confirmation" class="form-control" autocomplete="new-password" placeholder="Repite la contraseña">
+            </div>
+            <div class="mb-3">
                 <label for="userRole" class="form-label fw-semibold">Rol <span class="text-danger">*</span></label>
                 <select id="userRole" name="role" class="form-select" required>
                     <option value="">— Seleccionar rol —</option>
@@ -180,6 +184,7 @@
     const btnText      = document.getElementById('userBtnText');
     const spinner      = document.getElementById('userBtnSpinner');
     const passwordHint = document.getElementById('passwordHint');
+    const passwordConfirmationHint = document.getElementById('passwordConfirmationHint');
 
     function showFeedback(el, type, msg) {
         el.className = `alert alert-${type}`;
@@ -226,7 +231,9 @@
             document.getElementById('userModalIcon').className       = 'ti ti-user-edit';
             btnText.textContent = 'Guardar Cambios';
             passwordHint.textContent = '(dejar en blanco para no cambiar)';
+            passwordConfirmationHint.textContent = '(solo si cambias la contraseña)';
             document.getElementById('userPassword').required = false;
+            document.getElementById('userPasswordConfirmation').required = false;
         } else {
             userIdInput.value = '';
             document.getElementById('userModalLabel').textContent    = 'Nuevo Usuario';
@@ -234,7 +241,9 @@
             document.getElementById('userModalIcon').className       = 'ti ti-user-plus';
             btnText.textContent = 'Crear Usuario';
             passwordHint.textContent = '(requerida)';
+            passwordConfirmationHint.textContent = '(requerida)';
             document.getElementById('userPassword').required = true;
+            document.getElementById('userPasswordConfirmation').required = true;
         }
     });
 
@@ -262,7 +271,18 @@
             role:     document.getElementById('userRole').value,
         });
         const pass = document.getElementById('userPassword').value;
-        if (pass) body.set('password', pass);
+        const passConfirmation = document.getElementById('userPasswordConfirmation').value;
+
+        if (pass || passConfirmation) {
+            if (pass !== passConfirmation) {
+                showFeedback(feedback, 'danger', 'La confirmación de la contraseña no coincide.');
+                setLoading(false);
+                return;
+            }
+
+            body.set('password', pass);
+            body.set('password_confirmation', passConfirmation);
+        }
 
         try {
             const res  = await fetch(url, { method, headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }, body });
