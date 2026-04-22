@@ -1,0 +1,319 @@
+- generic [ref=e1]:
+  - link "Saltar al contenido" [ref=e2] [cursor=pointer]:
+    - /url: "#mainContent"
+  - text: 
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "ETHOS" [ref=e5] [cursor=pointer]:
+        - /url: /admin/dashboard
+        - generic [ref=e6]: ETHOS
+      - button "Alternar barra lateral" [ref=e7] [cursor=pointer]:
+        - generic [ref=e8]: 
+      - text: 
+    - list [ref=e9]:
+      - listitem [ref=e10]: Dashboards
+      - listitem [ref=e11]:
+        - link " Inicio" [ref=e12] [cursor=pointer]:
+          - /url: /admin/dashboard
+          - generic [ref=e13]: 
+          - generic [ref=e14]: Inicio
+      - listitem [ref=e15]:
+        - link " Clientes" [ref=e16] [cursor=pointer]:
+          - /url: /admin/clients
+          - generic [ref=e17]: 
+          - generic [ref=e18]: Clientes
+      - listitem [ref=e19]:
+        - link " Proyectos" [ref=e20] [cursor=pointer]:
+          - /url: /admin/projects
+          - generic [ref=e21]: 
+          - generic [ref=e22]: Proyectos
+      - listitem [ref=e23]:
+        - link " Servicios" [ref=e24] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/services
+          - generic [ref=e25]: 
+          - generic [ref=e26]: Servicios
+      - listitem [ref=e27]:
+        - link "﨡 Usuarios" [ref=e28] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/users
+          - generic [ref=e29]: 﨡
+          - generic [ref=e30]: Usuarios
+      - listitem [ref=e31]:
+        - link " Tópicos Restringidos" [ref=e32] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/restricted-topics
+          - generic [ref=e33]: 
+          - generic [ref=e34]: Tópicos Restringidos
+      - listitem [ref=e35]:
+        - link " Propuestas" [ref=e36] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/proposals
+          - generic [ref=e37]: 
+          - generic [ref=e38]: Propuestas
+      - listitem [ref=e39]:
+        - link " Levantamiento" [ref=e40] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/checklists
+          - generic [ref=e41]: 
+          - generic [ref=e42]: Levantamiento
+      - listitem [ref=e43]:
+        - link " Base de Conocimiento" [ref=e44] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/knowledge-base
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Base de Conocimiento
+  - navigation [ref=e47]:
+    - text: 
+    - generic [ref=e48] [cursor=pointer]:
+      - generic [ref=e49]: 
+      - textbox "Search (Ctrl+/)"
+    - generic [ref=e50]:
+      - button "Notificaciones" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: 
+      - button "Alternar modo oscuro" [ref=e54] [cursor=pointer]:
+        - generic [ref=e55]: 
+      - generic [ref=e56]:
+        - link "M( Miguel (Super Admin) super_admin" [ref=e57] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e58]: M(
+          - generic [ref=e59]:
+            - generic [ref=e60]: Miguel (Super Admin)
+            - generic [ref=e61]: super_admin
+        - text:  
+  - generic [ref=e62]:
+    - generic [ref=e63]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading " Clientes" [level=5] [ref=e68]:
+            - generic [ref=e69]: 
+            - generic [ref=e70]: Clientes
+          - button " Nuevo Cliente" [ref=e71] [cursor=pointer]:
+            - generic [ref=e72]: 
+            - generic [ref=e73]: Nuevo Cliente
+        - generic [ref=e74]:
+          - complementary [ref=e75]:
+            - generic [ref=e77]: 
+            - generic [ref=e78]:
+              - paragraph [ref=e79]: Inicio del flujo
+              - 'heading "Este módulo prepara el contexto: después de crear el cliente, el siguiente paso es capturar el proyecto." [level=5] [ref=e80]'
+              - paragraph [ref=e81]: Registrar bien al cliente evita perder tiempo más adelante. Una vez listo, el flujo operativo real continúa en proyectos.
+              - list [ref=e82]:
+                - listitem [ref=e83]: Crea o actualiza el cliente con sus datos clave.
+                - listitem [ref=e84]: Ve al módulo de proyectos y captura la oportunidad con la información mínima.
+                - listitem [ref=e85]: Desde la ficha del proyecto continúa análisis, propuesta y ejecución.
+              - link "Ir a proyectos" [ref=e87] [cursor=pointer]:
+                - /url: http://ethosconsultor.org/admin/projects
+            - button "Ocultar ayuda visual" [ref=e88] [cursor=pointer]:
+              - generic [ref=e89]: 
+          - table [ref=e91]:
+            - rowgroup [ref=e92]:
+              - row "Nombre Industria Contacto Principal Email Acciones" [ref=e93]:
+                - columnheader "Nombre" [ref=e94]
+                - columnheader "Industria" [ref=e95]
+                - columnheader "Contacto Principal" [ref=e96]
+                - columnheader "Email" [ref=e97]
+                - columnheader "Acciones" [ref=e98]
+            - rowgroup [ref=e99]:
+              - row [ref=e100]:
+                - cell [ref=e101]:
+                  - status [ref=e102]:
+                    - paragraph [ref=e104]: No hay clientes registrados
+                    - paragraph [ref=e105]: Agregá tu primer cliente para comenzar a capturar proyectos.
+      - dialog "Registrar Nuevo Cliente" [active] [ref=e116]:
+        - generic [ref=e117]:
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - generic [ref=e121]: 
+              - generic [ref=e122]:
+                - heading "Registrar Nuevo Cliente" [level=5] [ref=e123]
+                - paragraph [ref=e124]: Completa los datos principales del cliente.
+            - button "Close" [ref=e125] [cursor=pointer]
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - generic [ref=e129]:
+                  - generic [ref=e130]:
+                    - generic [ref=e131]: 
+                    - text: Nombre
+                    - generic [ref=e132]: "*"
+                  - textbox [ref=e133]
+                - generic [ref=e134]:
+                  - generic [ref=e135]:
+                    - generic [ref=e136]: 
+                    - text: Industria
+                  - textbox [ref=e137]
+                - generic [ref=e138]:
+                  - generic [ref=e139]:
+                    - generic [ref=e140]: 
+                    - text: Nombre Contacto Principal
+                  - textbox [ref=e141]
+                - generic [ref=e142]:
+                  - generic [ref=e143]:
+                    - generic [ref=e144]: 
+                    - text: Email Contacto Principal
+                  - textbox [ref=e145]
+                - generic [ref=e146]:
+                  - generic [ref=e147]:
+                    - generic [ref=e148]: 
+                    - text: Teléfono
+                  - textbox "+58 412-1234567" [ref=e149]
+                - generic [ref=e150]:
+                  - generic [ref=e151]:
+                    - generic [ref=e152]: 
+                    - text: Notas
+                  - textbox [ref=e153]
+              - generic [ref=e154]:
+                - heading " Ubicación" [level=6] [ref=e156]:
+                  - generic [ref=e157]: 
+                  - text: Ubicación
+                - generic [ref=e158]:
+                  - generic [ref=e159]:
+                    - generic [ref=e160]: 
+                    - text: Estado/Provincia *
+                  - combobox [ref=e161]:
+                    - option "Selecciona un estado" [selected]
+                    - option "Distrito Capital"
+                    - option "Amazonas"
+                    - option "Anzoátegui"
+                    - option "Apure"
+                    - option "Aragua"
+                    - option "Barinas"
+                    - option "Bolívar"
+                    - option "Carabobo"
+                    - option "Cojedes"
+                    - option "Delta Amacuro"
+                    - option "Falcón"
+                    - option "Guárico"
+                    - option "Lara"
+                    - option "Mérida"
+                    - option "Miranda"
+                    - option "Monagas"
+                    - option "Nueva Esparta"
+                    - option "Portuguesa"
+                    - option "Sucre"
+                    - option "Táchira"
+                    - option "Trujillo"
+                    - option "Vargas"
+                    - option "Yaracuy"
+                    - option "Zulia"
+                - generic [ref=e162]:
+                  - generic [ref=e163]:
+                    - generic [ref=e164]: 
+                    - text: Ciudad
+                  - combobox [ref=e165]:
+                    - option "Selecciona una ciudad" [selected]
+                    - option "La Guaira"
+                    - option "Maiquetía"
+                    - option "Catia La Mar"
+                    - option "Macuto"
+                - generic [ref=e166]:
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: 
+                    - text: Municipio
+                  - combobox [ref=e169]:
+                    - option "Selecciona un municipio" [selected]
+                    - option "Vargas"
+                - generic [ref=e170]:
+                  - generic [ref=e171]:
+                    - generic [ref=e172]: 
+                    - text: Parroquia
+                  - combobox [ref=e173]:
+                    - option "Primero selecciona un municipio" [selected]
+                - generic [ref=e174]:
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: 
+                    - text: Dirección
+                  - textbox "Calle, número, zona" [ref=e177]
+                - generic [ref=e178]:
+                  - generic [ref=e179]:
+                    - generic [ref=e180]: 
+                    - text: País
+                  - textbox [ref=e181]: Venezuela
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - heading " Ubicación en Mapa" [level=6] [ref=e184]:
+                    - generic [ref=e185]: 
+                    - text: Ubicación en Mapa
+                  - paragraph [ref=e186]: Haz clic en el mapa para seleccionar la ubicación del cliente
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: 
+                    - text: Latitud
+                  - textbox "Haz clic en el mapa" [ref=e193]
+                - generic [ref=e194]:
+                  - generic [ref=e195]:
+                    - generic [ref=e196]: 
+                    - text: Longitud
+                  - textbox "Haz clic en el mapa" [ref=e197]
+                - button " Limpiar ubicación" [ref=e199] [cursor=pointer]:
+                  - generic [ref=e200]: 
+                  - text: Limpiar ubicación
+            - generic [ref=e201]:
+              - button " Cancelar" [ref=e202] [cursor=pointer]:
+                - generic [ref=e203]: 
+                - generic [ref=e204]: Cancelar
+              - button " Guardar Cliente" [ref=e205] [cursor=pointer]:
+                - generic [ref=e206]: 
+                - generic [ref=e207]: Guardar Cliente
+      - text:  
+    - contentinfo [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - text: © 2026
+          - link "ETHOS" [ref=e109] [cursor=pointer]:
+            - /url: /
+        - generic [ref=e110]:
+          - link "Licencia" [ref=e111] [cursor=pointer]:
+            - /url: "#"
+          - link "Documentación" [ref=e112] [cursor=pointer]:
+            - /url: "#"
+          - link "Soporte" [ref=e113] [cursor=pointer]:
+            - /url: "#"
+  - button "Abrir asistente IA (Ctrl+K)" [ref=e114] [cursor=pointer]:
+    - generic [ref=e115]: 
+  - dialog:
+    - complementary:
+      - generic:
+        - generic: Conversaciones
+        - button:
+          - generic: 
+          - text: Nueva
+      - list:
+        - generic: Cargando…
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic: 
+          - generic:
+            - generic: ETHOS AI
+            - generic: En línea
+        - generic:
+          - button:
+            - generic: 
+          - button:
+            - generic: 
+          - button:
+            - generic: 
+          - text: 
+          - button:
+            - generic: 
+          - button:
+            - generic: 
+      - log:
+        - generic:
+          - generic:
+            - generic: 
+          - heading [level=6]: ¡Hola, Miguel (Super Admin)! 👋
+          - paragraph: Soy tu asistente IA. Puedo ayudarte con análisis de datos, gestión de usuarios, proyectos, clientes y más.
+          - generic:
+            - button: 📊 Ver estadísticas
+            - button: 📁 Estados de proyectos
+            - button: 📋 Resumen del sistema
+            - button: 📈 Métricas de desempeño
+        - text: 
+      - generic:
+        - generic:
+          - textbox:
+            - /placeholder: Escribe tu pregunta…
+          - button [disabled]:
+            - generic: 
+        - generic:
+          - generic: 0/2000
+          - generic: Enter enviar · Shift+Enter nueva línea · Ctrl+K abrir
+  - img

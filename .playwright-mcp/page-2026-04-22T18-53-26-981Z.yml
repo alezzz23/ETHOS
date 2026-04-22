@@ -1,0 +1,275 @@
+- generic [active] [ref=e1]:
+  - link "Saltar al contenido" [ref=e2] [cursor=pointer]:
+    - /url: "#mainContent"
+  - text: 
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "ETHOS" [ref=e5] [cursor=pointer]:
+        - /url: /admin/dashboard
+        - generic [ref=e6]: ETHOS
+      - button "Alternar barra lateral" [ref=e7] [cursor=pointer]:
+        - generic [ref=e8]: 
+      - text: 
+    - list [ref=e9]:
+      - listitem [ref=e10]: Dashboards
+      - listitem [ref=e11]:
+        - link " Inicio" [ref=e12] [cursor=pointer]:
+          - /url: /admin/dashboard
+          - generic [ref=e13]: 
+          - generic [ref=e14]: Inicio
+      - listitem [ref=e15]:
+        - link " Clientes" [ref=e16] [cursor=pointer]:
+          - /url: /admin/clients
+          - generic [ref=e17]: 
+          - generic [ref=e18]: Clientes
+      - listitem [ref=e19]:
+        - link " Proyectos" [ref=e20] [cursor=pointer]:
+          - /url: /admin/projects
+          - generic [ref=e21]: 
+          - generic [ref=e22]: Proyectos
+      - listitem [ref=e23]:
+        - link " Servicios" [ref=e24] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/services
+          - generic [ref=e25]: 
+          - generic [ref=e26]: Servicios
+      - listitem [ref=e27]:
+        - link "﨡 Usuarios" [ref=e28] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/users
+          - generic [ref=e29]: 﨡
+          - generic [ref=e30]: Usuarios
+      - listitem [ref=e31]:
+        - link " Tópicos Restringidos" [ref=e32] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/restricted-topics
+          - generic [ref=e33]: 
+          - generic [ref=e34]: Tópicos Restringidos
+      - listitem [ref=e35]:
+        - link " Propuestas" [ref=e36] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/proposals
+          - generic [ref=e37]: 
+          - generic [ref=e38]: Propuestas
+      - listitem [ref=e39]:
+        - link " Levantamiento" [ref=e40] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/checklists
+          - generic [ref=e41]: 
+          - generic [ref=e42]: Levantamiento
+      - listitem [ref=e43]:
+        - link " Base de Conocimiento" [ref=e44] [cursor=pointer]:
+          - /url: http://ethosconsultor.org/admin/knowledge-base
+          - generic [ref=e45]: 
+          - generic [ref=e46]: Base de Conocimiento
+  - navigation [ref=e47]:
+    - text: 
+    - generic [ref=e48] [cursor=pointer]:
+      - generic [ref=e49]: 
+      - textbox "Search (Ctrl+/)"
+    - generic [ref=e50]:
+      - button "Notificaciones" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: 
+      - button "Alternar modo oscuro" [ref=e54] [cursor=pointer]:
+        - generic [ref=e55]: 
+      - generic [ref=e56]:
+        - link "M( Miguel (Super Admin) super_admin" [ref=e57] [cursor=pointer]:
+          - /url: "#"
+          - generic [ref=e58]: M(
+          - generic [ref=e59]:
+            - generic [ref=e60]: Miguel (Super Admin)
+            - generic [ref=e61]: super_admin
+        - text:  
+  - generic [ref=e62]:
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - text: Clientes
+            - heading "0" [level=3] [ref=e71]
+          - generic [ref=e73]: 
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - text: Proyectos Totales
+            - heading "0" [level=3] [ref=e80]
+          - generic [ref=e82]: 
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - text: Proyectos Activos
+            - heading "0" [level=3] [ref=e89]
+          - generic [ref=e91]: 嗀
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - text: Por Cerrar (30 Días)
+            - heading "0" [level=3] [ref=e98]
+          - generic [ref=e100]: 
+      - generic [ref=e101]:
+        - generic [ref=e105]:
+          - generic [ref=e106]:
+            - text: Ingresos cerrados
+            - heading "$0" [level=3] [ref=e108]
+            - text: Suma de presupuesto final
+          - generic [ref=e110]: 
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - text: Desvío promedio
+            - heading "0%" [level=3] [ref=e117]
+            - text: Horas reales vs estimadas
+          - generic [ref=e119]: 
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - text: Días promedio de cierre
+            - heading "—" [level=3] [ref=e126]
+            - text: Desde captura hasta cerrado
+          - generic [ref=e128]: 
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - text: NPS promedio
+            - heading "—" [level=3] [ref=e135]
+            - text: Encuestas de satisfacción (0-10)
+          - generic [ref=e137]: 
+      - generic [ref=e138]:
+        - generic [ref=e140]:
+          - heading "Servicios más usados" [level=5] [ref=e142]:
+            - generic [ref=e143]: 
+            - text: Servicios más usados
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - generic [ref=e148]: 
+                - generic [ref=e149]: Auditoría Fiscal
+              - generic [ref=e150]: "0"
+            - generic [ref=e151]:
+              - generic [ref=e152]:
+                - generic [ref=e154]: 
+                - generic [ref=e155]: Diseño de Procesos Corporativos
+              - generic [ref=e156]: "0"
+            - generic [ref=e157]:
+              - generic [ref=e158]:
+                - generic [ref=e160]: 
+                - generic [ref=e161]: Manuales Operativos y de Funciones
+              - generic [ref=e162]: "0"
+            - generic [ref=e163]:
+              - generic [ref=e164]:
+                - generic [ref=e166]: 
+                - generic [ref=e167]: Estructuración Organizacional
+              - generic [ref=e168]: "0"
+            - generic [ref=e169]:
+              - generic [ref=e170]:
+                - generic [ref=e172]: 
+                - generic [ref=e173]: Sistema de Control Contable
+              - generic [ref=e174]: "0"
+        - generic [ref=e176]:
+          - heading "Proyectos creados por mes" [level=5] [ref=e178]
+          - img [ref=e182]:
+            - generic [ref=e185]:
+              - generic "2.0" [ref=e186]
+              - generic "1.6" [ref=e187]
+              - generic "1.2" [ref=e188]
+              - generic "0.8" [ref=e189]
+              - generic "0.4" [ref=e190]
+              - generic "0.0" [ref=e191]
+            - generic [ref=e205]:
+              - generic "Apr" [ref=e206]
+              - generic "Mar" [ref=e207]
+              - generic "Feb" [ref=e208]
+              - generic "Jan" [ref=e209]
+              - generic "Dec" [ref=e210]
+              - generic "Nov" [ref=e211]
+      - generic [ref=e212]:
+        - generic [ref=e214]:
+          - heading "Distribución por estado" [level=5] [ref=e216]
+          - img [ref=e220]:
+            - generic [ref=e222]:
+              - generic [ref=e225] [cursor=pointer]: Capturado
+              - generic [ref=e228] [cursor=pointer]: En análisis
+              - generic [ref=e231] [cursor=pointer]: Aprobado
+              - generic [ref=e234] [cursor=pointer]: En ejecución
+              - generic [ref=e237] [cursor=pointer]: Cerrado
+            - generic [ref=e242]:
+              - generic: Total
+              - generic: "0"
+        - generic [ref=e244]:
+          - generic [ref=e245]:
+            - heading "Proyectos Recientes" [level=5] [ref=e246]:
+              - generic [ref=e247]: 
+              - text: Proyectos Recientes
+            - link "Ver todos " [ref=e248] [cursor=pointer]:
+              - /url: http://ethosconsultor.org/admin/projects
+              - text: Ver todos
+              - generic [ref=e249]: 
+          - table [ref=e252]:
+            - rowgroup [ref=e253]:
+              - row "Título Cliente Estado Inicio Fin" [ref=e254]:
+                - columnheader "Título" [ref=e255]
+                - columnheader "Cliente" [ref=e256]
+                - columnheader "Estado" [ref=e257]
+                - columnheader "Inicio" [ref=e258]
+                - columnheader "Fin" [ref=e259]
+            - rowgroup [ref=e260]:
+              - row " Aún no hay proyectos registrados." [ref=e261]:
+                - cell " Aún no hay proyectos registrados." [ref=e262]:
+                  - generic [ref=e263]:
+                    - generic [ref=e264]: 
+                    - paragraph [ref=e265]: Aún no hay proyectos registrados.
+    - contentinfo [ref=e266]:
+      - generic [ref=e267]:
+        - generic [ref=e268]:
+          - text: © 2026
+          - link "ETHOS" [ref=e269] [cursor=pointer]:
+            - /url: /
+        - generic [ref=e270]:
+          - link "Licencia" [ref=e271] [cursor=pointer]:
+            - /url: "#"
+          - link "Documentación" [ref=e272] [cursor=pointer]:
+            - /url: "#"
+          - link "Soporte" [ref=e273] [cursor=pointer]:
+            - /url: "#"
+  - button "Abrir asistente IA (Ctrl+K)" [ref=e274] [cursor=pointer]:
+    - generic [ref=e275]: 
+  - dialog:
+    - complementary:
+      - generic:
+        - generic: Conversaciones
+        - button:
+          - generic: 
+          - text: Nueva
+      - list:
+        - generic: Cargando…
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic: 
+          - generic:
+            - generic: ETHOS AI
+            - generic: En línea
+        - generic:
+          - button:
+            - generic: 
+          - button:
+            - generic: 
+          - button:
+            - generic: 
+          - text: 
+          - button:
+            - generic: 
+          - button:
+            - generic: 
+      - log:
+        - generic:
+          - generic:
+            - generic: 
+          - heading [level=6]: ¡Hola, Miguel (Super Admin)! 👋
+          - paragraph: Soy tu asistente IA. Puedo ayudarte con análisis de datos, gestión de usuarios, proyectos, clientes y más.
+          - generic:
+            - button: 📊 Ver estadísticas
+            - button: 📁 Estados de proyectos
+            - button: 📋 Resumen del sistema
+            - button: 📈 Métricas de desempeño
+        - text: 
+      - generic:
+        - generic:
+          - textbox:
+            - /placeholder: Escribe tu pregunta…
+          - button [disabled]:
+            - generic: 
+        - generic:
+          - generic: 0/2000
+          - generic: Enter enviar · Shift+Enter nueva línea · Ctrl+K abrir
+  - img

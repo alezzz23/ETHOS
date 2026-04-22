@@ -927,6 +927,101 @@
                 'San Joaquín': ['San Joaquín'],
                 'Valencia': ['Valencia', 'Candelaria', 'Catedral', 'El Socorro', 'Miguel Peña', 'Rafael Urdaneta', 'San Blas', 'San José', 'Santa Rosa', 'Negro Primero']
             }
+        },
+        'Amazonas': {
+            cities: ['Puerto Ayacucho', 'San Fernando de Atabapo', 'Maroa', 'San Carlos de Río Negro'],
+            municipalities: ['Alto Orinoco', 'Atabapo', 'Atures', 'Autana', 'Manapiare', 'Maroa', 'Río Negro'],
+            parishes: {}
+        },
+        'Anzoátegui': {
+            cities: ['Barcelona', 'Puerto La Cruz', 'El Tigre', 'Anaco', 'Lechería', 'Puerto Píritu', 'Cantaura', 'Guanta'],
+            municipalities: ['Anaco', 'Aragua', 'Bolívar', 'Bruzual', 'Cajigal', 'Carvajal', 'Diego Bautista Urbaneja', 'Freites', 'Guanipa', 'Guanta', 'Independencia', 'Libertad', 'McGregor', 'Miranda', 'Monagas', 'Peñalver', 'Píritu', 'San Juan de Capistrano', 'Santa Ana', 'Simón Bolívar', 'Simón Rodríguez', 'Sotillo'],
+            parishes: {}
+        },
+        'Apure': {
+            cities: ['San Fernando de Apure', 'Biruaca', 'Guasdualito', 'Achaguas', 'Elorza'],
+            municipalities: ['Achaguas', 'Biruaca', 'Muñoz', 'Páez', 'Pedro Camejo', 'Rómulo Gallegos', 'San Fernando'],
+            parishes: {}
+        },
+        'Barinas': {
+            cities: ['Barinas', 'Barinitas', 'Socopó', 'Santa Bárbara', 'Sabaneta'],
+            municipalities: ['Alberto Arvelo Torrealba', 'Andrés Eloy Blanco', 'Antonio José de Sucre', 'Arismendi', 'Barinas', 'Bolívar', 'Cruz Paredes', 'Ezequiel Zamora', 'Obispos', 'Pedraza', 'Rojas', 'Sosa'],
+            parishes: {}
+        },
+        'Bolívar': {
+            cities: ['Ciudad Bolívar', 'Ciudad Guayana', 'Upata', 'Tumeremo', 'El Callao', 'Santa Elena de Uairén'],
+            municipalities: ['Caroní', 'Cedeño', 'El Callao', 'Gran Sabana', 'Heres', 'Piar', 'Raúl Leoni', 'Roscio', 'Sifontes', 'Sucre'],
+            parishes: {}
+        },
+        'Cojedes': {
+            cities: ['San Carlos', 'Tinaquillo', 'Tinaco', 'El Pao', 'Las Vegas'],
+            municipalities: ['Anzoátegui', 'Ezequiel Zamora', 'Falcón', 'Girardot', 'Lima Blanco', 'Pao de San Juan Bautista', 'Ricaurte', 'Rómulo Gallegos', 'San Carlos', 'Tinaco', 'Tinaquillo'],
+            parishes: {}
+        },
+        'Delta Amacuro': {
+            cities: ['Tucupita', 'Pedernales', 'Curiapo'],
+            municipalities: ['Antonio Díaz', 'Casacoima', 'Pedernales', 'Tucupita'],
+            parishes: {}
+        },
+        'Falcón': {
+            cities: ['Coro', 'Punto Fijo', 'Puerto Cumarebo', 'La Vela de Coro', 'Churuguara', 'Tucacas'],
+            municipalities: ['Acosta', 'Bolívar', 'Buchivacoa', 'Carirubana', 'Colina', 'Dabajuro', 'Democracia', 'Falcón', 'Federación', 'Jacura', 'Los Taques', 'Mauroa', 'Miranda', 'Monseñor Iturriza', 'Palmasola', 'Petit', 'Píritu', 'San Francisco', 'Silva', 'Sucre', 'Tocópero', 'Unión', 'Urumaco', 'Zamora'],
+            parishes: {}
+        },
+        'Guárico': {
+            cities: ['San Juan de los Morros', 'Calabozo', 'Valle de la Pascua', 'Altagracia de Orituco', 'Zaraza', 'Tucupido'],
+            municipalities: ['Camaguán', 'Chaguaramas', 'El Socorro', 'Francisco de Miranda', 'José Félix Ribas', 'José Tadeo Monagas', 'Juan Germán Roscio', 'Julián Mellado', 'Las Mercedes', 'Leonardo Infante', 'Ortiz', 'Pedro Zaraza', 'San Gerónimo de Guayabal', 'San José de Guaribe', 'Santa María de Ipire'],
+            parishes: {}
+        },
+        'Lara': {
+            cities: ['Barquisimeto', 'Cabudare', 'Carora', 'El Tocuyo', 'Quíbor', 'Sanare', 'Duaca'],
+            municipalities: ['Andrés Eloy Blanco', 'Crespo', 'Iribarren', 'Jiménez', 'Morán', 'Palavecino', 'Simón Planas', 'Torres', 'Urdaneta'],
+            parishes: {}
+        },
+        'Mérida': {
+            cities: ['Mérida', 'El Vigía', 'Tovar', 'Ejido', 'Bailadores', 'Santa Cruz de Mora'],
+            municipalities: ['Alberto Adriani', 'Andrés Bello', 'Antonio Pinto Salinas', 'Aricagua', 'Arzobispo Chacón', 'Campo Elías', 'Caracciolo Parra Olmedo', 'Cardenal Quintero', 'Guaraque', 'Julio César Salas', 'Justo Briceño', 'Libertador', 'Miranda', 'Obispo Ramos de Lora', 'Padre Noguera', 'Pueblo Llano', 'Rangel', 'Rivas Dávila', 'Santos Marquina', 'Sucre', 'Tovar', 'Tulio Febres Cordero', 'Zea'],
+            parishes: {}
+        },
+        'Monagas': {
+            cities: ['Maturín', 'Punta de Mata', 'Caripito', 'Caripe', 'Temblador', 'Quiriquire'],
+            municipalities: ['Acosta', 'Aguasay', 'Bolívar', 'Caripe', 'Cedeño', 'Ezequiel Zamora', 'Libertador', 'Maturín', 'Piar', 'Punceres', 'Santa Bárbara', 'Sotillo', 'Uracoa'],
+            parishes: {}
+        },
+        'Nueva Esparta': {
+            cities: ['La Asunción', 'Porlamar', 'Pampatar', 'Juan Griego', 'Punta de Piedras', 'Boca del Río'],
+            municipalities: ['Antolín del Campo', 'Arismendi', 'Díaz', 'García', 'Gómez', 'Maneiro', 'Marcano', 'Mariño', 'Península de Macanao', 'Tubores', 'Villalba'],
+            parishes: {}
+        },
+        'Portuguesa': {
+            cities: ['Guanare', 'Acarigua', 'Araure', 'Turén', 'Píritu', 'Ospino', 'Biscucuy'],
+            municipalities: ['Agua Blanca', 'Araure', 'Esteller', 'Guanare', 'Guanarito', 'Monseñor José Vicente de Unda', 'Ospino', 'Páez', 'Papelón', 'San Genaro de Boconoito', 'San Rafael de Onoto', 'Santa Rosalía', 'Sucre', 'Turén'],
+            parishes: {}
+        },
+        'Sucre': {
+            cities: ['Cumaná', 'Carúpano', 'Cariaco', 'Güiria', 'Río Caribe', 'Irapa'],
+            municipalities: ['Andrés Eloy Blanco', 'Andrés Mata', 'Arismendi', 'Benítez', 'Bermúdez', 'Bolívar', 'Cajigal', 'Cruz Salmerón Acosta', 'Libertador', 'Mariño', 'Mejía', 'Montes', 'Ribero', 'Sucre', 'Valdez'],
+            parishes: {}
+        },
+        'Táchira': {
+            cities: ['San Cristóbal', 'Táriba', 'Rubio', 'Ureña', 'San Antonio del Táchira', 'La Grita', 'Colón'],
+            municipalities: ['Andrés Bello', 'Antonio Rómulo Costa', 'Ayacucho', 'Bolívar', 'Cárdenas', 'Córdoba', 'Fernández Feo', 'Francisco de Miranda', 'García de Hevia', 'Guásimos', 'Independencia', 'Jáuregui', 'José María Vargas', 'Junín', 'Libertad', 'Libertador', 'Lobatera', 'Michelena', 'Panamericano', 'Pedro María Ureña', 'Rafael Urdaneta', 'Samuel Darío Maldonado', 'San Cristóbal', 'Seboruco', 'Simón Rodríguez', 'Sucre', 'Torbes', 'Uribante'],
+            parishes: {}
+        },
+        'Trujillo': {
+            cities: ['Trujillo', 'Valera', 'Boconó', 'Carvajal', 'Pampán', 'La Puerta', 'Escuque'],
+            municipalities: ['Andrés Bello', 'Boconó', 'Bolívar', 'Candelaria', 'Carache', 'Carvajal', 'Escuque', 'José Felipe Márquez Cañizales', 'Juan Vicente Campo Elías', 'La Ceiba', 'Miranda', 'Monte Carmelo', 'Motatán', 'Pampán', 'Pampanito', 'Rafael Rangel', 'Sucre', 'Trujillo', 'Urdaneta', 'Valera'],
+            parishes: {}
+        },
+        'Yaracuy': {
+            cities: ['San Felipe', 'Yaritagua', 'Chivacoa', 'Nirgua', 'Cocorote', 'Independencia'],
+            municipalities: ['Arístides Bastidas', 'Bolívar', 'Bruzual', 'Cocorote', 'Independencia', 'José Antonio Páez', 'La Trinidad', 'Manuel Monge', 'Nirgua', 'Peña', 'San Felipe', 'Sucre', 'Urachiche', 'Veroes'],
+            parishes: {}
+        },
+        'Zulia': {
+            cities: ['Maracaibo', 'Cabimas', 'Ciudad Ojeda', 'Machiques', 'Santa Bárbara del Zulia', 'San Carlos del Zulia', 'La Villa del Rosario', 'Los Puertos de Altagracia'],
+            municipalities: ['Almirante Padilla', 'Baralt', 'Cabimas', 'Catatumbo', 'Colón', 'Francisco Javier Pulgar', 'Jesús Enrique Lossada', 'Jesús María Semprún', 'La Cañada de Urdaneta', 'Lagunillas', 'Machiques de Perijá', 'Mara', 'Maracaibo', 'Miranda', 'Páez', 'Rosario de Perijá', 'San Francisco', 'Santa Rita', 'Simón Bolívar', 'Sucre', 'Valmore Rodríguez'],
+            parishes: {}
         }
     };
 
