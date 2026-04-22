@@ -12,12 +12,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
+        $seeders = [
             RoleAndPermissionSeeder::class,
-            ClientProjectSeeder::class,
             ServiceSeeder::class,
             ClientSizeConfigSeeder::class,
             ServiceProcessSeeder::class,
-        ]);
+        ];
+
+        // Demo/sample CRM data should not be loaded in production.
+        if (! app()->environment('production')) {
+            $seeders[] = ClientProjectSeeder::class;
+        }
+
+        $this->call($seeders);
     }
 }
