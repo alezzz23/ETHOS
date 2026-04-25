@@ -23,8 +23,17 @@ class AppServiceProvider extends ServiceProvider
             $r->register(new \App\Services\Chat\Tools\GetProjectStatusTool());
             $r->register(new \App\Services\Chat\Tools\ListPendingTasksTool());
             $r->register(new \App\Services\Chat\Tools\SearchClientsTool());
+            $r->register(new \App\Services\Chat\Tools\SearchUsersTool());
             $r->register(new \App\Services\Chat\Tools\GetProposalTool());
             $r->register(new \App\Services\Chat\Tools\GetMetricsTool());
+
+            // CRUD directo via tools (usuarios/clientes)
+            $r->register(new \App\Services\Chat\Tools\CreateUserTool());
+            $r->register(new \App\Services\Chat\Tools\UpdateUserTool());
+            $r->register(new \App\Services\Chat\Tools\DeleteUserTool());
+            $r->register(new \App\Services\Chat\Tools\CreateClientTool());
+            $r->register(new \App\Services\Chat\Tools\UpdateClientTool());
+            $r->register(new \App\Services\Chat\Tools\DeleteClientTool());
             return $r;
         });
     }

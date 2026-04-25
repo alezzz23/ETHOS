@@ -62,7 +62,9 @@ return [
 
     // ── Tool calling (Fase 3) ───────────────────────────────────────
     'tools' => [
-        'enabled'  => (bool) env('CHATBOT_TOOLS_ENABLED', true),
-        'max_hops' => (int)  env('CHATBOT_TOOLS_MAX_HOPS', 3),
+        'enabled'           => (bool) env('CHATBOT_TOOLS_ENABLED', true),
+        'max_hops'          => (int)  env('CHATBOT_TOOLS_MAX_HOPS', 3),
+        'allow_mutations'   => (bool) env('CHATBOT_TOOLS_ALLOW_MUTATIONS', true),
+        'allow_destructive' => (bool) env('CHATBOT_TOOLS_ALLOW_DESTRUCTIVE', true),
     ],
 ];

@@ -1,5 +1,21 @@
 @extends('layouts.vuexy')
-@section('title', 'Mi Perfil')
+@section('title', 'Mi Perfil | ETHOS')
+@section('meta_description', 'Edita tu perfil de usuario en ETHOS. Actualiza tus datos personales y preferencias de cuenta.')
+@section('meta_keywords', 'perfil, usuario, editar, ETHOS, consultoría')
+@section('canonical', url()->current())
+@section('og_title', 'Editar Perfil | ETHOS')
+@section('og_description', 'Edita tu perfil de usuario en ETHOS. Actualiza tus datos personales y preferencias de cuenta.')
+@section('og_image', asset('images/ethos-og.jpg'))
+@section('structured_data')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "{{ Auth::user()->name ?? 'Usuario ETHOS' }}",
+    "email": "{{ Auth::user()->email ?? '' }}"
+}
+</script>
+@endsection
 
 @push('styles')
 <style>
