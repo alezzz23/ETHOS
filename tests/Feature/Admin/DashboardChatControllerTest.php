@@ -9,6 +9,7 @@ use App\Models\ChatFeedback;
 use App\Models\User;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -66,6 +67,38 @@ final class DashboardChatControllerTest extends TestCase
             ]);
 
         $res->assertStatus(500);
+    }
+
+    public function test_chat_retries_without_tools_when_upstream_rejects_tool_use(): void
+    {
+        config()->set('chatbot.tools.enabled', true);
+
+        Http::fakeSequence()
+            ->push([
+                'error' => [
+                    'message' => 'No endpoints found that support tool use. Try disabling "get_project_status".',
+                    'code' => 404,
+                ],
+            ], 404)
+            ->push([
+                'choices' => [['message' => ['content' => 'Respuesta sin tools.'], 'finish_reason' => 'stop']],
+                'usage' => ['total_tokens' => 24],
+            ], 200);
+
+        $res = $this->actingAs($this->adminUser())
+            ->postJson(route('admin.chat'), [
+                'message' => 'hola',
+                'history' => [],
+            ]);
+
+        $res->assertOk()->assertJson(['reply' => 'Respuesta sin tools.']);
+        Http::assertSentCount(2);
+
+        $requests = Http::recorded()->map(fn (array $record): HttpRequest => $record[0])->values();
+
+        $this->assertArrayHasKey('tools', $requests[0]->data());
+        $this->assertArrayNotHasKey('tools', $requests[1]->data());
+        $this->assertArrayNotHasKey('tool_choice', $requests[1]->data());
     }
 
     public function test_chat_validates_empty_message(): void

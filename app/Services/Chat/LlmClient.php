@@ -54,6 +54,19 @@ class LlmClient
             ->withHeaders($this->headers($apiKey))
             ->post($baseUrl . '/chat/completions', $payload);
 
+        if (! $res->successful() && ! empty($tools) && $this->isToolUseUnsupportedResponse($res->status(), $res->body())) {
+            Log::info('llm_client_retry_without_tools', [
+                'status' => $res->status(),
+                'model'  => $model,
+            ]);
+
+            unset($payload['tools'], $payload['tool_choice']);
+
+            $res = Http::timeout($timeout)
+                ->withHeaders($this->headers($apiKey))
+                ->post($baseUrl . '/chat/completions', $payload);
+        }
+
         $ms = (int) round(microtime(true) * 1000) - $start;
 
         if (! $res->successful()) {
@@ -145,6 +158,34 @@ class LlmClient
 
             if ($up->getStatusCode() >= 400) {
                 $body = (string) $up->getBody()->getContents();
+
+                if (! empty($tools) && $this->isToolUseUnsupportedResponse($up->getStatusCode(), $body)) {
+                    Log::info('llm_client_stream_retry_without_tools', [
+                        'status' => $up->getStatusCode(),
+                        'model'  => $model,
+                    ]);
+
+                    unset($payload['tools'], $payload['tool_choice']);
+
+                    $up = $client->request('POST', $baseUrl . '/chat/completions', [
+                        'headers'        => $this->headers($apiKey),
+                        'json'           => $payload,
+                        'stream'         => true,
+                        'http_errors'    => false,
+                        'decode_content' => true,
+                    ]);
+                } else {
+                    Log::warning('llm_client_stream_error', [
+                        'status' => $up->getStatusCode(),
+                        'body'   => substr($body, 0, 500),
+                    ]);
+                    $onError && $onError('No se pudo obtener respuesta del asistente.');
+                    return ['ok' => false, 'reply' => '', 'tokens' => 0, 'ms' => 0, 'model' => $model];
+                }
+            }
+
+            if ($up->getStatusCode() >= 400) {
+                $body = (string) $up->getBody()->getContents();
                 Log::warning('llm_client_stream_error', [
                     'status' => $up->getStatusCode(),
                     'body'   => substr($body, 0, 500),
@@ -228,5 +269,20 @@ class LlmClient
             'HTTP-Referer'  => (string) config('app.url'),
             'X-Title'       => (string) config('app.name', 'ETHOS Admin'),
         ];
+    }
+
+    private function isToolUseUnsupportedResponse(int $status, string $body): bool
+    {
+        if (! in_array($status, [400, 404], true)) {
+            return false;
+        }
+
+        $message = strtolower($body);
+
+        return str_contains($message, 'support tool use')
+            || str_contains($message, 'tool use')
+            || str_contains($message, 'tools are not supported')
+            || str_contains($message, 'does not support tools')
+            || str_contains($message, 'tool_choice');
     }
 }
