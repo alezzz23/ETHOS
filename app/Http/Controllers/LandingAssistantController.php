@@ -37,8 +37,11 @@ class LandingAssistantController extends Controller
 
         $apiKey = (string) config('services.ai_assistant.api_key');
         $configuredBaseUrl = trim((string) config('services.ai_assistant.base_url'));
-        $baseUrl = $configuredBaseUrl !== '' ? rtrim($configuredBaseUrl, '/') : 'https://openrouter.ai/api/v1';
-        $model = (string) config('services.ai_assistant.model', 'minimax/minimax-m2.5:free');
+        $baseUrl = $configuredBaseUrl !== '' ? rtrim($configuredBaseUrl, '/') : 'https://integrate.api.nvidia.com/v1';
+        $model = (string) config('services.ai_assistant.model', 'minimaxai/minimax-m2.7');
+        $temperature = (float) config('services.ai_assistant.temperature', 1);
+        $topP = (float) config('services.ai_assistant.top_p', 0.95);
+        $maxTokens = (int) config('services.ai_assistant.max_tokens', 8192);
         $timeout = (int) config('services.ai_assistant.timeout', 30);
 
         if ($apiKey === '') {
@@ -80,19 +83,33 @@ class LandingAssistantController extends Controller
             ]]
         );
 
-        $response = Http::timeout($timeout)
-            ->withHeaders([
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type' => 'application/json',
-                'HTTP-Referer' => config('app.url'),
-                'X-Title' => config('app.name', 'ETHOS'),
-            ])
-            ->post($baseUrl . '/chat/completions', [
+        try {
+            $response = Http::timeout($timeout)
+                ->withHeaders([
+                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'HTTP-Referer' => config('app.url'),
+                    'X-Title' => config('app.name', 'ETHOS'),
+                ])
+                ->post($baseUrl . '/chat/completions', [
+                    'model' => $model,
+                    'messages' => $messages,
+                    'temperature' => $temperature,
+                    'top_p' => $topP,
+                    'max_tokens' => $maxTokens,
+                ]);
+        } catch (\Throwable $exception) {
+            Log::warning('assistant_chat_provider_exception', [
+                'provider' => 'nvidia',
                 'model' => $model,
-                'messages' => $messages,
-                'temperature' => 0.4,
-                'max_tokens' => 500,
+                'error' => $exception->getMessage(),
             ]);
+
+            return response()->json([
+                'message' => 'No se pudo obtener respuesta del asistente.',
+            ], 503);
+        }
 
         if (! $response->successful()) {
             return response()->json([

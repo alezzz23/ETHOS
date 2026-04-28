@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
@@ -98,14 +99,17 @@ class MVPTest extends TestCase
         $response->assertSeeText('Proyectos Recientes');
     }
 
-    public function test_assistant_route_returns_reply_with_default_openrouter_base_url()
+    public function test_assistant_route_returns_reply_with_default_nvidia_base_url()
     {
         config()->set('services.ai_assistant.api_key', 'test-key');
         config()->set('services.ai_assistant.base_url', '');
-        config()->set('services.ai_assistant.model', 'mistralai/mistral-small-3.1-24b-instruct:free');
+        config()->set('services.ai_assistant.model', 'minimaxai/minimax-m2.7');
+        config()->set('services.ai_assistant.temperature', 1);
+        config()->set('services.ai_assistant.top_p', 0.95);
+        config()->set('services.ai_assistant.max_tokens', 8192);
 
         Http::fake([
-            'https://openrouter.ai/api/v1/chat/completions' => Http::response([
+            'https://integrate.api.nvidia.com/v1/chat/completions' => Http::response([
                 'choices' => [
                     [
                         'message' => [
@@ -125,6 +129,16 @@ class MVPTest extends TestCase
         $response->assertJson([
             'reply' => 'Respuesta de prueba',
         ]);
+
+        Http::assertSent(function (HttpRequest $request): bool {
+            $payload = $request->data();
+
+            return $request->url() === 'https://integrate.api.nvidia.com/v1/chat/completions'
+                && data_get($payload, 'model') === 'minimaxai/minimax-m2.7'
+                && data_get($payload, 'temperature') === 1
+                && data_get($payload, 'top_p') === 0.95
+                && data_get($payload, 'max_tokens') === 8192;
+        });
     }
 
     public function test_assistant_route_handles_missing_api_key()

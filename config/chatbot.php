@@ -21,8 +21,8 @@ return [
             'fallback' => env('IA_DASHBOARD_FALLBACK_MODEL', 'anthropic/claude-3-haiku'),
         ],
 
-        'temperature' => (float) env('IA_TEMPERATURE', 0.55),
-        'max_tokens'  => (int)   env('IA_MAX_TOKENS', 1200),
+        'temperature' => (float) env('IA_DASHBOARD_TEMPERATURE', 0.55),
+        'max_tokens'  => (int)   env('IA_DASHBOARD_MAX_TOKENS', 1200),
     ],
 
     // ── Conversation / message limits ───────────────────────────────

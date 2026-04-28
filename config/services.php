@@ -38,8 +38,11 @@ return [
 
     'ai_assistant' => [
         'api_key' => env('IA_API'),
-        'base_url' => env('IA_BASE_URL', 'https://openrouter.ai/api/v1'),
-        'model' => env('IA_MODEL', 'mistralai/mistral-small-3.1-24b-instruct:free'),
+        'base_url' => rtrim(env('IA_BASE_URL', 'https://integrate.api.nvidia.com/v1'), '/'),
+        'model' => env('IA_MODEL', 'minimaxai/minimax-m2.7'),
+        'temperature' => (float) env('IA_TEMPERATURE', 1),
+        'top_p' => (float) env('IA_TOP_P', 0.95),
+        'max_tokens' => (int) env('IA_MAX_TOKENS', 8192),
         'timeout' => (int) env('IA_TIMEOUT', 30),
     ],
 

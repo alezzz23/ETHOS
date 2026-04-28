@@ -18,4 +18,5 @@ yarn-error.log
 /.idea
 /.vscode
 .agents
-skills-lock.json.playwright-mcp/
+skills-lock.json
+.playwright-mcp/
