@@ -63,6 +63,7 @@ class RoleAndPermissionSeeder extends Seeder
             'clients.create',
             'clients.edit',
             'projects.view',
+            'projects.create',
             'services.view',
         ]);
 
