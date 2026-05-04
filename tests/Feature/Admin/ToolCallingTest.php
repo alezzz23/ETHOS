@@ -43,6 +43,25 @@ final class ToolCallingTest extends TestCase
         $this->assertContains('search_clients', $names);
         $this->assertContains('get_proposal', $names);
         $this->assertContains('get_metrics', $names);
+        $this->assertContains('open_user_creation_form', $names);
+        $this->assertContains('open_client_creation_form', $names);
+        $this->assertContains('open_project_creation_form', $names);
+        $this->assertContains('open_service_creation_form', $names);
+    }
+
+    public function test_open_user_creation_form_tool_returns_form_request(): void
+    {
+        $out = app(ToolRegistry::class)->dispatch('open_user_creation_form', [
+            'defaults' => [
+                'name' => 'Ana Pérez',
+                'email' => 'ana@ethos.com',
+            ],
+        ], $this->adminUser());
+
+        $this->assertTrue($out['ok']);
+        $this->assertSame('user', $out['chat_form_request']['entity']);
+        $this->assertSame('Ana Pérez', $out['chat_form_request']['defaults']['name']);
+        $this->assertSame('ana@ethos.com', $out['chat_form_request']['defaults']['email']);
     }
 
     public function test_get_project_status_returns_data(): void

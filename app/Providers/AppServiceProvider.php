@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Service;
 use App\Observers\ProjectObserver;
 use App\Observers\ServiceObserver;
+use App\Services\Chat\ChatFormFactory;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -17,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(ChatFormFactory::class);
+
         // Fase 3 — Registro singleton de ToolRegistry con las tools de chat.
         $this->app->singleton(\App\Services\Chat\Tools\ToolRegistry::class, function () {
             $r = new \App\Services\Chat\Tools\ToolRegistry();
@@ -26,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
             $r->register(new \App\Services\Chat\Tools\SearchUsersTool());
             $r->register(new \App\Services\Chat\Tools\GetProposalTool());
             $r->register(new \App\Services\Chat\Tools\GetMetricsTool());
+
+            $r->register(new \App\Services\Chat\Tools\OpenCreationFormTool('user', 'users.manage', 'usuario'));
+            $r->register(new \App\Services\Chat\Tools\OpenCreationFormTool('client', 'clients.create', 'cliente'));
+            $r->register(new \App\Services\Chat\Tools\OpenCreationFormTool('project', 'projects.create', 'proyecto'));
+            $r->register(new \App\Services\Chat\Tools\OpenCreationFormTool('service', 'services.create', 'servicio'));
 
             // CRUD directo via tools (usuarios/clientes)
             $r->register(new \App\Services\Chat\Tools\CreateUserTool());

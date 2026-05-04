@@ -12,6 +12,7 @@
 <script>
     window.__ETHOS_CHAT__ = {
         streamUrl:        @json(route('admin.chat.stream')),
+        formSchemaUrl:    @json(route('admin.chat.forms.schema')),
         chatUrl:          @json(route('admin.chat')),
         clearUrl:         @json(route('admin.chat.clear')),
         feedbackUrl:      @json(route('admin.chat.feedback')),

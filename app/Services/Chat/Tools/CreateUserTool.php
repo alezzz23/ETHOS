@@ -14,7 +14,8 @@ class CreateUserTool extends Tool
     public function description(): string
     {
         return 'Crea un usuario nuevo en el sistema con rol asignado. '
-             . 'Usar solo cuando el usuario solicite explícitamente crear un usuario.';
+             . 'Usar solo cuando el usuario ya haya proporcionado nombre, email, contraseña y rol. '
+             . 'Si faltan datos o conviene capturarlos de forma guiada, usa open_user_creation_form.';
     }
 
     public function parameters(): array

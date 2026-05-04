@@ -323,6 +323,157 @@
 }
 .user-msg .ethos-chat-time { text-align: right; }
 
+.ethos-chat-form-bubble {
+    width: min(100%, 520px);
+    padding: 0.75rem;
+}
+
+.ethos-chat-form-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.ethos-chat-form-card.is-success {
+    border-color: rgba(var(--vz-success-rgb), 0.25);
+}
+
+.ethos-chat-form-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.ethos-chat-form-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.ethos-chat-form-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--vz-heading-color);
+}
+
+.ethos-chat-form-description {
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--vz-body-color);
+    opacity: 0.78;
+}
+
+.ethos-chat-form-badge {
+    flex-shrink: 0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(var(--vz-primary-rgb), 0.12);
+    color: var(--vz-primary);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.ethos-chat-inline-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.ethos-chat-form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.ethos-chat-form-field {
+    grid-column: span 12;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.ethos-chat-form-field.span-6 { grid-column: span 6; }
+.ethos-chat-form-field.span-3 { grid-column: span 3; }
+
+.ethos-chat-form-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--vz-heading-color);
+}
+
+.ethos-chat-form-help {
+    font-size: 0.68rem;
+    color: var(--vz-body-color);
+    opacity: 0.72;
+}
+
+.ethos-chat-form-error {
+    min-height: 1em;
+    font-size: 0.68rem;
+    color: var(--vz-danger);
+}
+
+.ethos-chat-form-field.has-error .form-control,
+.ethos-chat-form-field.has-error .form-select {
+    border-color: rgba(var(--vz-danger-rgb), 0.65);
+}
+
+.ethos-chat-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.ethos-chat-checkbox-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.38rem 0.55rem;
+    border-radius: 0.65rem;
+    border: 1px solid rgba(var(--vz-primary-rgb), 0.18);
+    background: rgba(var(--vz-primary-rgb), 0.04);
+    color: var(--vz-body-color);
+    font-size: 0.74rem;
+    line-height: 1.2;
+}
+
+.ethos-chat-checkbox-option input {
+    margin: 0;
+}
+
+.ethos-chat-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.ethos-chat-form-status {
+    min-height: 1.2em;
+    font-size: 0.72rem;
+    color: var(--vz-body-color);
+}
+
+.ethos-chat-form-status.is-error {
+    color: var(--vz-danger);
+}
+
+.ethos-chat-form-status.is-success {
+    color: var(--vz-success);
+    font-weight: 600;
+}
+
+.ethos-chat-form-summary {
+    font-size: 0.76rem;
+    color: var(--vz-heading-color);
+    background: rgba(var(--vz-success-rgb), 0.08);
+    border: 1px solid rgba(var(--vz-success-rgb), 0.18);
+    border-radius: 0.75rem;
+    padding: 0.55rem 0.7rem;
+}
+
 /* Markdown styling inside AI bubble */
 .ai-bubble strong { font-weight: 700; color: var(--vz-heading-color); }
 .ai-bubble code {
@@ -338,6 +489,18 @@
 .ai-bubble pre code { background: transparent; padding: 0; }
 .ai-bubble ul, .ai-bubble ol { padding-left: 1.2em; margin: 0.3em 0; }
 .ai-bubble li { margin-bottom: 0.2em; }
+
+@media (max-width: 640px) {
+    .ethos-chat-form-field.span-6,
+    .ethos-chat-form-field.span-3 {
+        grid-column: span 12;
+    }
+
+    .ethos-chat-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
 .ai-bubble p { margin-bottom: 0.4em; }
 .ai-bubble p:last-child { margin-bottom: 0; }
 .ai-bubble a { color: var(--vz-primary); text-decoration: underline; }

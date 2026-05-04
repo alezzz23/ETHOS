@@ -12,6 +12,7 @@ const cfg = window.__ETHOS_CHAT__ ?? {};
 
 const csrf         = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 const STREAM_URL   = cfg.streamUrl        ?? '/admin/chat/stream';
+const FORM_SCHEMA_URL = cfg.formSchemaUrl ?? '/admin/chat/forms/schema';
 const CHAT_URL     = cfg.chatUrl          ?? '/admin/chat';
 const CLEAR_URL    = cfg.clearUrl         ?? '/admin/chat/clear';
 const FEEDBACK_URL = cfg.feedbackUrl      ?? '/admin/chat/feedback';
@@ -343,6 +344,327 @@ function appendActionBar(msgRoot, { content, userMessage }) {
     msgRoot.querySelector('.ethos-chat-msg-content').appendChild(bar);
 }
 
+function appendChatForm(formSpec) {
+    const node = buildMessageNode('assistant', '', fmtTime());
+    node.root.classList.add('ethos-chat-form-msg');
+    node.bubble.classList.add('ethos-chat-form-bubble');
+    node.bubble.innerHTML = '';
+
+    const card = buildChatFormCard(formSpec);
+    node.bubble.appendChild(card);
+    el.messages.appendChild(node.root);
+    scrollToBottom();
+    updateScrollPill();
+    return node.root;
+}
+
+function buildChatFormCard(formSpec) {
+    const card = document.createElement('div');
+    card.className = 'ethos-chat-form-card';
+    card.dataset.entity = formSpec.entity ?? 'item';
+
+    const header = document.createElement('div');
+    header.className = 'ethos-chat-form-header';
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'ethos-chat-form-heading';
+
+    const title = document.createElement('div');
+    title.className = 'ethos-chat-form-title';
+    title.textContent = formSpec.title ?? 'Formulario';
+
+    const desc = document.createElement('div');
+    desc.className = 'ethos-chat-form-description';
+    desc.textContent = formSpec.description ?? 'Completa los datos para continuar.';
+
+    titleWrap.appendChild(title);
+    titleWrap.appendChild(desc);
+
+    const badge = document.createElement('span');
+    badge.className = 'ethos-chat-form-badge';
+    badge.textContent = (formSpec.entity_label ?? formSpec.entity ?? 'registro').toUpperCase();
+
+    header.appendChild(titleWrap);
+    header.appendChild(badge);
+    card.appendChild(header);
+
+    const form = document.createElement('form');
+    form.className = 'ethos-chat-inline-form';
+    form.noValidate = true;
+
+    const grid = document.createElement('div');
+    grid.className = 'ethos-chat-form-grid';
+
+    for (const field of formSpec.fields ?? []) {
+        grid.appendChild(buildChatFormField(field));
+    }
+
+    const footer = document.createElement('div');
+    footer.className = 'ethos-chat-form-actions';
+
+    const status = document.createElement('div');
+    status.className = 'ethos-chat-form-status';
+
+    const submit = document.createElement('button');
+    submit.type = 'submit';
+    submit.className = 'btn btn-primary btn-sm';
+    submit.textContent = formSpec.submit?.label ?? `Crear ${formSpec.entity_label ?? formSpec.entity ?? 'registro'}`;
+
+    footer.appendChild(status);
+    footer.appendChild(submit);
+
+    form.appendChild(grid);
+    form.appendChild(footer);
+    form.addEventListener('submit', (event) => submitChatForm(event, formSpec, form, card));
+
+    card.appendChild(form);
+    return card;
+}
+
+function buildChatFormField(field) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `ethos-chat-form-field span-${field.span ?? 12}`;
+    wrapper.dataset.field = field.name;
+    wrapper.dataset.type = field.type;
+
+    const label = document.createElement('label');
+    label.className = 'ethos-chat-form-label';
+    label.textContent = field.required ? `${field.label} *` : field.label;
+    wrapper.appendChild(label);
+
+    const inputId = `chatForm_${field.name}_${Math.random().toString(36).slice(2, 8)}`;
+    let control;
+
+    if (field.type === 'textarea') {
+        control = document.createElement('textarea');
+        control.rows = 3;
+        control.value = field.value ?? '';
+    } else if (field.type === 'select') {
+        control = document.createElement('select');
+        if (field.placeholder) {
+            const empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = field.placeholder;
+            control.appendChild(empty);
+        }
+        for (const option of field.options ?? []) {
+            const opt = document.createElement('option');
+            opt.value = option.value;
+            opt.textContent = option.label;
+            if (String(field.value ?? '') === String(option.value)) opt.selected = true;
+            control.appendChild(opt);
+        }
+    } else if (field.type === 'checkboxes') {
+        const group = document.createElement('div');
+        group.className = 'ethos-chat-checkbox-group';
+        const selected = new Set(Array.isArray(field.value) ? field.value.map(String) : []);
+        for (const option of field.options ?? []) {
+            const optionLabel = document.createElement('label');
+            optionLabel.className = 'ethos-chat-checkbox-option';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = field.name;
+            checkbox.value = option.value;
+            checkbox.checked = selected.has(String(option.value));
+            optionLabel.appendChild(checkbox);
+            const text = document.createElement('span');
+            text.textContent = option.label;
+            optionLabel.appendChild(text);
+            group.appendChild(optionLabel);
+        }
+        control = group;
+    } else {
+        control = document.createElement('input');
+        control.type = field.type === 'number' ? 'number' : field.type;
+        control.value = field.value ?? '';
+        if (field.step) control.step = field.step;
+        if (field.min) control.min = field.min;
+    }
+
+    if (field.type !== 'checkboxes') {
+        control.id = inputId;
+        control.name = field.name;
+        control.className = field.type === 'select' ? 'form-select form-select-sm' : 'form-control form-control-sm';
+        if (field.placeholder && field.type !== 'select') control.placeholder = field.placeholder;
+        if (field.required) control.required = true;
+        label.htmlFor = inputId;
+    }
+
+    wrapper.appendChild(control);
+
+    if (field.help) {
+        const help = document.createElement('div');
+        help.className = 'ethos-chat-form-help';
+        help.textContent = field.help;
+        wrapper.appendChild(help);
+    }
+
+    const errorText = document.createElement('div');
+    errorText.className = 'ethos-chat-form-error';
+    wrapper.appendChild(errorText);
+
+    return wrapper;
+}
+
+function clearChatFormErrors(form) {
+    form.querySelectorAll('.ethos-chat-form-field').forEach(field => field.classList.remove('has-error'));
+    form.querySelectorAll('.ethos-chat-form-error').forEach(node => { node.textContent = ''; });
+}
+
+function setChatFormStatus(form, message, state = '') {
+    const status = form.querySelector('.ethos-chat-form-status');
+    if (!status) return;
+    status.className = 'ethos-chat-form-status';
+    if (state) status.classList.add(`is-${state}`);
+    status.textContent = message ?? '';
+}
+
+function getChatFormPayload(formSpec, form) {
+    const payload = {};
+
+    for (const field of formSpec.fields ?? []) {
+        if (field.type === 'checkboxes') {
+            const values = Array.from(form.querySelectorAll(`input[name="${field.name}"]:checked`)).map(input => input.value);
+            if (values.length > 0) payload[field.name] = values;
+            continue;
+        }
+
+        const input = form.querySelector(`[name="${field.name}"]`);
+        if (!input) continue;
+
+        let value = input.value;
+        if (field.type !== 'password') value = typeof value === 'string' ? value.trim() : value;
+        if (field.type === 'number' && value !== '') value = Number(value);
+
+        if (value === '' || value === null) continue;
+        payload[field.name] = value;
+    }
+
+    return payload;
+}
+
+function showChatFormErrors(form, errors = {}) {
+    for (const [fieldName, messages] of Object.entries(errors)) {
+        const field = form.querySelector(`.ethos-chat-form-field[data-field="${fieldName}"]`);
+        if (!field) continue;
+        field.classList.add('has-error');
+        const errorText = field.querySelector('.ethos-chat-form-error');
+        if (errorText) errorText.textContent = Array.isArray(messages) ? (messages[0] ?? '') : String(messages ?? '');
+    }
+}
+
+function setChatFormBusy(form, busy) {
+    form.querySelectorAll('input, textarea, select, button').forEach(control => {
+        control.disabled = busy;
+    });
+}
+
+function buildChatFormSuccessSummary(formSpec, data) {
+    if (formSpec.entity === 'user' && data.user) {
+        return `Usuario creado: ${data.user.name} (${data.user.email}).`;
+    }
+    if (formSpec.entity === 'client' && data.client) {
+        return `Cliente creado: ${data.client.name}.`;
+    }
+    if (formSpec.entity === 'project' && data.project) {
+        return `Proyecto creado: ${data.project.title}.`;
+    }
+    if (formSpec.entity === 'service' && data.service) {
+        return `Servicio creado: ${data.service.short_name}.`;
+    }
+    return data.message ?? `Se creó el ${formSpec.entity_label ?? formSpec.entity ?? 'registro'}.`;
+}
+
+function finalizeChatFormSuccess(formSpec, form, card, data) {
+    const summary = buildChatFormSuccessSummary(formSpec, data);
+    card.classList.add('is-success');
+    setChatFormStatus(form, summary, 'success');
+    form.querySelectorAll('input, textarea, select, button').forEach(control => {
+        control.disabled = true;
+    });
+
+    let summaryNode = card.querySelector('.ethos-chat-form-summary');
+    if (!summaryNode) {
+        summaryNode = document.createElement('div');
+        summaryNode.className = 'ethos-chat-form-summary';
+        card.appendChild(summaryNode);
+    }
+    summaryNode.textContent = summary;
+
+    state.history.push({ role: 'assistant', content: summary });
+    if (state.history.length > 30) state.history = state.history.slice(-30);
+}
+
+async function submitChatForm(event, formSpec, form, card) {
+    event.preventDefault();
+    clearChatFormErrors(form);
+    setChatFormStatus(form, '');
+
+    if (!form.reportValidity()) return;
+
+    const payload = getChatFormPayload(formSpec, form);
+    setChatFormBusy(form, true);
+
+    try {
+        const res = await fetch(formSpec.submit?.url, {
+            method: formSpec.submit?.method ?? 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                Accept: 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.status === 422) {
+            showChatFormErrors(form, data.errors ?? {});
+            setChatFormStatus(form, data.message ?? 'Revisa los campos marcados.', 'error');
+            setChatFormBusy(form, false);
+            return;
+        }
+
+        if (!res.ok) {
+            setChatFormStatus(form, data.message ?? 'No se pudo completar la operación.', 'error');
+            setChatFormBusy(form, false);
+            return;
+        }
+
+        finalizeChatFormSuccess(formSpec, form, card, data);
+        loadConversations();
+    } catch {
+        setChatFormStatus(form, 'Error de red al enviar el formulario.', 'error');
+        setChatFormBusy(form, false);
+    }
+}
+
+async function openChatForm(formRequest) {
+    if (!formRequest?.entity) return;
+
+    try {
+        const res = await fetch(FORM_SCHEMA_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrf,
+                Accept: 'application/json',
+            },
+            body: JSON.stringify(formRequest),
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.form) {
+            appendMessage('assistant', '⚠️ No se pudo abrir el formulario solicitado.');
+            return;
+        }
+
+        appendChatForm(data.form);
+    } catch {
+        appendMessage('assistant', '⚠️ No se pudo cargar el formulario solicitado.');
+    }
+}
+
 function appendMessage(role, content, time) {
     const node = buildMessageNode(role, content, time);
     el.messages.appendChild(node.root);
@@ -602,6 +924,9 @@ async function sendMessage() {
                             const pills = streamNode.bubble.querySelectorAll('.ethos-chat-tool-pill');
                             const last  = pills[pills.length - 1];
                             if (last) last.classList.add('is-done');
+                        }
+                        if (data.form_request) {
+                            openChatForm(data.form_request);
                         }
                     }
                 }

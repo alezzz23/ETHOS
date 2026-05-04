@@ -13,7 +13,8 @@ class CreateClientTool extends Tool
     public function description(): string
     {
         return 'Crea un cliente nuevo en el sistema. '
-             . 'Usar cuando el usuario pida explícitamente registrar un cliente.';
+             . 'Usar solo cuando el usuario ya haya proporcionado los datos necesarios. '
+             . 'Si faltan datos o quiere completarlos en interfaz, usa open_client_creation_form.';
     }
 
     public function parameters(): array

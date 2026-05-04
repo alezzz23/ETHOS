@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Admin AI Chatbot
         Route::post('/admin/chat',         [App\Http\Controllers\Admin\DashboardChatController::class, 'chat'])->name('admin.chat')->middleware(['throttle:40,1', 'ai.budget']);
         Route::post('/admin/chat/stream',  [App\Http\Controllers\Admin\DashboardChatController::class, 'stream'])->name('admin.chat.stream')->middleware(['throttle:40,1', 'ai.budget']);
+        Route::post('/admin/chat/forms/schema', [App\Http\Controllers\Admin\ChatFormController::class, 'schema'])->name('admin.chat.forms.schema');
         Route::post('/admin/chat/clear',   [App\Http\Controllers\Admin\DashboardChatController::class, 'clearHistory'])->name('admin.chat.clear');
         Route::get ('/admin/chat/audit',   [App\Http\Controllers\Admin\DashboardChatController::class, 'auditLog'])->name('admin.chat.audit');
         Route::post('/admin/chat/feedback',[App\Http\Controllers\Admin\DashboardChatController::class, 'feedback'])->name('admin.chat.feedback')->middleware('throttle:20,1');

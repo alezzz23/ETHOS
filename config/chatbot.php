@@ -13,12 +13,11 @@ return [
     // ── LLM provider (OpenRouter-compatible) ────────────────────────
     'llm' => [
         'api_key'  => env('IA_DASHBOARD_API'),
-        'base_url' => rtrim(env('IA_DASHBOARD_BASE_URL', 'https://openrouter.ai/api/v1'), '/'),
+        'base_url' => rtrim(env('IA_DASHBOARD_BASE_URL', 'https://integrate.api.nvidia.com/v1'), '/'),
         'timeout'  => (int) env('IA_DASHBOARD_TIMEOUT', 30),
 
         'models' => [
             'primary'  => env('IA_DASHBOARD_MODEL', 'nvidia/llama-nemotron-super-49b-v1:free'),
-            'fallback' => env('IA_DASHBOARD_FALLBACK_MODEL', 'anthropic/claude-3-haiku'),
         ],
 
         'temperature' => (float) env('IA_DASHBOARD_TEMPERATURE', 0.55),

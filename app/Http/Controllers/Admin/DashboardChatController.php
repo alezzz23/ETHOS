@@ -174,6 +174,14 @@ class DashboardChatController extends Controller
 
         $userMessage = $validated['message'];
 
+        if ($request->session()->isStarted()) {
+            $request->session()->save();
+        }
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+
         $response = new StreamedResponse(function () use (
             $messages, $model, $conversation, $user, $userMessage, $sessionId, $ip, $ua
         ) {
@@ -254,6 +262,7 @@ class DashboardChatController extends Controller
                     $emit([
                         'type' => 'tool_result',
                         'name' => $name,
+                        'form_request' => $out['chat_form_request'] ?? null,
                     ]);
                 }
             }
